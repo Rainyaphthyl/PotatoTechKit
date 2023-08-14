@@ -34,6 +34,13 @@ repositories {
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
 
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.encoding = 'UTF-8'
+    //options.encoding = 'GBK'
+}
+
 group = 'io.github.rainyaphthyl'
 version = project.modVersion
 
@@ -44,6 +51,7 @@ minecraft {
 }
 
 dependencies {
+    compile files("malilib-liteloader-${project.mcVersionOut}-${project.malilibVersion}-deobf.jar")
     deobfCompile "fi.dy.masa.malilib:malilib-liteloader-${project.mcVersionOut}:${project.malilibVersion}:deobf"
 }
 

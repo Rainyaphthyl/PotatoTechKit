@@ -4,17 +4,16 @@ import com.mumfrey.liteloader.Configurable;
 import com.mumfrey.liteloader.InitCompleteListener;
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
-import io.github.rainyaphthyl.potteckit.util.version.ModVersion;
+import fi.dy.masa.malilib.registry.Registry;
+import io.github.rainyaphthyl.potteckit.config.Configs;
+import io.github.rainyaphthyl.potteckit.config.Reference;
+import io.github.rainyaphthyl.potteckit.gui.PotteckitConfigPanel;
 import net.minecraft.client.Minecraft;
 
 import java.io.File;
 
 @SuppressWarnings("unused")
 public class LiteModPotteckit implements Configurable, InitCompleteListener {
-    public static final String NAME = "Potato Tech Kit";
-    public static final String VERSION = "0.0.0";
-    public static final ModVersion versionObj = ModVersion.getVersion(VERSION);
-
     /**
      * Get the mod version string
      *
@@ -22,7 +21,7 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public String getVersion() {
-        return VERSION;
+        return Reference.VERSION;
     }
 
     /**
@@ -55,7 +54,7 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public String getName() {
-        return NAME;
+        return Reference.NAME;
     }
 
     /**
@@ -66,7 +65,7 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public Class<? extends ConfigPanel> getConfigPanelClass() {
-        return null;
+        return PotteckitConfigPanel.class;
     }
 
     /**
@@ -78,5 +77,6 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public void onInitCompleted(Minecraft minecraft, LiteLoader loader) {
+        Registry.INITIALIZATION_DISPATCHER.registerInitializationHandler(Configs::registerOnModInit);
     }
 }

@@ -1,1 +1,5 @@
 potteckit.name=Potato Tech Kit
+potteckit.title.configs=Configs - Potteckit %s
+
+potteckit.hotkeys.category.generic=Generic
+potteckit.hotkeys.category.actions=Actions
