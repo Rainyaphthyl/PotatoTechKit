@@ -1,0 +1,8 @@
+potteckit.name=Potato Tech Kit
+potteckit.title.configs=Potteckit %s - Configs
+
+potteckit.config.tab.generic=Generic
+potteckit.config.tab.actions=Actions
+
+potteckit.config.name.globalswitch=Enable PotatoTechKit
+potteckit.hotkey.name.openconfigscreen=Open Config Screen

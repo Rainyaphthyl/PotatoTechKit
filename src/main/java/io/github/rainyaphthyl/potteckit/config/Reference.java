@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Reference {
-    public static final String NAME = "Potteckit";
+    public static final String NAME = "PotatoTechKit";
     public static final String SHORT_NAME = "potteckit";
     public static final String ID = SHORT_NAME;
     public static final ModInfo MOD_INFO = new ModInfo(ID, NAME);

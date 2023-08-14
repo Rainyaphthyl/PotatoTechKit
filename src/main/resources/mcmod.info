@@ -1,7 +1,7 @@
 [
   {
-    "modid": "potato_tech_kit",
-    "name": "Potato Tech Kit",
+    "modid": "potteckit",
+    "name": "PotatoTechKit",
     "description": "",
     "version": "${modVersion}",
     "mcversion": "${mcVersion}",

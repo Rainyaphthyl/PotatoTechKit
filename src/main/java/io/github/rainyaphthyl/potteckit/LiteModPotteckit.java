@@ -1,19 +1,17 @@
 package io.github.rainyaphthyl.potteckit;
 
 import com.mumfrey.liteloader.Configurable;
-import com.mumfrey.liteloader.InitCompleteListener;
-import com.mumfrey.liteloader.core.LiteLoader;
+import com.mumfrey.liteloader.LiteMod;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.config.Reference;
 import io.github.rainyaphthyl.potteckit.gui.PotteckitConfigPanel;
-import net.minecraft.client.Minecraft;
 
 import java.io.File;
 
 @SuppressWarnings("unused")
-public class LiteModPotteckit implements Configurable, InitCompleteListener {
+public class LiteModPotteckit implements Configurable, LiteMod {
     /**
      * Get the mod version string
      *
@@ -33,6 +31,7 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public void init(File configPath) {
+        Registry.INITIALIZATION_DISPATCHER.registerInitializationHandler(Configs::registerOnInit);
     }
 
     /**
@@ -66,17 +65,5 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
     @Override
     public Class<? extends ConfigPanel> getConfigPanelClass() {
         return PotteckitConfigPanel.class;
-    }
-
-    /**
-     * Called as soon as the game is initialised and the main game loop is
-     * running.
-     *
-     * @param minecraft Minecraft instance
-     * @param loader    LiteLoader instance
-     */
-    @Override
-    public void onInitCompleted(Minecraft minecraft, LiteLoader loader) {
-        Registry.INITIALIZATION_DISPATCHER.registerInitializationHandler(Configs::registerOnModInit);
     }
 }

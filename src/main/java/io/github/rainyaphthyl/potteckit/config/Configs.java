@@ -40,7 +40,7 @@ public class Configs {
         }
     }
 
-    public static void registerOnModInit() {
+    public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, CATEGORIES);
         Registry.CONFIG_MANAGER.registerConfigHandler(jsonModConfig);
         Registry.CONFIG_SCREEN.registerConfigScreenFactory(Reference.MOD_INFO, GuiConfigScreen::create);
