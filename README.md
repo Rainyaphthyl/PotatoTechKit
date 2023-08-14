@@ -4,7 +4,8 @@
 
 ### Deployment
 
-- Download the `*.litemod` and put it into `.minecraft/mods/`.
+1. Download the `*.litemod` from the release and put it into `.minecraft/mods/`.
+2. This mod requires [MaLiLib](https://github.com/maruohon/malilib). Download it from https://masa.dy.fi/mcmods/client_mods/ and put it into `.minecraft/mods/`.
 
 ### Features and Functions
 
