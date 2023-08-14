@@ -11,7 +11,9 @@ potteckit.config.tab.vanilless=Not Vanilla
 potteckit.config.tab.cheat=Cheating
 
 potteckit.config.name.enablepotteckit=Enable Potteckit
-potteckit.config.comment.enablepotteckit=The global switch of Potato Tech Kit mod
+potteckit.config.comment.enablepotteckit=The global switch of Potato Tech Kit mod.
+potteckit.config.name.chunkloadinggraph=§6Chunk Loading Graph§r
+potteckit.config.comment.chunkloadinggraph=§6(SINGLE-PLAYER ONLY or NEED SPECIAL PROTOCOLS)§r\nCaptures the chunk loading chains during chunk loaders running.
 
 potteckit.hotkey.name.openconfigscreen=Open Config Screen
-potteckit.hotkey.comment.openconfigscreen=Open the config screen of Potato Tech Kit
+potteckit.hotkey.comment.openconfigscreen=Open the config screen of Potato Tech Kit.
