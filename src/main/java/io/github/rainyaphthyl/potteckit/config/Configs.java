@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.category.BaseConfigOptionCategory;
 import fi.dy.masa.malilib.config.category.ConfigOptionCategory;
+import fi.dy.masa.malilib.config.option.HotkeyConfig;
+import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
 import fi.dy.masa.malilib.input.Hotkey;
 import fi.dy.masa.malilib.input.HotkeyCategory;
 import fi.dy.masa.malilib.registry.Registry;
@@ -14,8 +16,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public class Configs {
-    public static final ConfigGeneric GENERIC = AbstractPartialConfig.getInstance(ConfigGeneric.class);
-    public static final ConfigActions ACTIONS = AbstractPartialConfig.getInstance(ConfigActions.class);
+    public static final GenericConfigs GENERIC = AbstractPartialConfig.getInstance(GenericConfigs.class);
+    public static final ActionConfigs ACTIONS = AbstractPartialConfig.getInstance(ActionConfigs.class);
     public static final List<ConfigOptionCategory> CATEGORIES = Lists.newArrayList();
     public static final List<Hotkey> ALL_HOTKEYS = Lists.newArrayList();
     public static final List<HotkeyCategory> HOTKEY_CATEGORY_LIST = Lists.newArrayList();
@@ -48,5 +50,23 @@ public class Configs {
         Registry.HOTKEY_MANAGER.registerHotkeyProvider(new PotteckitHotkeyProvider());
         Actions.init();
         Callbacks.init();
+    }
+
+    public static class ActionConfigs extends AbstractPartialConfig {
+        public final HotkeyConfig OPEN_CONFIG_PANEL = new HotkeyConfig("openConfigScreen", "K,C");
+
+        protected ActionConfigs() {
+            super("Actions");
+            initAllList();
+        }
+    }
+
+    public static class GenericConfigs extends AbstractPartialConfig {
+        public final HotkeyedBooleanConfig GLOBAL_SWITCH = new HotkeyedBooleanConfig("enablePotteckit", true, "");
+
+        protected GenericConfigs() {
+            super("Generic");
+            initAllList();
+        }
     }
 }
