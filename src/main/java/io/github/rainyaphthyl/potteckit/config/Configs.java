@@ -9,6 +9,7 @@ import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
 import io.github.rainyaphthyl.potteckit.config.annotation.Type;
 import io.github.rainyaphthyl.potteckit.gui.GuiConfigScreen;
 import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
+import io.github.rainyaphthyl.potteckit.util.Reference;
 
 public class Configs {
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.GENERIC, notVanilla = false, cheating = false)

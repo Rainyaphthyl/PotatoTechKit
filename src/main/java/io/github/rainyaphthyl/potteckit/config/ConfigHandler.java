@@ -11,6 +11,7 @@ import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.ConfigBundle;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
 import io.github.rainyaphthyl.potteckit.gui.GuiConfigScreen;
+import io.github.rainyaphthyl.potteckit.util.Reference;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;

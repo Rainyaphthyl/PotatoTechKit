@@ -5,8 +5,8 @@ import com.mumfrey.liteloader.LiteMod;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.Configs;
-import io.github.rainyaphthyl.potteckit.config.Reference;
 import io.github.rainyaphthyl.potteckit.gui.PotteckitConfigPanel;
+import io.github.rainyaphthyl.potteckit.util.Reference;
 
 import java.io.File;
 

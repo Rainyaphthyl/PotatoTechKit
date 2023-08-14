@@ -1,5 +1,6 @@
 package io.github.rainyaphthyl.potteckit.util.version;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.ParametersAreNullableByDefault;
 import java.util.concurrent.atomic.AtomicReference;
@@ -23,6 +24,7 @@ public class ModVersion implements Comparable<ModVersion> {
         this.preLabels = preLabels;
     }
 
+    @Nullable
     public static ModVersion getVersion(String versionName) {
         if (versionName == null) {
             return null;

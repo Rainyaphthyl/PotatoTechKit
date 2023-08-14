@@ -23,7 +23,7 @@
 Before release, ensure the mod version is correct:
 
 - [gradle.properties](gradle.properties)
-- [LiteModEntry](src/main/java/io/github/rainyaphthyl/potteckit/LiteModPotteckit.java)
+- [Reference.java](src/main/java/io/github/rainyaphthyl/potteckit/util/Reference.java)
 
 Run your task by one of the following commands:
 

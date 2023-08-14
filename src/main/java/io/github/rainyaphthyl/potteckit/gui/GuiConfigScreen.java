@@ -3,7 +3,7 @@ package io.github.rainyaphthyl.potteckit.gui;
 import fi.dy.masa.malilib.gui.config.BaseConfigScreen;
 import fi.dy.masa.malilib.gui.config.ConfigTab;
 import io.github.rainyaphthyl.potteckit.config.ConfigHandler;
-import io.github.rainyaphthyl.potteckit.config.Reference;
+import io.github.rainyaphthyl.potteckit.util.Reference;
 
 import javax.annotation.Nonnull;
 import java.util.List;

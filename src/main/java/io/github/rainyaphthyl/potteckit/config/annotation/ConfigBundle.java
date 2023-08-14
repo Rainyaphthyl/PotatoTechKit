@@ -5,7 +5,7 @@ import fi.dy.masa.malilib.config.category.ConfigOptionCategory;
 import fi.dy.masa.malilib.config.option.ConfigOption;
 import fi.dy.masa.malilib.input.Hotkey;
 import fi.dy.masa.malilib.input.HotkeyCategory;
-import io.github.rainyaphthyl.potteckit.config.Reference;
+import io.github.rainyaphthyl.potteckit.util.Reference;
 
 import java.util.ArrayList;
 import java.util.List;
