@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "potato_tech_kit",
+    "name": "Potato Tech Kit",
+    "description": "",
+    "version": "${modVersion}",
+    "mcversion": "${mcVersion}",
+    "url": "https://github.com/Rainyaphthyl/PotatoTechKit",
+    "updateUrl": "",
+    "authorList": [
+      "Naftalluvia"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
