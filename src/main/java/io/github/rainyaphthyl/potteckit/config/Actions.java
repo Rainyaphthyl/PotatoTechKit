@@ -9,6 +9,5 @@ public class Actions {
     public static final NamedAction OPEN_CONFIG_SCREEN = ActionUtils.register(Reference.MOD_INFO, "openConfigScreen", () -> BaseScreen.openScreen(GuiConfigScreen.create()));
 
     public static void init() {
-
     }
 }
