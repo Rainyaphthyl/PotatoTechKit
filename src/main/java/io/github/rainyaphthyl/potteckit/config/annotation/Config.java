@@ -12,7 +12,7 @@ public @interface Config {
 
     Domain[] domains();
 
-    boolean clientOnly() default true;
+    boolean needServer() default false;
 
     /**
      * Destructive to some vanilla features, causing players to forget the vanilla operations and refuse to redstone with them; Or solving some vanilla problems that could have been solved with vanilla technologies.
