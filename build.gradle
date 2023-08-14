@@ -14,10 +14,20 @@ buildscript {
             name = 'sponge'
             url = 'https://repo.spongepowered.org/maven'
         }
+        maven {
+            name = 'masa'
+            url = 'https://masa.dy.fi/maven'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:' + project.forgeGradleVersion
         classpath 'org.spongepowered:mixingradle:0.5-SNAPSHOT'
+    }
+}
+
+repositories {
+    maven {
+        url 'https://masa.dy.fi/maven'
     }
 }
 
@@ -31,6 +41,10 @@ minecraft {
     version = project.mcVersion
     mappings = project.mcMappings
     runDir = "run"
+}
+
+dependencies {
+    deobfCompile "fi.dy.masa.malilib:malilib-liteloader-${project.mcVersionOut}:${project.malilibVersion}:deobf"
 }
 
 sourceSets {
