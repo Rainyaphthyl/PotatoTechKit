@@ -8,11 +8,11 @@ import java.util.Set;
 
 public class ImmutableSetView<T> implements Set<T> {
     private final Collection<? super T> parent;
-    private final Class<? extends T> targetClass;
+    private final Class<? extends T> elemClass;
 
-    ImmutableSetView(Collection<? super T> parent, Class<? extends T> targetClass) {
+    ImmutableSetView(Collection<? super T> parent, Class<? extends T> elemClass) {
         this.parent = Objects.requireNonNull(parent);
-        this.targetClass = Objects.requireNonNull(targetClass);
+        this.elemClass = Objects.requireNonNull(elemClass);
     }
 
     @Override
@@ -32,24 +32,7 @@ public class ImmutableSetView<T> implements Set<T> {
 
     @Override
     public Iterator<T> iterator() {
-        Iterator<? super T> objectIterator = parent.iterator();
-        return new Iterator<T>() {
-            @Override
-            public boolean hasNext() {
-                return objectIterator.hasNext();
-            }
-
-            @Override
-            public T next() {
-                Object nextElem = objectIterator.next();
-                return targetClass.cast(nextElem);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
-            }
-        };
+        return new IteratorView();
     }
 
     @Override
@@ -64,13 +47,13 @@ public class ImmutableSetView<T> implements Set<T> {
 
     @Override
     @Deprecated
-    public boolean add(T t) {
+    public boolean add(T t) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
     }
 
     @Override
     @Deprecated
-    public boolean remove(Object o) {
+    public boolean remove(Object o) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
     }
 
@@ -81,25 +64,49 @@ public class ImmutableSetView<T> implements Set<T> {
 
     @Override
     @Deprecated
-    public boolean addAll(@Nonnull Collection<? extends T> c) {
+    public boolean addAll(@Nonnull Collection<? extends T> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
     }
 
     @Override
     @Deprecated
-    public boolean retainAll(@Nonnull Collection<?> c) {
+    public boolean retainAll(@Nonnull Collection<?> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
     }
 
     @Override
     @Deprecated
-    public boolean removeAll(@Nonnull Collection<?> c) {
+    public boolean removeAll(@Nonnull Collection<?> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
     }
 
     @Override
     @Deprecated
-    public void clear() {
+    public void clear() throws UnsupportedOperationException {
         throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
+    }
+
+    public class IteratorView implements Iterator<T> {
+        private final Iterator<? super T> objectIterator;
+
+        private IteratorView() {
+            objectIterator = parent.iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return objectIterator.hasNext();
+        }
+
+        @Override
+        public T next() {
+            Object nextElem = objectIterator.next();
+            return elemClass.cast(nextElem);
+        }
+
+        @Override
+        public void remove() throws UnsupportedOperationException {
+            throw new UnsupportedOperationException(ImmutableSetView.class + " " + ImmutableSetView.this + " is immutable.");
+        }
     }
 }

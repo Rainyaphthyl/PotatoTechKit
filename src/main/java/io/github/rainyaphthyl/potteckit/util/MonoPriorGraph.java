@@ -1,30 +1,25 @@
 package io.github.rainyaphthyl.potteckit.util;
 
-import com.google.common.graph.ElementOrder;
-import com.google.common.graph.EndpointPair;
-import com.google.common.graph.MutableValueGraph;
-import com.google.common.graph.ValueGraphBuilder;
+import com.google.common.graph.*;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
 @SuppressWarnings("UnstableApiUsage")
 @ParametersAreNonnullByDefault
-public class MonoPriorGraph<N, V> implements MutableValueGraph<N, V> {
-    private final MutableValueGraph<Object, Object> graph;
+public class MonoPriorGraph<N, E> extends AbstractNetwork<N, E> implements MutableNetwork<N, E> {
+    private final MutableNetwork<Object, Object> graph;
     private final Class<? extends N> nodeClass;
-    private final Class<? extends V> valueClass;
+    private final Class<? extends E> edgeClass;
 
     {
-        ValueGraphBuilder<Object, Object> builder = ValueGraphBuilder.directed().nodeOrder(ElementOrder.insertion());
-        builder.allowsSelfLoops(true);
+        NetworkBuilder<Object, Object> builder = NetworkBuilder.directed().nodeOrder(ElementOrder.insertion()).edgeOrder(ElementOrder.insertion()).allowsSelfLoops(true).allowsParallelEdges(true);
         graph = builder.build();
     }
 
-    public MonoPriorGraph(Class<? extends N> nodeClass, Class<? extends V> valueClass) {
+    public MonoPriorGraph(Class<? extends N> nodeClass, Class<? extends E> edgeClass) {
         this.nodeClass = nodeClass;
-        this.valueClass = valueClass;
+        this.edgeClass = edgeClass;
     }
 
     @Override
@@ -33,9 +28,8 @@ public class MonoPriorGraph<N, V> implements MutableValueGraph<N, V> {
     }
 
     @Override
-    public V putEdgeValue(N nodeU, N nodeV, V value) throws ClassCastException {
-        Object object = graph.putEdgeValue(nodeU, nodeV, value);
-        return valueClass.cast(object);
+    public boolean addEdge(N nodeU, N nodeV, E edge) {
+        return graph.addEdge(nodeU, nodeV, edge);
     }
 
     @Override
@@ -44,37 +38,30 @@ public class MonoPriorGraph<N, V> implements MutableValueGraph<N, V> {
     }
 
     @Override
-    public V removeEdge(Object nodeU, Object nodeV) throws ClassCastException {
-        Object object = graph.removeEdge(nodeU, nodeV);
-        return valueClass.cast(object);
-    }
-
-    @Override
-    public V edgeValue(Object nodeU, Object nodeV) throws ClassCastException {
-        return edgeValueOrDefault(nodeU, nodeV, null);
-    }
-
-    @Override
-    public V edgeValueOrDefault(Object nodeU, Object nodeV, @Nullable V defaultValue) throws ClassCastException {
-        Object object = graph.edgeValueOrDefault(nodeU, nodeV, defaultValue);
-        return valueClass.cast(object);
+    public boolean removeEdge(Object edge) {
+        return graph.removeEdge(edge);
     }
 
     @Override
     public ImmutableSetView<N> nodes() {
-        return new ImmutableSetView<>(graph.nodes(), nodeClass);
+        Set<Object> objectSet = graph.nodes();
+        return new ImmutableSetView<>(objectSet, nodeClass);
     }
 
     @Override
-    @Deprecated
-    public ImmutableSetView<EndpointPair<N>> edges() {
-        Set<EndpointPair<Object>> objPairSet = graph.edges();
-        return null;
+    public ImmutableSetView<E> edges() {
+        Set<Object> objectSet = graph.edges();
+        return new ImmutableSetView<>(objectSet, edgeClass);
     }
 
     @Override
     public boolean isDirected() {
         return graph.isDirected();
+    }
+
+    @Override
+    public boolean allowsParallelEdges() {
+        return graph.allowsParallelEdges();
     }
 
     @Override
@@ -88,35 +75,63 @@ public class MonoPriorGraph<N, V> implements MutableValueGraph<N, V> {
     }
 
     @Override
+    public ElementOrder<E> edgeOrder() {
+        return ElementOrder.insertion();
+    }
+
+    @Override
     public ImmutableSetView<N> adjacentNodes(Object node) {
         Set<Object> objectSet = graph.adjacentNodes(node);
         return new ImmutableSetView<>(objectSet, nodeClass);
     }
 
     @Override
-    public Set<N> predecessors(Object node) {
+    public ImmutableSetView<N> predecessors(Object node) {
         Set<Object> objectSet = graph.predecessors(node);
         return new ImmutableSetView<>(objectSet, nodeClass);
     }
 
     @Override
-    public Set<N> successors(Object node) {
+    public ImmutableSetView<N> successors(Object node) {
         Set<Object> objectSet = graph.successors(node);
         return new ImmutableSetView<>(objectSet, nodeClass);
     }
 
     @Override
-    public int degree(Object node) {
-        return graph.degree(node);
+    public ImmutableSetView<E> incidentEdges(Object node) {
+        Set<Object> objectSet = graph.incidentEdges(node);
+        return new ImmutableSetView<>(objectSet, edgeClass);
     }
 
     @Override
-    public int inDegree(Object node) {
-        return graph.inDegree(node);
+    public ImmutableSetView<E> inEdges(Object node) {
+        Set<Object> objectSet = graph.inEdges(node);
+        return new ImmutableSetView<>(objectSet, edgeClass);
     }
 
     @Override
-    public int outDegree(Object node) {
-        return graph.outDegree(node);
+    public ImmutableSetView<E> outEdges(Object node) {
+        Set<Object> objectSet = graph.outEdges(node);
+        return new ImmutableSetView<>(objectSet, edgeClass);
+    }
+
+    @Override
+    public EndpointPair<N> incidentNodes(Object edge) {
+        EndpointPair<Object> objectPair = graph.incidentNodes(edge);
+        Object objectU = objectPair.nodeU();
+        Object objectV = objectPair.nodeV();
+        N source = nodeClass.cast(objectU);
+        N target = nodeClass.cast(objectV);
+        if (objectPair.isOrdered()) {
+            return EndpointPair.ordered(source, target);
+        } else {
+            return EndpointPair.unordered(source, target);
+        }
+    }
+
+    @Override
+    public ImmutableSetView<E> edgesConnecting(Object nodeU, Object nodeV) {
+        Set<Object> objectSet = graph.edgesConnecting(nodeU, nodeV);
+        return new ImmutableSetView<>(objectSet, edgeClass);
     }
 }
