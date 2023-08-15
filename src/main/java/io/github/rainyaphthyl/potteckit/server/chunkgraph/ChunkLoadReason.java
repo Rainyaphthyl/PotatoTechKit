@@ -1,5 +1,5 @@
 package io.github.rainyaphthyl.potteckit.server.chunkgraph;
 
 public enum ChunkLoadReason {
-    HOPPER,
+    HOPPER_POINTING,
 }
