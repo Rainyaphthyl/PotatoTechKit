@@ -36,16 +36,23 @@ public abstract class MixinChunkProviderServer {
             // chunk == null -> generating new chunk;
             // chunk != null -> loading chunk from region file;
             Chunk chunk = cir.getReturnValue();
-            ChunkLoadSource source = ChunkLoadCaptor.popThreadSource();
-            if (source != null) {
-                ChunkLoadReason reason = source.reason;
+            if (chunk != null) {
+                ChunkLoadSource source = ChunkLoadCaptor.popThreadSource();
+                ChunkLoadReason reason = null;
+                ChunkPos priorPos = null;
+                if (source != null) {
+                    priorPos = source.chunkPos;
+                    reason = source.reason;
+                }
                 //region debug
                 MinecraftServer server = world.getMinecraftServer();
                 if (server != null) {
                     PlayerList playerList = server.getPlayerList();
                     TextFormatting color;
                     DimensionType dimensionType = world.provider.getDimensionType();
-                    switch (dimensionType) {
+                    if (source == null) {
+                        color = TextFormatting.GOLD;
+                    } else switch (dimensionType) {
                         case OVERWORLD:
                             color = TextFormatting.GREEN;
                             break;
@@ -59,7 +66,7 @@ public abstract class MixinChunkProviderServer {
                             color = TextFormatting.GRAY;
                     }
                     Style style = new Style().setColor(color);
-                    playerList.sendMessage(new TextComponentString("(" + dimensionType.getId() + ") " + chunk.getPos() + " is loaded by " + new ChunkPos(source.chunkX, source.chunkZ) + " via " + reason).setStyle(style));
+                    playerList.sendMessage(new TextComponentString("(" + dimensionType.getId() + ") " + chunk.getPos() + " is loaded by " + priorPos + " via " + reason).setStyle(style));
                 }
                 //endregion
             }
