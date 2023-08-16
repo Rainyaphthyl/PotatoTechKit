@@ -7,7 +7,7 @@ import java.util.Set;
 
 @SuppressWarnings("UnstableApiUsage")
 @ParametersAreNonnullByDefault
-public class MonoPriorGraph<N, E> extends AbstractNetwork<N, E> implements MutableNetwork<N, E> {
+public class NetworkGraph<N, E> extends AbstractNetwork<N, E> implements MutableNetwork<N, E> {
     private final MutableNetwork<Object, Object> graph;
     private final Class<? extends N> nodeClass;
     private final Class<? extends E> edgeClass;
@@ -17,7 +17,7 @@ public class MonoPriorGraph<N, E> extends AbstractNetwork<N, E> implements Mutab
         graph = builder.build();
     }
 
-    public MonoPriorGraph(Class<? extends N> nodeClass, Class<? extends E> edgeClass) {
+    public NetworkGraph(Class<? extends N> nodeClass, Class<? extends E> edgeClass) {
         this.nodeClass = nodeClass;
         this.edgeClass = edgeClass;
     }

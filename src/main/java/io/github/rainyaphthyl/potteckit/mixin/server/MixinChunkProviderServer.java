@@ -7,7 +7,10 @@ import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
@@ -29,6 +32,7 @@ public abstract class MixinChunkProviderServer {
     @Inject(method = "loadChunkFromFile", at = @At(value = "RETURN", ordinal = 0))
     public void onLoadChunkFromFile(int x, int z, @Nonnull CallbackInfoReturnable<Chunk> cir) {
         if (Configs.enablePotteckit.getBooleanValue() && Configs.chunkLoadingGraph.getBooleanValue()) {
+            world.profiler.startSection("litemods");
             // chunk == null -> generating new chunk;
             // chunk != null -> loading chunk from region file;
             Chunk chunk = cir.getReturnValue();
@@ -39,10 +43,27 @@ public abstract class MixinChunkProviderServer {
                 MinecraftServer server = world.getMinecraftServer();
                 if (server != null) {
                     PlayerList playerList = server.getPlayerList();
-                    playerList.sendMessage(new TextComponentString(chunk.getPos() + " is loaded by " + new ChunkPos(source.chunkX, source.chunkZ) + " via " + reason));
+                    TextFormatting color;
+                    DimensionType dimensionType = world.provider.getDimensionType();
+                    switch (dimensionType) {
+                        case OVERWORLD:
+                            color = TextFormatting.GREEN;
+                            break;
+                        case NETHER:
+                            color = TextFormatting.RED;
+                            break;
+                        case THE_END:
+                            color = TextFormatting.LIGHT_PURPLE;
+                            break;
+                        default:
+                            color = TextFormatting.GRAY;
+                    }
+                    Style style = new Style().setColor(color);
+                    playerList.sendMessage(new TextComponentString("(" + dimensionType.getId() + ") " + chunk.getPos() + " is loaded by " + new ChunkPos(source.chunkX, source.chunkZ) + " via " + reason).setStyle(style));
                 }
                 //endregion
             }
+            world.profiler.endSection();
         }
     }
 

@@ -1,6 +1,6 @@
 package io.github.rainyaphthyl.potteckit.server.chunkgraph;
 
-import io.github.rainyaphthyl.potteckit.util.MonoPriorGraph;
+import io.github.rainyaphthyl.potteckit.util.NetworkGraph;
 import net.minecraft.util.math.ChunkPos;
 
 import java.util.ConcurrentModificationException;
@@ -9,7 +9,12 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ChunkLoadCaptor {
     private static final ConcurrentMap<Thread, ChunkLoadSource> threadReasonCache = new ConcurrentHashMap<>();
-    private final MonoPriorGraph<ChunkPos, ChunkLoadReason> graph = new MonoPriorGraph<>(ChunkPos.class, ChunkLoadReason.class);
+    private final NetworkGraph<ChunkPos, ChunkLoadReason> graph = new NetworkGraph<>(ChunkPos.class, ChunkLoadReason.class);
+
+    public static void pushThreadSource(int chunkX, int chunkZ, ChunkLoadReason reason) {
+        ChunkLoadSource source = new ChunkLoadSource(chunkX, chunkZ, reason);
+        pushThreadSource(source);
+    }
 
     public static void pushThreadSource(ChunkLoadSource source) {
         Thread thread = Thread.currentThread();
