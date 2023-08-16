@@ -26,7 +26,9 @@ public class PhaseRecord implements Comparable<PhaseRecord> {
     }
 
     public static PhaseRecord getPooledRecord(@Nullable DimensionType dimension, GamePhase phase) {
-        if (dimension == null || phase != null && !phase.dimensional) {
+        if (phase == null) {
+            return null;
+        } else if (dimension == null || !phase.dimensional) {
             return getPooledRecord(phase);
         } else {
             Map<GamePhase, PhaseRecord> partialPool = worldRecordPool.computeIfAbsent(dimension,

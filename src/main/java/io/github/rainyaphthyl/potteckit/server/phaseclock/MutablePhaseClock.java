@@ -3,8 +3,14 @@ package io.github.rainyaphthyl.potteckit.server.phaseclock;
 import net.minecraft.world.DimensionType;
 
 public class MutablePhaseClock {
+    public static final MutablePhaseClock INSTANCE = new MutablePhaseClock();
     private DimensionType dimension;
     private GamePhase phase;
+
+    private MutablePhaseClock() {
+        dimension = null;
+        phase = null;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -31,7 +37,19 @@ public class MutablePhaseClock {
         return phase;
     }
 
-    public void setPhase(GamePhase phase) {
-        this.phase = phase;
+    public void startPhase(GamePhase phase) throws IllegalArgumentException {
+        if (this.phase == null) {
+            this.phase = phase;
+        } else {
+            throw new IllegalArgumentException(this.phase + " != " + null);
+        }
+    }
+
+    public void endPhase(GamePhase phase) throws IllegalArgumentException {
+        if (this.phase == phase) {
+            this.phase = null;
+        } else {
+            throw new IllegalArgumentException(this.phase + " != " + phase);
+        }
     }
 }
