@@ -4,8 +4,9 @@
   "package": "io.github.rainyaphthyl.potteckit.mixin",
   "refmap": "mixins.potteckit.refmap.json",
   "mixins": [
-    "server.MixinChunkProviderServer",
-    "server.MixinTileEntityHopper"
+    "server.chunkgraph.MixinChunkProviderServer",
+    "server.chunkgraph.MixinTileEntityHopper",
+    "server.gamephase.MixinIntegratedServer"
   ],
   "injectors": {
     "defaultRequire": 1
