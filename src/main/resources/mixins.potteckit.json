@@ -7,7 +7,9 @@
     "server.chunkgraph.MixinChunkProviderServer",
     "server.chunkgraph.MixinTileEntityHopper",
     "server.gamephase.MixinIntegratedServer",
-    "server.gamephase.MixinMinecraftServer"
+    "server.gamephase.MixinMinecraftServer",
+    "server.gamephase.MixinWorld",
+    "server.gamephase.MixinWorldServer"
   ],
   "injectors": {
     "defaultRequire": 1

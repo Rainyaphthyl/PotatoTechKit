@@ -4,14 +4,25 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class MutablePhaseClock {
+    private static final ConcurrentMap<MinecraftServer, MutablePhaseClock> serverClockPool = new ConcurrentHashMap<>();
     private final MinecraftServer server;
     private DimensionType dimension = null;
     private GamePhase phase = null;
 
-    public MutablePhaseClock(MinecraftServer server) {
+    private MutablePhaseClock(MinecraftServer server) {
         this.server = Objects.requireNonNull(server);
+    }
+
+    public static MutablePhaseClock instanceFromServer(MinecraftServer server) {
+        if (server == null) {
+            return null;
+        } else {
+            return serverClockPool.computeIfAbsent(server, MutablePhaseClock::new);
+        }
     }
 
     @Override

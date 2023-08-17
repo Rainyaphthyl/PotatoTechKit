@@ -7,6 +7,7 @@ public enum GamePhase {
     SERVER_TICK_COUNT(false),
     INGAME_QUEUED_TASK(false),
     WEATHER_UPDATE(true),
+    SLEEP_AND_WAKE(true),
     MOB_SPAWNING(true),
     CHUNK_UNLOAD(true),
     WORLD_TIME_UPDATE(true),
