@@ -31,7 +31,8 @@ public enum GamePhase {
     COMMAND_FUNCTION(false),
     SERVER_AUTO_SAVE(false),
     SP_VIEW_DISTANCE_ALT(false),
-    SP_DIFFICULTY_LOCK(false);
+    SP_DIFFICULTY_LOCK(false),
+    SERVER_STOP(false);
     public final boolean dimensional;
 
     GamePhase(boolean dimensional) {

@@ -1,15 +1,17 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 
-public class MutablePhaseClock {
-    public static final MutablePhaseClock INSTANCE = new MutablePhaseClock();
-    private DimensionType dimension;
-    private GamePhase phase;
+import java.util.Objects;
 
-    private MutablePhaseClock() {
-        dimension = null;
-        phase = null;
+public class MutablePhaseClock {
+    private final MinecraftServer server;
+    private DimensionType dimension = null;
+    private GamePhase phase = null;
+
+    public MutablePhaseClock(MinecraftServer server) {
+        this.server = Objects.requireNonNull(server);
     }
 
     @Override
@@ -37,19 +39,47 @@ public class MutablePhaseClock {
         return phase;
     }
 
-    public void startPhase(GamePhase phase) throws IllegalArgumentException {
-        if (this.phase == null) {
+    public void pushPhase(GamePhase phase) {
+        if (this.phase == null && phase != null) {
             this.phase = phase;
-        } else {
-            throw new IllegalArgumentException(this.phase + " != " + null);
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] Push phase in: " + phase);
+            //endregion
         }
     }
 
-    public void endPhase(GamePhase phase) throws IllegalArgumentException {
-        if (this.phase == phase) {
-            this.phase = null;
-        } else {
-            throw new IllegalArgumentException(this.phase + " != " + phase);
+    public void popPhase() {
+        if (phase != null) {
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] Pop phase out: " + phase);
+            //endregion
+            phase = null;
+        }
+    }
+
+    @Override
+    protected void finalize() {
+        System.out.println(this + " is finalized.");
+    }
+
+    public void nextPhase(GamePhase phase) {
+        if (this.phase != null && phase != null) {
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] Pop phase out: " + this.phase);
+            //endregion
+            this.phase = phase;
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] Push phase in: " + phase);
+            //endregion
+        }
+    }
+
+    public void popPhaseIfPresent(GamePhase oldPhase) {
+        if (phase == oldPhase) {
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] Pop phase out: " + phase);
+            //endregion
+            phase = null;
         }
     }
 }
