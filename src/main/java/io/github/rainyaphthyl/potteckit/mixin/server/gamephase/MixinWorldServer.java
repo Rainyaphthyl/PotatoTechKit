@@ -77,4 +77,69 @@ public abstract class MixinWorldServer extends MixinWorld {
     public void afterTileTick(boolean runAllPending, CallbackInfoReturnable<Boolean> cir) {
         potatoTechKit$clock.popPhase();
     }
+
+    @Inject(method = "updateBlocks", at = @At(value = "HEAD"))
+    public void beforeChunkTick(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.CHUNK_TICK);
+    }
+
+    @Inject(method = "updateBlocks", at = @At(value = "RETURN"))
+    public void afterChunkTick(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;playerChunkMap:Lnet/minecraft/server/management/PlayerChunkMap;", opcode = Opcodes.GETFIELD))
+    public void beforePlayerChunkMap(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.PLAYER_CHUNK_MAP);
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 5))
+    public void afterPlayerChunkMap(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;villageCollection:Lnet/minecraft/village/VillageCollection;", opcode = Opcodes.GETFIELD))
+    public void beforeVillageTick(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.VILLAGE_TICK);
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;villageSiege:Lnet/minecraft/village/VillageSiege;", opcode = Opcodes.GETFIELD))
+    public void swapVillageTickSiege(CallbackInfo ci) {
+        potatoTechKit$clock.nextPhase(GamePhase.VILLAGE_SIEGE);
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 6))
+    public void afterVillageSiege(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "sendQueuedBlockEvents", at = @At(value = "HEAD"))
+    public void beforeBlockEvent(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.BLOCK_EVENT);
+    }
+
+    @Inject(method = "sendQueuedBlockEvents", at = @At(value = "RETURN"))
+    public void afterBlockEvent(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "updateEntities", at = @At(value = "HEAD"))
+    public void beforeWorldIdleCheck(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.WORLD_IDLE_CHECK);
+    }
+
+    @Inject(method = "updateEntities", at = {@At(value = "RETURN", ordinal = 0), @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;provider:Lnet/minecraft/world/WorldProvider;")})
+    public void afterWorldIdleCheck(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "tickPlayers", at = @At(value = "HEAD"))
+    public void beforePlayerEntities(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.PLAYER_UPDATE);
+    }
+
+    @Inject(method = "tickPlayers", at = @At(value = "RETURN"))
+    public void afterPlayerEntities(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
 }

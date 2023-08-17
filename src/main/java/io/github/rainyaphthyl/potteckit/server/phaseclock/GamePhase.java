@@ -1,9 +1,6 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock;
 
 public enum GamePhase {
-    SP_INITIAL_LOAD(false),
-    SP_SAVE_ON_PAUSE(false),
-    SP_TASK_ON_PAUSE(false),
     SERVER_TICK_COUNT(false),
     INGAME_QUEUED_TASK(false),
     WEATHER_UPDATE(true),
@@ -33,6 +30,15 @@ public enum GamePhase {
     SERVER_AUTO_SAVE(false),
     SP_VIEW_DISTANCE_ALT(false),
     SP_DIFFICULTY_LOCK(false),
+    /////////////////////////////////////////
+    // Things below should be at the first //
+    /////////////////////////////////////////
+    SP_INITIAL_LOAD(false),
+    SP_SAVE_ON_PAUSE(false),
+    SP_TASK_ON_PAUSE(false),
+    /////////////////////////////////////////
+    // Things above should be at the first //
+    /////////////////////////////////////////
     SERVER_STOP(false);
     public final boolean dimensional;
 

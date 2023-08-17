@@ -30,67 +30,97 @@ public class MutablePhaseClock {
         if (this == o) return true;
         if (!(o instanceof MutablePhaseClock)) return false;
         MutablePhaseClock that = (MutablePhaseClock) o;
-        if (dimension != that.dimension) return false;
-        return phase == that.phase;
-    }
-
-    public PhaseRecord toImmutable() {
-        return PhaseRecord.getPooledRecord(dimension, phase);
-    }
-
-    public DimensionType getDimension() {
-        return dimension;
-    }
-
-    public void setDimension(DimensionType dimension) {
-        this.dimension = dimension;
-    }
-
-    public GamePhase getPhase() {
-        return phase;
-    }
-
-    public void pushPhase(GamePhase phase) {
-        if (this.phase == null && phase != null) {
-            this.phase = phase;
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] Push phase in: " + phase);
-            //endregion
-        }
-    }
-
-    public void popPhase() {
-        if (phase != null) {
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] Pop phase out: " + phase);
-            //endregion
-            phase = null;
-        }
+        if (!server.equals(that.server)) return false;
+        return Objects.equals(toImmutable(), that.toImmutable());
     }
 
     @Override
-    protected void finalize() {
-        System.out.println(this + " is finalized.");
+    public int hashCode() {
+        return server.hashCode();
     }
 
-    public void nextPhase(GamePhase phase) {
-        if (this.phase != null && phase != null) {
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] Pop phase out: " + this.phase);
-            //endregion
-            this.phase = phase;
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] Push phase in: " + phase);
-            //endregion
+    public PhaseRecord toImmutable() {
+        final DimensionType dimensionType;
+        final GamePhase gamePhase;
+        synchronized (this) {
+            dimensionType = dimension;
+            gamePhase = phase;
+        }
+        return PhaseRecord.getPooledRecord(dimensionType, gamePhase);
+    }
+
+    public synchronized boolean isDimensionValid() {
+        if (phase == null) {
+            return true;
+        } else {
+            boolean requiring = phase.dimensional;
+            boolean actual = dimension != null;
+            return requiring == actual;
         }
     }
 
-    public void popPhaseIfPresent(GamePhase oldPhase) {
-        if (phase == oldPhase) {
+    public void checkValidDimension() throws IllegalDimensionException {
+        if (phase != null) {
+            boolean requiring = phase.dimensional;
+            boolean actual = dimension != null;
+            if (requiring != actual) {
+                throw new IllegalDimensionException(phase, requiring);
+            }
+        }
+    }
+
+    public synchronized DimensionType getDimension() {
+        return dimension;
+    }
+
+    public synchronized void setDimension(DimensionType dimension) {
+        this.dimension = dimension;
+    }
+
+    public synchronized GamePhase getPhase() {
+        return phase;
+    }
+
+    public synchronized void pushPhase(GamePhase phase) throws IllegalDimensionException {
+        if (this.phase == null && phase != null) {
+            this.phase = phase;
             //region debug
-            System.out.println("[" + server.getTickCounter() + "] Pop phase out: " + phase);
+            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Push phase in: " + phase);
+            //endregion
+        }
+        checkValidDimension();
+    }
+
+    public synchronized void popPhase() throws IllegalDimensionException {
+        if (phase != null) {
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Pop phase out: " + phase);
             //endregion
             phase = null;
         }
+        checkValidDimension();
+    }
+
+    public synchronized void nextPhase(GamePhase phase) throws IllegalDimensionException {
+        if (this.phase != null && phase != null) {
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Pop phase out: " + this.phase);
+            //endregion
+            this.phase = phase;
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Push phase in: " + phase);
+            //endregion
+        }
+        checkValidDimension();
+    }
+
+    public synchronized void popPhaseIfPresent(GamePhase oldPhase) throws IllegalDimensionException {
+        if (phase == oldPhase) {
+            //region debug
+            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Pop phase out: " + phase);
+            //endregion
+            phase = null;
+        }
+        checkValidDimension();
     }
 }

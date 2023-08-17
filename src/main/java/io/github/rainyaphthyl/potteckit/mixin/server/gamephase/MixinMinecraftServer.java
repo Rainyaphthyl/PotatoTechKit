@@ -44,6 +44,36 @@ public abstract class MixinMinecraftServer {
         potatoTechKit$clock.setDimension(null);
     }
 
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getNetworkSystem()Lnet/minecraft/network/NetworkSystem;"))
+    public void beforeNetworkTick(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.CONNECTION_UPDATE);
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 11))
+    public void afterNetworkTick(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;playerList:Lnet/minecraft/server/management/PlayerList;", opcode = Opcodes.GETFIELD, ordinal = 1))
+    public void beforePlayerListTick(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.PACKET_SENDING);
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 12))
+    public void afterPlayerListTick(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getFunctionManager()Lnet/minecraft/advancements/FunctionManager;"))
+    public void beforeCommandFunction(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.COMMAND_FUNCTION);
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 13))
+    public void afterCommandFunction(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;playerList:Lnet/minecraft/server/management/PlayerList;", opcode = Opcodes.GETFIELD, ordinal = 1))
     public void beforeAutoSave(CallbackInfo ci) {
         potatoTechKit$clock.pushPhase(GamePhase.SERVER_AUTO_SAVE);

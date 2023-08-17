@@ -6,9 +6,12 @@
   "mixins": [
     "server.chunkgraph.MixinChunkProviderServer",
     "server.chunkgraph.MixinTileEntityHopper",
+    "server.gamephase.MixinEntityTracker",
     "server.gamephase.MixinIntegratedServer",
     "server.gamephase.MixinMinecraftServer",
     "server.gamephase.MixinWorld",
+    "server.gamephase.MixinWorldProvider",
+    "server.gamephase.MixinWorldProviderEnd",
     "server.gamephase.MixinWorldServer"
   ],
   "injectors": {
