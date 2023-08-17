@@ -6,12 +6,23 @@ import net.minecraft.world.DimensionType;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MutablePhaseClock {
     private static final ConcurrentMap<MinecraftServer, MutablePhaseClock> serverClockPool = new ConcurrentHashMap<>();
+    private final Lock writeLock;
+    private final Lock readLock;
     private final MinecraftServer server;
     private DimensionType dimension = null;
     private GamePhase phase = null;
+
+    {
+        ReadWriteLock lock = new ReentrantReadWriteLock(true);
+        writeLock = lock.writeLock();
+        readLock = lock.readLock();
+    }
 
     private MutablePhaseClock(MinecraftServer server) {
         this.server = Objects.requireNonNull(server);
@@ -42,84 +53,117 @@ public class MutablePhaseClock {
     public PhaseRecord toImmutable() {
         final DimensionType dimensionType;
         final GamePhase gamePhase;
-        synchronized (this) {
+        try {
+            readLock.lock();
             dimensionType = dimension;
             gamePhase = phase;
+        } finally {
+            readLock.unlock();
         }
         return PhaseRecord.getPooledRecord(dimensionType, gamePhase);
     }
 
-    public synchronized boolean isDimensionValid() {
-        if (phase == null) {
-            return true;
-        } else {
-            boolean requiring = phase.dimensional;
-            boolean actual = dimension != null;
-            return requiring == actual;
+    public boolean isDimensionValid() {
+        try {
+            readLock.lock();
+            if (phase == null) {
+                return true;
+            } else {
+                boolean requiring = phase.dimensional;
+                boolean actual = dimension != null;
+                return requiring == actual;
+            }
+        } finally {
+            readLock.unlock();
         }
     }
 
     public void checkValidDimension() throws IllegalDimensionException {
-        if (phase != null) {
-            boolean requiring = phase.dimensional;
-            boolean actual = dimension != null;
-            if (requiring != actual) {
-                throw new IllegalDimensionException(phase, requiring);
+        try {
+            readLock.lock();
+            if (phase != null) {
+                boolean requiring = phase.dimensional;
+                boolean actual = dimension != null;
+                if (requiring != actual) {
+                    throw new IllegalDimensionException(phase, requiring);
+                }
             }
+        } finally {
+            readLock.unlock();
         }
     }
 
-    public synchronized DimensionType getDimension() {
-        return dimension;
-    }
-
-    public synchronized void setDimension(DimensionType dimension) {
-        this.dimension = dimension;
-    }
-
-    public synchronized GamePhase getPhase() {
-        return phase;
-    }
-
-    public synchronized void pushPhase(GamePhase phase) throws IllegalDimensionException {
-        if (this.phase == null && phase != null) {
-            this.phase = phase;
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Push phase in: " + phase);
-            //endregion
+    public DimensionType getDimension() {
+        try {
+            readLock.lock();
+            return dimension;
+        } finally {
+            readLock.unlock();
         }
-        checkValidDimension();
     }
 
-    public synchronized void popPhase() throws IllegalDimensionException {
-        if (phase != null) {
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Pop phase out: " + phase);
-            //endregion
-            phase = null;
+    public void setDimension(DimensionType dimension) {
+        try {
+            writeLock.lock();
+            this.dimension = dimension;
+        } finally {
+            writeLock.unlock();
         }
-        checkValidDimension();
     }
 
-    public synchronized void nextPhase(GamePhase phase) throws IllegalDimensionException {
-        if (this.phase != null && phase != null) {
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Pop phase out: " + this.phase);
-            //endregion
-            this.phase = phase;
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Push phase in: " + phase);
-            //endregion
+    public GamePhase getPhase() {
+        try {
+            readLock.lock();
+            return phase;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    public void pushPhase(GamePhase phase) throws IllegalDimensionException {
+        try {
+            writeLock.lock();
+            if (this.phase == null && phase != null) {
+                this.phase = phase;
+            }
+        } finally {
+            writeLock.unlock();
         }
         checkValidDimension();
     }
 
-    public synchronized void popPhaseIfPresent(GamePhase oldPhase) throws IllegalDimensionException {
-        if (phase == oldPhase) {
-            //region debug
-            System.out.println("[" + server.getTickCounter() + "] (" + dimension + ") Pop phase out: " + phase);
-            //endregion
-            phase = null;
+    public void popPhase() throws IllegalDimensionException {
+        try {
+            writeLock.lock();
+            if (phase != null) {
+                phase = null;
+            }
+        } finally {
+            writeLock.unlock();
+        }
+        checkValidDimension();
+    }
+
+    public void nextPhase(GamePhase phase) throws IllegalDimensionException {
+        try {
+            writeLock.lock();
+            if (this.phase != null && phase != null) {
+                this.phase = phase;
+            }
+        } finally {
+            writeLock.unlock();
+        }
+        checkValidDimension();
+    }
+
+    public void popPhaseIfPresent(GamePhase oldPhase) throws IllegalDimensionException {
+        try {
+            writeLock.lock();
+            if (phase == oldPhase) {
+                phase = null;
+            }
+        } finally {
+            writeLock.unlock();
         }
         checkValidDimension();
     }
