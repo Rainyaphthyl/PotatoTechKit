@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.mixin.server;
+package io.github.rainyaphthyl.potteckit.mixin.server.chunkgraph;
 
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadCaptor;
