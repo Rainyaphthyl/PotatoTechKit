@@ -42,7 +42,7 @@ public class MutablePhaseClock {
         if (!(o instanceof MutablePhaseClock)) return false;
         MutablePhaseClock that = (MutablePhaseClock) o;
         if (!server.equals(that.server)) return false;
-        return Objects.equals(toImmutable(), that.toImmutable());
+        return Objects.equals(getRecord(), that.getRecord());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MutablePhaseClock {
         return server.hashCode();
     }
 
-    public PhaseRecord toImmutable() {
+    public PhaseRecord getRecord() {
         final DimensionType dimensionType;
         final GamePhase gamePhase;
         try {

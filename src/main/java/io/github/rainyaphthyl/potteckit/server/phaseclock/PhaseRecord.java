@@ -46,6 +46,32 @@ public class PhaseRecord implements Comparable<PhaseRecord> {
         }
     }
 
+    public static String getShortName(@Nullable PhaseRecord record) {
+        if (record == null) {
+            return String.valueOf((Object) null);
+        } else {
+            DimensionType dimension = record.dimension;
+            String shortName = GamePhase.getShortName(record.phase);
+            if (dimension == null) {
+                return shortName;
+            } else {
+                StringBuilder builder = new StringBuilder();
+                switch (dimension) {
+                    case OVERWORLD:
+                        builder.append("OW:");
+                        break;
+                    case NETHER:
+                        builder.append("NT:");
+                        break;
+                    case THE_END:
+                        builder.append("ED:");
+                }
+                builder.append(shortName);
+                return builder.toString();
+            }
+        }
+    }
+
     @Override
     public int compareTo(@Nonnull PhaseRecord that) {
         if (this == that) return 0;
