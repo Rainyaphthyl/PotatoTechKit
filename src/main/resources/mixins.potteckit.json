@@ -4,7 +4,8 @@
   "package": "io.github.rainyaphthyl.potteckit.mixin",
   "refmap": "mixins.potteckit.refmap.json",
   "mixins": [
-    "client.render.MixinChunkRenderDispatcher"
+    "client.render.MixinChunkRenderDispatcher",
+    "client.render.MixinChunkRenderWorker"
   ],
   "injectors": {
     "defaultRequire": 1

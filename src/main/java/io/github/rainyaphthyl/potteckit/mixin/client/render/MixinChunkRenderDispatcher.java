@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import javax.annotation.Nonnull;
 
 @Mixin(ChunkRenderDispatcher.class)
-public class MixinChunkRenderDispatcher {
+public abstract class MixinChunkRenderDispatcher {
     @Unique
     public final Profiler potatoTechKit$profiler = Minecraft.getMinecraft().profiler;
 
