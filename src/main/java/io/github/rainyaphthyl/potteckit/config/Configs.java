@@ -18,6 +18,8 @@ public class Configs {
     public static final HotkeyConfig openConfigScreen = new HotkeyConfig("openConfigScreen", "K,C");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig moreProfilerLevels = new HotkeyedBooleanConfig("moreProfilerLevels", false, "");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig optimizeChunkRenderer = new HotkeyedBooleanConfig("optimizeChunkRenderer", false, "");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
