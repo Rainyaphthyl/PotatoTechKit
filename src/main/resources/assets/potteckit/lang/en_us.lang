@@ -12,6 +12,8 @@ potteckit.config.tab.cheat=Cheating
 
 potteckit.config.name.enablepotteckit=Enable Potteckit
 potteckit.config.comment.enablepotteckit=The global switch of Potato Tech Kit mod
+potteckit.config.name.moreprofilerlevels=More Profiler Levels
+potteckit.config.comment.moreprofilerlevels=More detailed info at deeper levels will be added into the profiler graph (the pie charts in the lower right), e.g. more separated entries of "root.gameRenderer.level.terrain_setup.rebuildNear".
 
 potteckit.hotkey.name.openconfigscreen=Open Config Screen
 potteckit.hotkey.comment.openconfigscreen=Open the config screen of Potato Tech Kit

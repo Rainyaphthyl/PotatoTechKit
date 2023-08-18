@@ -16,6 +16,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig enablePotteckit = new HotkeyedBooleanConfig("enablePotteckit", true, "");
     @Config(types = Type.HOTKEY, domains = Domain.GENERIC, notVanilla = false, cheating = false)
     public static final HotkeyConfig openConfigScreen = new HotkeyConfig("openConfigScreen", "K,C");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig moreProfilerLevels = new HotkeyedBooleanConfig("moreProfilerLevels", false, "");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
