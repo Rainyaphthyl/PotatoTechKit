@@ -66,7 +66,8 @@ public abstract class MixinChunkRenderWorker {
 
     @Redirect(method = "processTask", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;rebuildChunk(FFFLnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;)V"))
     public void profileRebuildChunk(RenderChunk instance, float x, float y, float z, ChunkCompileTaskGenerator generator) {
-        if (Configs.moreProfilerLevels.getBooleanValue() && potatoTechKit$client.isCallingFromMinecraftThread()
+        if (Configs.moreProfilerLevels.getBooleanValue()
+                && potatoTechKit$client.isCallingFromMinecraftThread()
                 && Configs.enablePotteckit.getBooleanValue()) {
             potatoTechKit$profiler.startSection("rebuildChunk");
             instance.rebuildChunk(x, y, z, generator);

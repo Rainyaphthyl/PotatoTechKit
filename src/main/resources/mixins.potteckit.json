@@ -5,7 +5,8 @@
   "refmap": "mixins.potteckit.refmap.json",
   "mixins": [
     "client.render.MixinChunkRenderDispatcher",
-    "client.render.MixinChunkRenderWorker"
+    "client.render.MixinChunkRenderWorker",
+    "client.render.MixinRenderChunk"
   ],
   "injectors": {
     "defaultRequire": 1
