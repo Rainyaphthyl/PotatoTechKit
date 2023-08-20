@@ -2,7 +2,9 @@ package io.github.rainyaphthyl.potteckit.mixin.client.render;
 
 import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
 import fi.dy.masa.malilib.overlay.message.MessageOutput;
+import io.github.rainyaphthyl.potteckit.client.RenderGlobals;
 import io.github.rainyaphthyl.potteckit.config.Configs;
+import io.github.rainyaphthyl.potteckit.util.Reference;
 import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
@@ -22,6 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(RenderGlobal.class)
 public abstract class MixinRenderGlobal {
@@ -33,6 +37,19 @@ public abstract class MixinRenderGlobal {
     private Set<RenderChunk> chunksToUpdate;
     @Unique
     private boolean potatoTechKit$reduced = false;
+
+    @Inject(method = "setupTerrain", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/RenderGlobal;renderInfos:Ljava/util/List;", opcode = Opcodes.GETFIELD, ordinal = 2))
+    public void startRenderIteration(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
+        if (Configs.asyncImmediateChunkRender.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
+            RenderGlobals.asyncImmediate.set(true);
+            Thread thread = Thread.currentThread();
+            Semaphore semaphore = RenderGlobals.semaphores.computeIfAbsent(thread, key -> new Semaphore(0));
+            semaphore.drainPermits();
+            RenderGlobals.sectionNum.put(thread, 0);
+        } else {
+            RenderGlobals.asyncImmediate.set(false);
+        }
+    }
 
     @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;distanceSq(Lnet/minecraft/util/math/Vec3i;)D"))
     public double captureLocalDistance(@Nonnull BlockPos instance, Vec3i posView) {
@@ -58,9 +75,6 @@ public abstract class MixinRenderGlobal {
         }
     }
 
-    //@Inject(method = "setupTerrain", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/RenderGlobal;mc:Lnet/minecraft/client/Minecraft;", opcode = Opcodes.GETFIELD, ordinal = 9))
-    //public void pendChunkRender(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
-    //}
     @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/ChunkRenderDispatcher;updateChunkNow(Lnet/minecraft/client/renderer/chunk/RenderChunk;)Z"))
     public boolean onNearbyChunkRebuild(@Nonnull ChunkRenderDispatcher instance, RenderChunk renderChunk) {
         if (potatoTechKit$reduced) {
@@ -82,6 +96,8 @@ public abstract class MixinRenderGlobal {
                         renderChunk.setNeedsUpdate(false);
                         return chunksToUpdate.add(renderChunk);
                     case INVOKE:
+                        renderChunk.clearNeedsUpdate();
+                        renderChunk.setNeedsUpdate(false);
                         return instance.updateChunkLater(renderChunk);
                 }
             }
@@ -98,6 +114,19 @@ public abstract class MixinRenderGlobal {
     }
 
     @Inject(method = "setupTerrain", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/RenderGlobal;chunksToUpdate:Ljava/util/Set;", opcode = Opcodes.GETFIELD, ordinal = 3))
-    public void finishImmediateRender(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
+    public void endRenderIteration(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
+        if (RenderGlobals.asyncImmediate.get()) {
+            Thread thread = Thread.currentThread();
+            Semaphore semaphore = RenderGlobals.semaphores.computeIfAbsent(thread, key -> new Semaphore(0));
+            int count = RenderGlobals.sectionNum.getInt(thread);
+            try {
+                boolean acquired = semaphore.tryAcquire(count, 1000, TimeUnit.MILLISECONDS);
+                if (!acquired) {
+                    Reference.LOGGER.info("Chunk renderer time out");
+                }
+            } catch (InterruptedException e) {
+                Reference.LOGGER.info("Chunk renderer interrupted");
+            }
+        }
     }
 }

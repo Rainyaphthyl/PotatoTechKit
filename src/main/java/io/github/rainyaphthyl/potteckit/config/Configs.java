@@ -32,6 +32,8 @@ public class Configs {
     public static final DoubleConfig immediateChunkRenderRange = new DoubleConfig("immediateChunkRenderRange", 14.0, 0.0, 400.0);
     @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
     public static final OptionListConfig<ChunkRenderYeetMode> chunkRenderYeetMode = new OptionListConfig<>("chunkRenderYeetMode", ChunkRenderYeetMode.INVOKE, ChunkRenderYeetMode.list);
+    @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig asyncImmediateChunkRender = new HotkeyedBooleanConfig("asyncImmediateChunkRender", false, "");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
