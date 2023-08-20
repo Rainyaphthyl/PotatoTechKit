@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Config {
-    Type[] types();
+    Type[] types() default {};
 
     Domain[] domains();
 
