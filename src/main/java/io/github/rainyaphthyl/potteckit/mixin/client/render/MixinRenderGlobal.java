@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 @Mixin(RenderGlobal.class)
 public abstract class MixinRenderGlobal {
@@ -120,10 +119,7 @@ public abstract class MixinRenderGlobal {
             Semaphore semaphore = RenderGlobals.semaphores.computeIfAbsent(thread, key -> new Semaphore(0));
             int count = RenderGlobals.sectionNum.getInt(thread);
             try {
-                boolean acquired = semaphore.tryAcquire(count, 1000, TimeUnit.MILLISECONDS);
-                if (!acquired) {
-                    Reference.LOGGER.info("Chunk renderer time out");
-                }
+                semaphore.acquire(count);
             } catch (InterruptedException e) {
                 Reference.LOGGER.info("Chunk renderer interrupted");
             }
