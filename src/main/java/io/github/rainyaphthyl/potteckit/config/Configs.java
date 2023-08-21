@@ -7,7 +7,9 @@ import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
 import io.github.rainyaphthyl.potteckit.config.annotation.Type;
+import io.github.rainyaphthyl.potteckit.config.option.InvIntegerConfig;
 import io.github.rainyaphthyl.potteckit.gui.GuiConfigScreen;
+import io.github.rainyaphthyl.potteckit.gui.InvIntegerConfigWidget;
 import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 
@@ -24,12 +26,19 @@ public class Configs {
     public static final HotkeyedBooleanConfig profileImmediateChunkRebuild = new HotkeyedBooleanConfig("profileImmediateChunkRebuild", false, "");
     @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig yeetChunkRebuild = new HotkeyedBooleanConfig("yeetChunkRebuild", false, "");
+    @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig autoDisturbChunkRebuild = new HotkeyedBooleanConfig("autoDisturbChunkRebuild", false, "");
+    @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig chunkRebuildBuffer = new HotkeyedBooleanConfig("chunkRebuildBuffer", false, "");
+    @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
+    public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunkRebuildDisturbThreshold", 1.0e+9, 20, 1, 120);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
         Registry.CONFIG_MANAGER.registerConfigHandler(jsonModConfig);
         Registry.CONFIG_SCREEN.registerConfigScreenFactory(Reference.MOD_INFO, GuiConfigScreen::create);
         Registry.CONFIG_TAB.registerConfigTabProvider(Reference.MOD_INFO, GuiConfigScreen::getConfigTabs);
+        Registry.CONFIG_WIDGET.registerConfigWidgetFactory(InvIntegerConfig.class, InvIntegerConfigWidget::new);
         Registry.HOTKEY_MANAGER.registerHotkeyProvider(new PotteckitHotkeyProvider());
         Actions.init();
         Callbacks.init();
