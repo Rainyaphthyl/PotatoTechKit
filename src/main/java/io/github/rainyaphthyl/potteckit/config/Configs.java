@@ -22,6 +22,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig optimizeChunkRenderer = new HotkeyedBooleanConfig("optimizeChunkRenderer", false, "");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig profileImmediateChunkRebuild = new HotkeyedBooleanConfig("profileImmediateChunkRebuild", false, "");
+    @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig yeetChunkRebuild = new HotkeyedBooleanConfig("yeetChunkRebuild", false, "");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
