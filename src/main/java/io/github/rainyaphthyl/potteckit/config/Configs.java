@@ -3,6 +3,7 @@ package io.github.rainyaphthyl.potteckit.config;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.HotkeyConfig;
 import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
+import fi.dy.masa.malilib.config.option.IntegerConfig;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
@@ -27,6 +28,12 @@ public class Configs {
     @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig yeetChunkRebuild = new HotkeyedBooleanConfig("yeetChunkRebuild", false, "");
     @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig cyclicReduceChunkRebuild = new HotkeyedBooleanConfig("cyclicReduceChunkRebuild", false, "");
+    @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig randomReduceChunkRebuild = new HotkeyedBooleanConfig("randomReduceChunkRebuild", false, "");
+    @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
+    public static final IntegerConfig chunkRebuildPeriod = new IntegerConfig("chunkRebuildPeriod", 10, "");
+    @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig autoDisturbChunkRebuild = new HotkeyedBooleanConfig("autoDisturbChunkRebuild", false, "");
     @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig chunkRebuildBuffer = new HotkeyedBooleanConfig("chunkRebuildBuffer", false, "");
