@@ -20,7 +20,7 @@ public abstract class MixinChunkRenderDispatcher {
 
     @Redirect(method = "updateChunkNow", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;makeCompileTaskChunk()Lnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;"))
     public ChunkCompileTaskGenerator profileCompile(@Nonnull RenderChunk chunkRenderer) {
-        if (Configs.enablePotteckit.getBooleanValue() && Configs.moreProfilerLevels.getBooleanValue()) {
+        if (Configs.enablePotteckit.getBooleanValue() && Configs.moreProfilerLevels.getBooleanValue() && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
             potatoTechKit$profiler.startSection("makeCompileTask");
             ChunkCompileTaskGenerator generator = chunkRenderer.makeCompileTaskChunk();
             potatoTechKit$profiler.endSection();
