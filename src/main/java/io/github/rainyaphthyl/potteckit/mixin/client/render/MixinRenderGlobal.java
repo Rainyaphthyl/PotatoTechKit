@@ -64,7 +64,7 @@ public abstract class MixinRenderGlobal {
 
     @Inject(method = "setupTerrain", at = @At(value = "HEAD"))
     public void resetPendingTag(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
-        if (Configs.chunkRebuildBuffer.getBooleanValue() && potatoTechKit$pending && mc.isCallingFromMinecraftThread() && Configs.enablePotteckit.getBooleanValue()) {
+        if (potatoTechKit$pending && mc.isCallingFromMinecraftThread() && Configs.enablePotteckit.getBooleanValue()) {
             potatoTechKit$pending = false;
         }
     }
@@ -73,14 +73,12 @@ public abstract class MixinRenderGlobal {
     public void startYeetChunkRebuild(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
         if (Configs.enablePotteckit.getBooleanValue() && mc.isCallingFromMinecraftThread()) {
             boolean shouldYeet = potatoTechKit$checkYeetRequire();
-            if (shouldYeet) {
-                if (ci.isCancellable() && !ci.isCancelled()) {
-                    ci.cancel();
-                    if (ci.isCancelled()) {
-                        Profiler profiler = mc.profiler;
-                        if (profiler.profilingEnabled && "rebuildNear".equals(profiler.getNameOfLastSection())) {
-                            profiler.endSection();
-                        }
+            if (shouldYeet && ci.isCancellable() && !ci.isCancelled()) {
+                ci.cancel();
+                if (ci.isCancelled()) {
+                    Profiler profiler = mc.profiler;
+                    if (profiler.profilingEnabled && "rebuildNear".equals(profiler.getNameOfLastSection())) {
+                        profiler.endSection();
                     }
                 }
             }
@@ -97,7 +95,7 @@ public abstract class MixinRenderGlobal {
                 double threshold = Configs.chunkRebuildBufferThreshold.getInverseValue();
                 if (duration > threshold) {
                     potatoTechKit$pending = true;
-                    String message = "Pend chunk rebuild: " + String.format("%.2f", duration * 1.0e-6) + " ms/f > 80% "
+                    String message = "Pend chunk rebuild: " + String.format("%.2f", duration * 1.0e-6) + " ms/f > "
                             + String.format("%.2f", threshold * 1.0e-6) + " ms/f";
                     //MessageOutput.CHAT.send(message, MessageDispatcher.warning());
                     Reference.LOGGER.info(message);
@@ -108,16 +106,16 @@ public abstract class MixinRenderGlobal {
 
     @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;needsImmediateUpdate()Z"))
     public boolean setImmediateUpdate(RenderChunk instance) {
-        if (mc.isCallingFromMinecraftThread() && potatoTechKit$pending) {
-            instance.clearNeedsUpdate();
-            instance.setNeedsUpdate(false);
+        if (potatoTechKit$pending && mc.isCallingFromMinecraftThread()) {
+            return false;
+        } else {
+            return instance.needsImmediateUpdate();
         }
-        return instance.needsImmediateUpdate();
     }
 
     @ModifyVariable(method = "setupTerrain", name = "flag3", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;needsImmediateUpdate()Z"))
     public boolean setPlayerNearbyFlag(boolean flag) {
-        if (mc.isCallingFromMinecraftThread() && potatoTechKit$pending) {
+        if (potatoTechKit$pending && mc.isCallingFromMinecraftThread()) {
             return false;
         } else {
             return flag;

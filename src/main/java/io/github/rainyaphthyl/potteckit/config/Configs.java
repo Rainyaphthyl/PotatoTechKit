@@ -31,7 +31,7 @@ public class Configs {
     @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig chunkRebuildBuffer = new HotkeyedBooleanConfig("chunkRebuildBuffer", false, "");
     @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
-    public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunkRebuildDisturbThreshold", 0.8e+9, 40, 1, 120);
+    public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunkRebuildDisturbThreshold", 0.75e+9, 40, 1, 120);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
