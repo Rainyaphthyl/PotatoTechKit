@@ -4,6 +4,7 @@
   "package": "io.github.rainyaphthyl.potteckit.mixin",
   "refmap": "mixins.potteckit.refmap.json",
   "mixins": [
+    "access.AccessMinecraft",
     "client.render.MixinBlockRendererDispatcher",
     "client.render.MixinChunkRenderDispatcher",
     "client.render.MixinChunkRenderWorker",

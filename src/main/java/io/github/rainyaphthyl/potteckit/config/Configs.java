@@ -30,8 +30,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig autoDisturbChunkRebuild = new HotkeyedBooleanConfig("autoDisturbChunkRebuild", false, "");
     @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig chunkRebuildBuffer = new HotkeyedBooleanConfig("chunkRebuildBuffer", false, "");
-    @Config(domains = Domain.YEET, notVanilla = false, cheating = false)
-    public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunkRebuildDisturbThreshold", 1.0e+9, 20, 1, 120);
+    @Config(domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunkRebuildDisturbThreshold", 0.8e+9, 40, 1, 120);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
