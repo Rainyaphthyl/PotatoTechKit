@@ -5,6 +5,7 @@
   "refmap": "mixins.potteckit.refmap.json",
   "mixins": [
     "access.AccessChunkRenderWorker",
+    "access.AccessMinecraft",
     "client.render.MixinBlockRendererDispatcher",
     "client.render.MixinChunkRenderDispatcher",
     "client.render.MixinChunkRenderWorker",
