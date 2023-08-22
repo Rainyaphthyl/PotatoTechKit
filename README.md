@@ -4,7 +4,8 @@
 
 ### Deployment
 
-- Download the `*.litemod` and put it into `.minecraft/mods/`.
+1. Download the `*.litemod` from the release and put it into `.minecraft/mods/`.
+2. This mod requires [MaLiLib](https://github.com/maruohon/malilib). Download it from https://masa.dy.fi/mcmods/client_mods/ and put it into `.minecraft/mods/`.
 
 ### Features and Functions
 
@@ -22,7 +23,7 @@
 Before release, ensure the mod version is correct:
 
 - [gradle.properties](gradle.properties)
-- [LiteModEntry](src/main/java/io/github/rainyaphthyl/potteckit/LiteModPotteckit.java)
+- [Reference.java](src/main/java/io/github/rainyaphthyl/potteckit/util/Reference.java)
 
 Run your task by one of the following commands:
 

@@ -14,6 +14,10 @@ buildscript {
             name = 'sponge'
             url = 'https://repo.spongepowered.org/maven'
         }
+        maven {
+            name = 'masa'
+            url = 'https://masa.dy.fi/maven'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:' + project.forgeGradleVersion
@@ -21,8 +25,21 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+        url 'https://masa.dy.fi/maven'
+    }
+}
+
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.encoding = 'UTF-8'
+    //options.encoding = 'GBK'
+}
 
 group = 'io.github.rainyaphthyl'
 version = project.modVersion
@@ -31,6 +48,11 @@ minecraft {
     version = project.mcVersion
     mappings = project.mcMappings
     runDir = "run"
+}
+
+dependencies {
+    compile files("malilib-liteloader-${project.mcVersionOut}-${project.malilibVersion}-deobf.jar")
+    deobfCompile "fi.dy.masa.malilib:malilib-liteloader-${project.mcVersionOut}:${project.malilibVersion}:deobf"
 }
 
 sourceSets {

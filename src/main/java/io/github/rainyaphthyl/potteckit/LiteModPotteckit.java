@@ -1,20 +1,17 @@
 package io.github.rainyaphthyl.potteckit;
 
 import com.mumfrey.liteloader.Configurable;
-import com.mumfrey.liteloader.InitCompleteListener;
-import com.mumfrey.liteloader.core.LiteLoader;
+import com.mumfrey.liteloader.LiteMod;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
-import io.github.rainyaphthyl.potteckit.util.version.ModVersion;
-import net.minecraft.client.Minecraft;
+import fi.dy.masa.malilib.registry.Registry;
+import io.github.rainyaphthyl.potteckit.config.Configs;
+import io.github.rainyaphthyl.potteckit.gui.PotteckitConfigPanel;
+import io.github.rainyaphthyl.potteckit.util.Reference;
 
 import java.io.File;
 
 @SuppressWarnings("unused")
-public class LiteModPotteckit implements Configurable, InitCompleteListener {
-    public static final String NAME = "Potato Tech Kit";
-    public static final String VERSION = "0.0.0";
-    public static final ModVersion versionObj = ModVersion.getVersion(VERSION);
-
+public class LiteModPotteckit implements Configurable, LiteMod {
     /**
      * Get the mod version string
      *
@@ -22,7 +19,7 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public String getVersion() {
-        return VERSION;
+        return Reference.VERSION;
     }
 
     /**
@@ -34,6 +31,7 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public void init(File configPath) {
+        Registry.INITIALIZATION_DISPATCHER.registerInitializationHandler(Configs::registerOnInit);
     }
 
     /**
@@ -55,7 +53,7 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public String getName() {
-        return NAME;
+        return Reference.NAME;
     }
 
     /**
@@ -66,17 +64,6 @@ public class LiteModPotteckit implements Configurable, InitCompleteListener {
      */
     @Override
     public Class<? extends ConfigPanel> getConfigPanelClass() {
-        return null;
-    }
-
-    /**
-     * Called as soon as the game is initialised and the main game loop is
-     * running.
-     *
-     * @param minecraft Minecraft instance
-     * @param loader    LiteLoader instance
-     */
-    @Override
-    public void onInitCompleted(Minecraft minecraft, LiteLoader loader) {
+        return PotteckitConfigPanel.class;
     }
 }
