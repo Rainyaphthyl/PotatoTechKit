@@ -4,14 +4,12 @@ import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
 import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.mixin.access.AccessMinecraft;
-import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
-import net.minecraft.profiler.Profiler;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,10 +48,7 @@ public abstract class MixinRenderGlobal {
             if (shouldYeet && ci.isCancellable() && !ci.isCancelled()) {
                 ci.cancel();
                 if (ci.isCancelled()) {
-                    Profiler profiler = mc.profiler;
-                    if (profiler.profilingEnabled && "rebuildNear".equals(profiler.getNameOfLastSection())) {
-                        profiler.endSection();
-                    }
+                    mc.profiler.endSection();
                 }
             }
         }
@@ -85,24 +80,12 @@ public abstract class MixinRenderGlobal {
                 }
                 if (shouldYeet) {
                     potatoTechKit$timeOut = true;
-                    String action;
-                    if (Configs.autoDisturbChunkRebuild.getBooleanValue()) {
-                        action = "Yeet";
-                        if (ci.isCancellable() && !ci.isCancelled()) {
-                            ci.cancel();
-                            if (ci.isCancelled()) {
-                                Profiler profiler = mc.profiler;
-                                if (profiler.profilingEnabled && "rebuildNear".equals(profiler.getNameOfLastSection())) {
-                                    profiler.endSection();
-                                }
-                            }
+                    if (Configs.autoDisturbChunkRebuild.getBooleanValue() && ci.isCancellable() && !ci.isCancelled()) {
+                        ci.cancel();
+                        if (ci.isCancelled()) {
+                            mc.profiler.endSection();
                         }
-                    } else {
-                        action = "Pend";
                     }
-                    String message = action + " chunk rebuild: " + String.format("%.2f", (System.nanoTime() - ((AccessMinecraft) mc).getStartNanoTime()) * 1.0e-6) + " ms/f > " + String.format("%.2f", Configs.chunkRebuildBufferThreshold.getInverseValue() * 1.0e-6) + " ms/f";
-                    //MessageOutput.CHAT.send(message, MessageDispatcher.warning());
-                    Reference.LOGGER.info(message);
                 }
             }
         }
