@@ -6,6 +6,7 @@
   "mixins": [
     "access.AccessChunkRenderWorker",
     "access.AccessMinecraft",
+    "access.AccessRenderChunk",
     "client.render.MixinBlockRendererDispatcher",
     "client.render.MixinChunkRenderDispatcher",
     "client.render.MixinChunkRenderWorker",

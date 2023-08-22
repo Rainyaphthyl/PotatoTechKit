@@ -4,6 +4,7 @@ import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
 import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.mixin.access.AccessMinecraft;
+import io.github.rainyaphthyl.potteckit.mixin.access.AccessRenderChunk;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
@@ -111,13 +112,21 @@ public abstract class MixinRenderGlobal {
 
     @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/ChunkRenderDispatcher;updateChunkNow(Lnet/minecraft/client/renderer/chunk/RenderChunk;)Z"))
     public boolean profileChunkRebuild(@Nonnull ChunkRenderDispatcher instance, RenderChunk renderChunk) {
-        if (Configs.profileImmediateChunkRebuild.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
+        if (Configs.enablePotteckit.getBooleanValue()) {
             long timeStart = System.nanoTime();
-            boolean flag = instance.updateChunkNow(renderChunk);
-            long timeEnd = System.nanoTime();
-            long duration = timeEnd - timeStart;
-            double millis = duration / 1.0e6;
-            MessageOutput.CHAT.send("Chunk at " + renderChunk.getPosition() + " took " + String.format("%.3f", millis) + " ms", MessageDispatcher.generic());
+            boolean flag;
+            if (Configs.asyncNearbyChunkRender.getBooleanValue()) {
+                ((AccessRenderChunk) renderChunk).setNeedImmediate(false);
+                flag = instance.updateChunkLater(renderChunk);
+            } else {
+                flag = instance.updateChunkNow(renderChunk);
+            }
+            if (Configs.profileImmediateChunkRebuild.getBooleanValue()) {
+                long timeEnd = System.nanoTime();
+                long duration = timeEnd - timeStart;
+                double millis = duration / 1.0e6;
+                MessageOutput.CHAT.send("Chunk at " + renderChunk.getPosition() + " took " + String.format("%.3f", millis) + " ms", MessageDispatcher.generic());
+            }
             return flag;
         } else {
             return instance.updateChunkNow(renderChunk);

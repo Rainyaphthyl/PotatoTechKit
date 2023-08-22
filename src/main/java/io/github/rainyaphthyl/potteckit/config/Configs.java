@@ -3,7 +3,6 @@ package io.github.rainyaphthyl.potteckit.config;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.HotkeyConfig;
 import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
-import fi.dy.masa.malilib.config.option.IntegerConfig;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
@@ -15,32 +14,34 @@ import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 
 public class Configs {
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = {Domain.GENERIC, Domain.TWEAK}, notVanilla = false, cheating = false)
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = {Domain.GENERIC, Domain.TWEAK})
     public static final HotkeyedBooleanConfig enablePotteckit = new HotkeyedBooleanConfig("enablePotteckit", true, "");
-    @Config(types = Type.HOTKEY, domains = {Domain.GENERIC, Domain.ACTION}, notVanilla = false, cheating = false)
+    @Config(types = Type.HOTKEY, domains = {Domain.GENERIC, Domain.ACTION})
     public static final HotkeyConfig openConfigScreen = new HotkeyConfig("openConfigScreen", "K,C");
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig moreProfilerLevels = new HotkeyedBooleanConfig("moreProfilerLevels", false, "");
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, notVanilla = false, cheating = false)
-    public static final HotkeyedBooleanConfig optimizeChunkRenderer = new HotkeyedBooleanConfig("optimizeChunkRenderer", false, "");
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, notVanilla = false, cheating = false)
+    //@Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, enabled = false)
+    //public static final HotkeyedBooleanConfig optimizeChunkRenderer = new HotkeyedBooleanConfig("optimizeChunkRenderer", false, "");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER)
     public static final HotkeyedBooleanConfig profileImmediateChunkRebuild = new HotkeyedBooleanConfig("profileImmediateChunkRebuild", false, "");
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET, notVanilla = false, cheating = false)
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET)
     public static final HotkeyedBooleanConfig yeetChunkRebuild = new HotkeyedBooleanConfig("yeetChunkRebuild", false, "");
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET, notVanilla = false, cheating = false)
-    public static final HotkeyedBooleanConfig cyclicReduceChunkRebuild = new HotkeyedBooleanConfig("cyclicReduceChunkRebuild", false, "");
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET, notVanilla = false, cheating = false)
-    public static final HotkeyedBooleanConfig randomReduceChunkRebuild = new HotkeyedBooleanConfig("randomReduceChunkRebuild", false, "");
-    @Config(types = Type.NUMBER, domains = Domain.YEET, notVanilla = false, cheating = false)
-    public static final IntegerConfig chunkRebuildReducedPeriod = new IntegerConfig("chunkRebuildReducedPeriod", 20, 1, 900);
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    //@Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET, enabled = false)
+    //public static final HotkeyedBooleanConfig cyclicReduceChunkRebuild = new HotkeyedBooleanConfig("cyclicReduceChunkRebuild", false, "");
+    //@Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET, enabled = false)
+    //public static final HotkeyedBooleanConfig randomReduceChunkRebuild = new HotkeyedBooleanConfig("randomReduceChunkRebuild", false, "");
+    //@Config(types = Type.NUMBER, domains = Domain.YEET, enabled = false)
+    //public static final IntegerConfig chunkRebuildReducedPeriod = new IntegerConfig("chunkRebuildReducedPeriod", 20, 1, 900);
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig autoDisturbChunkRebuild = new HotkeyedBooleanConfig("autoDisturbChunkRebuild", false, "");
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig chunkRebuildBuffer = new HotkeyedBooleanConfig("chunkRebuildBuffer", false, "");
-    @Config(types = Type.NUMBER, domains = Domain.TWEAK, notVanilla = false, cheating = false)
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK)
     public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunkRebuildDisturbThreshold", 0.75e+9, 40, 1, 120);
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK, notVanilla = false, cheating = false)
-    public static final HotkeyedBooleanConfig threadedImmediateChunkRender = new HotkeyedBooleanConfig("threadedImmediateChunkRender", false, "");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
+    public static final HotkeyedBooleanConfig asyncNearbyChunkRender = new HotkeyedBooleanConfig("asyncNearbyChunkRender", false, "");
+    //@Config(types = {Type.NUMBER, Type.TOGGLE}, domains = Domain.TWEAK, enabled = false)
+    //public static final BooleanAndDoubleConfig immediateChunkRenderDaemon = new BooleanAndDoubleConfig("immediateChunkRenderDaemon", false, 20.0, 0.0, 50.0);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
