@@ -17,6 +17,7 @@ public enum GamePhase {
     /////////////////////////////////////
     SERVER_TICK_COUNT(false, "Tick Counting", "TC"),
     INGAME_QUEUED_TASK(false, "Queued Tasks in Game", "QT"),
+    CLIENT_TIME_SYNC(true, "Client Time Sync", "CTS"),
     WEATHER_UPDATE(true, "Weather Update", "WU"),
     HARDCODE_DIFFICULTY(true, "Hardcode Difficulty Lock", "HDL"),
     SLEEP_AND_DAYTIME(true, "Sleep and Daytime", "SDT"),

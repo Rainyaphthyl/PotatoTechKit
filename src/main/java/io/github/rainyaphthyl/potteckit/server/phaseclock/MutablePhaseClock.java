@@ -111,6 +111,29 @@ public class MutablePhaseClock {
         }
     }
 
+    public void startNextDimension() {
+        try {
+            writeLock.lock();
+            if (dimension == null) {
+                dimension = DimensionType.OVERWORLD;
+            } else {
+                switch (dimension) {
+                    case OVERWORLD:
+                        dimension = DimensionType.NETHER;
+                        break;
+                    case NETHER:
+                        dimension = DimensionType.THE_END;
+                        break;
+                    case THE_END:
+                    default:
+                        dimension = null;
+                }
+            }
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
     public GamePhase getPhase() {
         try {
             readLock.lock();

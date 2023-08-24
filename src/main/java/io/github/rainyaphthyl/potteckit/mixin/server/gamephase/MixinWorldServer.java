@@ -4,7 +4,6 @@ import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
 import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -20,12 +19,6 @@ public abstract class MixinWorldServer extends MixinWorld {
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     public void onConstruct(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn, CallbackInfo ci) {
         potatoTechKit$clock = MutablePhaseClock.instanceFromServer(server);
-    }
-
-    @Inject(method = "tick", at = @At(value = "HEAD"))
-    public void startDimension(CallbackInfo ci) {
-        DimensionType dimension = provider.getDimensionType();
-        potatoTechKit$clock.setDimension(dimension);
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;getWorldInfo()Lnet/minecraft/world/storage/WorldInfo;", ordinal = 0))

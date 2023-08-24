@@ -39,8 +39,23 @@ public abstract class MixinMinecraftServer {
         potatoTechKit$clock.popPhase();
     }
 
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 2))
+    public void startDimension(CallbackInfo ci) {
+        potatoTechKit$clock.startNextDimension();
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/profiler/Profiler;startSection(Ljava/lang/String;)V", ordinal = 1))
+    public void beforeTimeSync(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.CLIENT_TIME_SYNC);
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 4))
+    public void afterTimeSync(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
     @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 10))
-    public void swapDimensionNetwork(CallbackInfo ci) {
+    public void endDimension(CallbackInfo ci) {
         potatoTechKit$clock.setDimension(null);
     }
 
