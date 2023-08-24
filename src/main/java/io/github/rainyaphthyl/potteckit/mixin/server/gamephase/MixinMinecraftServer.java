@@ -56,7 +56,7 @@ public abstract class MixinMinecraftServer {
 
     @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;playerList:Lnet/minecraft/server/management/PlayerList;", opcode = Opcodes.GETFIELD, ordinal = 1))
     public void beforePlayerListTick(CallbackInfo ci) {
-        potatoTechKit$clock.pushPhase(GamePhase.PACKET_SENDING);
+        potatoTechKit$clock.pushPhase(GamePhase.PLAYER_LIST_TICK);
     }
 
     @Inject(method = "updateTimeLightAndEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 12))

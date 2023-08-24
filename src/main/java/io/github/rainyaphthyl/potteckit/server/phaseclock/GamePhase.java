@@ -7,22 +7,24 @@ import net.minecraft.util.text.event.HoverEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum GamePhase {
     /////////////////////////////////////
     // The Game Phases are comparable! //
     // Do NOT change the order! /////////
     /////////////////////////////////////
-    SERVER_TICK_COUNT(false, "Tick Counting"),
+    SERVER_TICK_COUNT(false, "Tick Counting", "TC"),
     INGAME_QUEUED_TASK(false, "Queued Tasks in Game", "QT"),
     WEATHER_UPDATE(true, "Weather Update", "WU"),
-    SLEEP_AND_DAYLIGHT(true, "Sleep and Daylight", "SDL"),
+    SLEEP_AND_DAYTIME(true, "Sleep and Daytime", "SDT"),
     MOB_SPAWNING(true, "Mob Spawning", "MS"),
     CHUNK_UNLOAD(true, "Chunk Unload", "CU"),
     WORLD_TIME_UPDATE(true, "World Time Counting", "WTC"),
     TILE_TICK(true, "Tile Tick", "TT"),
-    CHUNK_TICK(true, "Chunk Tick", "CRT"),
+    PLAYER_LIGHT_CHECK(true, "Player Light Check", "PLC"),
+    CHUNK_TICK(true, "Chunk Tick", "CT"),
     PLAYER_CHUNK_MAP(true, "Player Chunk Map", "PCM"),
     VILLAGE_TICK(true, "Village Tick", "VT"),
     VILLAGE_SIEGE(true, "Village Siege", "VS"),
@@ -30,7 +32,7 @@ public enum GamePhase {
     BLOCK_EVENT(true, "Block Events", "BE"),
     WORLD_IDLE_CHECK(true, "World Idle Check", "WIC"),
     DRAGON_FIGHT(true, "Dragon Fight", "DF"),
-    GLOBAL_ENTITY_UPDATE(true, "Global Entity Update"),
+    GLOBAL_ENTITY_UPDATE(true, "Global Entity Update", "GE"),
     ENTITY_UNLOAD(true, "Entity Unload", "ER"),
     PLAYER_UPDATE(true, "Player Entities", "PE"),
     ENTITY_UPDATE(true, "Entity Update", "EU"),
@@ -39,41 +41,55 @@ public enum GamePhase {
     TILE_ENTITY_PENDING(true, "Tile Entity Appending", "TEA"),
     ENTITY_TRACKING(true, "Entity Tracking", "ET"),
     CONNECTION_UPDATE(false, "Connection Update", "NU"),
-    PACKET_SENDING(false, "Player Packet Sending", "PPS"),
+    PLAYER_LIST_TICK(false, "Player List Tick", "PLT"),
     COMMAND_FUNCTION(false, "Command Function", "CF"),
     SERVER_AUTO_SAVE(false, "Periodic Auto-save", "AS"),
-    SP_VIEW_DISTANCE_ALT(false, "View Distance Alteration"),
-    SP_DIFFICULTY_LOCK(false, "Difficulty Lock Check"),
+    SP_VIEW_DISTANCE_ALT(false, "View Distance Alteration", "VDA"),
+    SP_DIFFICULTY_ALT(false, "Difficulty Alteration", "DA"),
     /////////////////////////////////////////
     // Things below should be at the first //
     /////////////////////////////////////////
-    SP_INITIAL_LOAD(false, "Initialization", "Init"),
-    SP_SAVE_ON_PAUSE(false, "Auto-save on Pause", "ASP"),
-    SP_TASK_ON_PAUSE(false, "Queued Tasks on Pause", "QTP"),
+    SP_INITIAL_LOAD(false, true, "Initial Loading", "Init"),
+    SP_SAVE_ON_PAUSE(false, true, "Auto-save on Pause", "ASP"),
+    SP_TASK_ON_PAUSE(false, true, "Queued Tasks on Pause", "QTP"),
     /////////////////////////////////////////
     // Things above should be at the first //
     /////////////////////////////////////////
-    SERVER_STOP(false, "Server Shutdown", "Exit");
+    SERVER_STOP(false, true, "Server Shutdown", "Exit");
+    private static final Map<String, GamePhase> phaseMapByName = new HashMap<>();
+
+    static {
+        for (GamePhase phase : GamePhase.values()) {
+            GamePhase previous = phaseMapByName.putIfAbsent(phase.shortName, phase);
+            if (previous != null) {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
     public final boolean dimensional;
+    /**
+     * Tasks during game pause, before server starting, or on server stopping.
+     */
+    public final boolean outOfTick;
     public final String description;
     public final String shortName;
     private final ITextComponent component;
 
-    GamePhase(boolean dimensional, String description) {
-        this(dimensional, description, description);
+    GamePhase(boolean dimensional, String description, String shortName) {
+        this(dimensional, false, description, shortName);
     }
 
-    GamePhase(boolean dimensional, String description, String shortName) {
+    GamePhase(boolean dimensional, boolean outOfTick, String description, String shortName) {
         this.dimensional = dimensional;
+        this.outOfTick = outOfTick;
         this.description = description;
         this.shortName = shortName;
         component = new TextComponentString(this.shortName);
-        if (!Objects.equals(description, shortName)) {
-            Style style = new Style();
-            ITextComponent hover = new TextComponentString("(" + ordinal() + ')' + description);
-            style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hover));
-            component.setStyle(style);
-        }
+        Style style = new Style();
+        ITextComponent hover = new TextComponentString("(" + ordinal() + ')' + description);
+        style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hover));
+        component.setStyle(style);
     }
 
     public static boolean isNullOrDimensional(GamePhase phase) {

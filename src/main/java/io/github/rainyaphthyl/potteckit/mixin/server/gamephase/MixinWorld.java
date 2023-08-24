@@ -100,7 +100,7 @@ public abstract class MixinWorld {
     @Inject(method = "updateEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/world/World;processingLoadedTiles:Z", opcode = Opcodes.PUTFIELD, ordinal = 0))
     public void swapTileEntityUpdate(CallbackInfo ci) {
         if (potatoTechKit$clock != null) {
-            potatoTechKit$clock.nextPhase(GamePhase.TILE_ENTITY_UPDATE);
+            potatoTechKit$clock.swapPhase(GamePhase.TILE_ENTITY_UPDATE);
         }
     }
 

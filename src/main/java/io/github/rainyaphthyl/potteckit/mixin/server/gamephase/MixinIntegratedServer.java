@@ -47,13 +47,13 @@ public abstract class MixinIntegratedServer extends MixinMinecraftServer {
 
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/integrated/IntegratedServer;mc:Lnet/minecraft/client/Minecraft;", opcode = Opcodes.GETFIELD, ordinal = 3))
     public void beforeLockDifficulty(CallbackInfo ci) {
-        potatoTechKit$clock.nextPhase(GamePhase.SP_DIFFICULTY_LOCK);
+        potatoTechKit$clock.swapPhase(GamePhase.SP_DIFFICULTY_ALT);
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
     public void afterIntegratedTick(CallbackInfo ci) {
         potatoTechKit$clock.popPhaseIfPresent(GamePhase.SP_TASK_ON_PAUSE);
-        potatoTechKit$clock.popPhaseIfPresent(GamePhase.SP_DIFFICULTY_LOCK);
+        potatoTechKit$clock.popPhaseIfPresent(GamePhase.SP_DIFFICULTY_ALT);
     }
 
     @Inject(method = "stopServer", at = @At(value = "HEAD"))

@@ -144,7 +144,7 @@ public class MutablePhaseClock {
         checkValidDimension();
     }
 
-    public void nextPhase(GamePhase phase) throws IllegalDimensionException {
+    public void swapPhase(GamePhase phase) throws IllegalDimensionException {
         try {
             writeLock.lock();
             if (this.phase != null && phase != null) {

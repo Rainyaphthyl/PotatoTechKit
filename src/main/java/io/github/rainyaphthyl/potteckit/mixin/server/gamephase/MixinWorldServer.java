@@ -30,7 +30,7 @@ public abstract class MixinWorldServer extends MixinWorld {
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;areAllPlayersAsleep()Z"))
     public void beforeSleep(CallbackInfo ci) {
-        potatoTechKit$clock.pushPhase(GamePhase.SLEEP_AND_DAYLIGHT);
+        potatoTechKit$clock.pushPhase(GamePhase.SLEEP_AND_DAYTIME);
     }
 
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 0))
@@ -79,8 +79,13 @@ public abstract class MixinWorldServer extends MixinWorld {
     }
 
     @Inject(method = "updateBlocks", at = @At(value = "HEAD"))
+    public void beforePlayerLightCheck(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.PLAYER_LIGHT_CHECK);
+    }
+
+    @Inject(method = "updateBlocks", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;worldInfo:Lnet/minecraft/world/storage/WorldInfo;"))
     public void beforeChunkTick(CallbackInfo ci) {
-        potatoTechKit$clock.pushPhase(GamePhase.CHUNK_TICK);
+        potatoTechKit$clock.swapPhase(GamePhase.CHUNK_TICK);
     }
 
     @Inject(method = "updateBlocks", at = @At(value = "RETURN"))
@@ -105,7 +110,7 @@ public abstract class MixinWorldServer extends MixinWorld {
 
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;villageSiege:Lnet/minecraft/village/VillageSiege;", opcode = Opcodes.GETFIELD))
     public void swapVillageTickSiege(CallbackInfo ci) {
-        potatoTechKit$clock.nextPhase(GamePhase.VILLAGE_SIEGE);
+        potatoTechKit$clock.swapPhase(GamePhase.VILLAGE_SIEGE);
     }
 
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 6))
