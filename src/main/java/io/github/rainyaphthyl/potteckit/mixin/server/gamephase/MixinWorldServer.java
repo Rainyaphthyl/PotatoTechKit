@@ -30,7 +30,7 @@ public abstract class MixinWorldServer extends MixinWorld {
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;areAllPlayersAsleep()Z"))
     public void beforeSleep(CallbackInfo ci) {
-        potatoTechKit$clock.pushPhase(GamePhase.SLEEP_AND_WAKE);
+        potatoTechKit$clock.pushPhase(GamePhase.SLEEP_AND_DAYLIGHT);
     }
 
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 0))
@@ -110,6 +110,16 @@ public abstract class MixinWorldServer extends MixinWorld {
 
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 6))
     public void afterVillageSiege(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;worldTeleporter:Lnet/minecraft/world/Teleporter;", opcode = Opcodes.GETFIELD))
+    public void beforePortalRemoval(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.PORTAL_REMOVAL);
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;profiler:Lnet/minecraft/profiler/Profiler;", opcode = Opcodes.GETFIELD, ordinal = 7))
+    public void afterPortalRemoval(CallbackInfo ci) {
         potatoTechKit$clock.popPhase();
     }
 

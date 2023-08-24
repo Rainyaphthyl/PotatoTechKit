@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class TickRecord implements Comparable<TickRecord> {
     /**
-     * The global tick counter (int), increasing <b>between</b> ticks.
+     * The global and <b>comparable</b> tick counter (int), increasing <b>between</b> ticks.
      */
     public final long tickOrdinal;
     /**
@@ -27,7 +27,7 @@ public class TickRecord implements Comparable<TickRecord> {
      */
     public final Object[] arguments;
 
-    public TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, Object... arguments) throws NullPointerException {
+    public TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, Object... arguments) throws NullPointerException, IllegalArgumentException {
         this.tickOrdinal = tickOrdinal;
         this.gameTime = gameTime;
         this.gamePhase = Objects.requireNonNull(gamePhase);
@@ -39,8 +39,14 @@ public class TickRecord implements Comparable<TickRecord> {
      * Check the arguments for Tile Ticks, Block Events, etc.
      */
     @Nonnull
-    private Object[] checkArguments(Object[] argumentsIn) {
-        return argumentsIn == null ? new Object[0] : argumentsIn;
+    private Object[] checkArguments(Object[] argumentsIn) throws IllegalArgumentException {
+        Object[] objects = argumentsIn == null ? new Object[0] : argumentsIn;
+        for (Object object : objects) {
+            if (!(object instanceof Comparable)) {
+                throw new IllegalArgumentException();
+            }
+        }
+        return objects;
     }
 
     @Override
@@ -64,6 +70,33 @@ public class TickRecord implements Comparable<TickRecord> {
         // Do not use deepHashCode
         result = 31 * result + Arrays.hashCode(arguments);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[').append(tickOrdinal);
+        if (dimensionType != null) {
+            switch (dimensionType) {
+                case OVERWORLD:
+                    builder.append('w');
+                    break;
+                case NETHER:
+                    builder.append('n');
+                    break;
+                case THE_END:
+                    builder.append('e');
+                    break;
+            }
+            builder.append(':');
+        }
+        builder.append(':').append(gamePhase);
+        for (Object argument : arguments) {
+            builder.append(':');
+            if (argument != null) builder.append(argument);
+        }
+        builder.append(']');
+        return builder.toString();
     }
 
     @Override
