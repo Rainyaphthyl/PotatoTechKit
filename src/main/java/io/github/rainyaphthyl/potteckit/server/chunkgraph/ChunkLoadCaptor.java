@@ -1,8 +1,16 @@
 package io.github.rainyaphthyl.potteckit.server.chunkgraph;
 
+import io.github.rainyaphthyl.potteckit.server.phaseclock.PhaseRecord;
 import io.github.rainyaphthyl.potteckit.util.NetworkGraph;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.DimensionType;
 
+import javax.annotation.Nonnull;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -35,5 +43,57 @@ public class ChunkLoadCaptor {
     public static void removeThreadSource() {
         Thread thread = Thread.currentThread();
         threadReasonCache.remove(thread);
+    }
+
+    public static void debugOnChat(int tickCount, PhaseRecord record, ChunkPos currPos, @Nonnull DimensionType dimensionType, @Nonnull ChunkEvent event, ChunkLoadSource source, PlayerList playerList) {
+        ITextComponent component = new TextComponentString(
+                "[" + tickCount + ':' + record + ']'
+        ).setStyle(new Style().setColor(TextFormatting.WHITE));
+        StringBuilder msgBuilder = new StringBuilder(" Chunk ");
+        msgBuilder.append(currPos).append(' ');
+        switch (event) {
+            case LOADING:
+                msgBuilder.append("is loaded");
+                break;
+            case CANCEL_UNLOAD:
+                msgBuilder.append("cancels unloading");
+                break;
+            case QUEUE_UNLOAD:
+                msgBuilder.append("queues for unloading");
+                break;
+            case UNLOADING:
+                msgBuilder.append("is unloaded");
+                break;
+            case GENERATING:
+                msgBuilder.append("is generated");
+                break;
+            default:
+                msgBuilder.append("has undefined behaviors");
+        }
+        ITextComponent body = new TextComponentString(msgBuilder.toString());
+        TextFormatting color;
+        switch (dimensionType) {
+            case OVERWORLD:
+                color = TextFormatting.GREEN;
+                break;
+            case NETHER:
+                color = TextFormatting.RED;
+                break;
+            case THE_END:
+                color = TextFormatting.LIGHT_PURPLE;
+                break;
+            default:
+                color = TextFormatting.GRAY;
+        }
+        body.setStyle(new Style().setColor(color));
+        if (source != null) {
+            ChunkPos priorPos = source.chunkPos;
+            ChunkLoadReason reason = source.reason;
+            ITextComponent tail = new TextComponentString(" from " + priorPos + " (" + reason + ')');
+            tail.setStyle(new Style().setColor(TextFormatting.GRAY));
+            body.appendSibling(tail);
+        }
+        component.appendSibling(body);
+        playerList.sendMessage(component);
     }
 }
