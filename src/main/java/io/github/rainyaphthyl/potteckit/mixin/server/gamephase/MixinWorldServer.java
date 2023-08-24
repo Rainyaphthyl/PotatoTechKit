@@ -28,6 +28,16 @@ public abstract class MixinWorldServer extends MixinWorld {
         potatoTechKit$clock.setDimension(dimension);
     }
 
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;getWorldInfo()Lnet/minecraft/world/storage/WorldInfo;", ordinal = 0))
+    public void beforeDifficultyLock(CallbackInfo ci) {
+        potatoTechKit$clock.pushPhase(GamePhase.HARDCODE_DIFFICULTY);
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;provider:Lnet/minecraft/world/WorldProvider;"))
+    public void afterDifficultyLock(CallbackInfo ci) {
+        potatoTechKit$clock.popPhase();
+    }
+
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;areAllPlayersAsleep()Z"))
     public void beforeSleep(CallbackInfo ci) {
         potatoTechKit$clock.pushPhase(GamePhase.SLEEP_AND_DAYTIME);
