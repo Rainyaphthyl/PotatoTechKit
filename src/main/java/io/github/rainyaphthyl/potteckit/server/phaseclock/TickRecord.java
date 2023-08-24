@@ -21,27 +21,34 @@ public class TickRecord implements Comparable<TickRecord> {
     public final DimensionType dimensionType;
     public final GamePhase gamePhase;
     /**
-     * Sub-phases and the unique sub-tick ordinal.
+     * Sub-phases without the unique sub-tick ordinal.
      */
     public final SubPhase subPhase;
+    /**
+     * The unique sub-"sub-phase" ordinal, to be compared when the sub-phases are equal.
+     */
+    public final int eventOrdinal;
 
-    public TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase) throws NullPointerException, IllegalArgumentException {
+    public TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) throws NullPointerException, IllegalArgumentException {
         this.tickOrdinal = tickOrdinal;
         this.gameTime = gameTime;
         this.gamePhase = Objects.requireNonNull(gamePhase);
+        this.dimensionType = gamePhase.dimensional ? Objects.requireNonNull(dimensionType) : null;
         if (subPhase != null && subPhase.parentPhase() != gamePhase) {
             throw new IllegalArgumentException();
         }
         this.subPhase = subPhase;
-        this.dimensionType = gamePhase.dimensional ? Objects.requireNonNull(dimensionType) : null;
+        this.eventOrdinal = eventOrdinal;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof TickRecord)) return false;
-        TickRecord that = (TickRecord) obj;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TickRecord)) return false;
+        TickRecord that = (TickRecord) o;
         if (tickOrdinal != that.tickOrdinal) return false;
+        if (gameTime != that.gameTime) return false;
+        if (eventOrdinal != that.eventOrdinal) return false;
         if (dimensionType != that.dimensionType) return false;
         if (gamePhase != that.gamePhase) return false;
         return Objects.equals(subPhase, that.subPhase);
@@ -54,6 +61,7 @@ public class TickRecord implements Comparable<TickRecord> {
         result = 31 * result + (dimensionType != null ? dimensionType.hashCode() : 0);
         result = 31 * result + gamePhase.hashCode();
         result = 31 * result + (subPhase != null ? subPhase.hashCode() : 0);
+        result = 31 * result + eventOrdinal;
         return result;
     }
 
@@ -79,6 +87,7 @@ public class TickRecord implements Comparable<TickRecord> {
         builder.append(':').append(gamePhase);
         if (subPhase != null) {
             builder.append(':').append(subPhase);
+            builder.append(':').append(eventOrdinal);
         }
         builder.append(']');
         return builder.toString();
@@ -92,10 +101,15 @@ public class TickRecord implements Comparable<TickRecord> {
         if (gamePhase.dimensional && dimensionType != that.dimensionType) {
             return dimensionType.compareTo(that.dimensionType);
         }
+        int spc;
         if (subPhase != null && that.subPhase != null) {
-            return subPhase.compareTo(that.subPhase);
-        } else {
-            return 0;
+            try {
+                spc = subPhase.compareTo(that.subPhase);
+                if (spc != 0) return spc;
+                return Integer.compare(eventOrdinal, that.eventOrdinal);
+            } catch (UnsupportedOperationException ignored) {
+            }
         }
+        return 0;
     }
 }
