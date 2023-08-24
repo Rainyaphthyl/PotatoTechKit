@@ -1,9 +1,9 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock;
 
+import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.SubPhase;
 import net.minecraft.world.DimensionType;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -21,32 +21,19 @@ public class TickRecord implements Comparable<TickRecord> {
     public final DimensionType dimensionType;
     public final GamePhase gamePhase;
     /**
-     * For Block Events: Event Depth;
-     * <p>
-     * For Tile Ticks: Priority;
+     * Sub-phases and the unique sub-tick ordinal.
      */
-    public final Object[] arguments;
+    public final SubPhase subPhase;
 
-    public TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, Object... arguments) throws NullPointerException, IllegalArgumentException {
+    public TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase) throws NullPointerException, IllegalArgumentException {
         this.tickOrdinal = tickOrdinal;
         this.gameTime = gameTime;
         this.gamePhase = Objects.requireNonNull(gamePhase);
-        this.dimensionType = gamePhase.dimensional ? Objects.requireNonNull(dimensionType) : null;
-        this.arguments = checkArguments(arguments);
-    }
-
-    /**
-     * Check the arguments for Tile Ticks, Block Events, etc.
-     */
-    @Nonnull
-    private Object[] checkArguments(Object[] argumentsIn) throws IllegalArgumentException {
-        Object[] objects = argumentsIn == null ? new Object[0] : argumentsIn;
-        for (Object object : objects) {
-            if (!(object instanceof Comparable)) {
-                throw new IllegalArgumentException();
-            }
+        if (subPhase != null && subPhase.parentPhase() != gamePhase) {
+            throw new IllegalArgumentException();
         }
-        return objects;
+        this.subPhase = subPhase;
+        this.dimensionType = gamePhase.dimensional ? Objects.requireNonNull(dimensionType) : null;
     }
 
     @Override
@@ -55,10 +42,9 @@ public class TickRecord implements Comparable<TickRecord> {
         if (!(obj instanceof TickRecord)) return false;
         TickRecord that = (TickRecord) obj;
         if (tickOrdinal != that.tickOrdinal) return false;
-        if (gameTime != that.gameTime) return false;
         if (dimensionType != that.dimensionType) return false;
         if (gamePhase != that.gamePhase) return false;
-        return Arrays.deepEquals(arguments, that.arguments);
+        return Objects.equals(subPhase, that.subPhase);
     }
 
     @Override
@@ -67,15 +53,14 @@ public class TickRecord implements Comparable<TickRecord> {
         result = 31 * result + (int) (gameTime ^ (gameTime >>> 32));
         result = 31 * result + (dimensionType != null ? dimensionType.hashCode() : 0);
         result = 31 * result + gamePhase.hashCode();
-        // Do not use deepHashCode
-        result = 31 * result + Arrays.hashCode(arguments);
+        result = 31 * result + (subPhase != null ? subPhase.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append('[').append(tickOrdinal);
+        builder.append('[').append(tickOrdinal).append(':');
         if (dimensionType != null) {
             switch (dimensionType) {
                 case OVERWORLD:
@@ -88,12 +73,12 @@ public class TickRecord implements Comparable<TickRecord> {
                     builder.append('e');
                     break;
             }
-            builder.append(':');
         }
+        // string with ":" means that the part should be null, instead of unknown.
+        // e.g. the dimension part where the phase is not dimensional.
         builder.append(':').append(gamePhase);
-        for (Object argument : arguments) {
-            builder.append(':');
-            if (argument != null) builder.append(argument);
+        if (subPhase != null) {
+            builder.append(':').append(subPhase);
         }
         builder.append(']');
         return builder.toString();
@@ -104,8 +89,13 @@ public class TickRecord implements Comparable<TickRecord> {
         if (this == that) return 0;
         if (tickOrdinal != that.tickOrdinal) return Long.compare(tickOrdinal, that.tickOrdinal);
         if (gamePhase != that.gamePhase) return gamePhase.compareTo(that.gamePhase);
-        if (gamePhase.dimensional && dimensionType != that.dimensionType)
+        if (gamePhase.dimensional && dimensionType != that.dimensionType) {
             return dimensionType.compareTo(that.dimensionType);
-        return 0;
+        }
+        if (subPhase != null && that.subPhase != null) {
+            return subPhase.compareTo(that.subPhase);
+        } else {
+            return 0;
+        }
     }
 }
