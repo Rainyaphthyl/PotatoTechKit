@@ -37,9 +37,9 @@ public abstract class MixinChunkProviderServer {
     @Unique
     private static void potatoTechKit$debugOnChat(int tickCount, PhaseRecord record, ChunkPos currPos, @Nonnull DimensionType dimensionType, ChunkLoadSource source, PlayerList playerList) {
         ITextComponent component = new TextComponentString(
-                "[" + tickCount + ':' + PhaseRecord.getShortName(record) + ']'
+                "[" + tickCount + ':' + record + ']'
         ).setStyle(new Style().setColor(TextFormatting.WHITE));
-        ITextComponent body = new TextComponentString(" c" + currPos + " loaded");
+        ITextComponent body = new TextComponentString(" Chunk " + currPos + " loaded");
         TextFormatting color;
         switch (dimensionType) {
             case OVERWORLD:

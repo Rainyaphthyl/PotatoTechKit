@@ -21,6 +21,8 @@ public abstract class MixinMinecraftServer {
 
     @Inject(method = "tick", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/System;nanoTime()J", ordinal = 0))
     public void beforeTickIncrement(CallbackInfo ci) {
+        potatoTechKit$clock.syncFromConfigs();
+        potatoTechKit$clock.updateStatus();
         potatoTechKit$clock.pushPhase(GamePhase.SERVER_TICK_COUNT);
     }
 
@@ -44,7 +46,7 @@ public abstract class MixinMinecraftServer {
         potatoTechKit$clock.startNextDimension();
     }
 
-    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/profiler/Profiler;startSection(Ljava/lang/String;)V", ordinal = 1))
+    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;startSection(Ljava/lang/String;)V", ordinal = 1))
     public void beforeTimeSync(CallbackInfo ci) {
         potatoTechKit$clock.pushPhase(GamePhase.CLIENT_TIME_SYNC);
     }
