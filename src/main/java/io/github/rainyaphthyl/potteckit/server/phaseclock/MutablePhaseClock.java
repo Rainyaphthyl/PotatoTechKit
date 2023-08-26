@@ -1,10 +1,14 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock;
 
 import io.github.rainyaphthyl.potteckit.config.Configs;
+import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.SubPhase;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -21,19 +25,28 @@ public class MutablePhaseClock {
     private final Lock readLock;
     private final MinecraftServer server;
     private final AtomicInteger statusFlags = new AtomicInteger(0);
+    private final Map<GamePhase, SubPhaseClock> subClockMap = Collections.synchronizedMap(new EnumMap<>(GamePhase.class));
     private DimensionType dimension = null;
     private GamePhase phase = null;
+    private SubPhaseClock subClock = null;
+    /**
+     * This only increases when an event is marked.
+     */
+    private int eventOrdinal = 0;
     private boolean running = false;
     private boolean detailMode = false;
 
-    {
+    private MutablePhaseClock(MinecraftServer server) {
+        this.server = Objects.requireNonNull(server);
         ReadWriteLock lock = new ReentrantReadWriteLock(true);
         writeLock = lock.writeLock();
         readLock = lock.readLock();
-    }
-
-    private MutablePhaseClock(MinecraftServer server) {
-        this.server = Objects.requireNonNull(server);
+        for (GamePhase gamePhase : GamePhase.values()) {
+            SubPhaseClock clock = gamePhase.createSubPhaseClock(this);
+            if (clock != null) {
+                subClockMap.put(gamePhase, clock);
+            }
+        }
         syncFromConfigs();
         updateStatus();
     }
@@ -108,6 +121,8 @@ public class MutablePhaseClock {
     public void syncFromConfigs() {
         boolean shouldRun = Configs.chunkLoadingGraph.getBooleanValue() && Configs.enablePotteckit.getBooleanValue();
         setRunning(shouldRun);
+        boolean requiresDetail = Configs.chunkLoadingDetails.getBooleanValue() && Configs.enablePotteckit.getBooleanValue();
+        setDetailMode(requiresDetail);
     }
 
     public void updateStatus() {
@@ -130,6 +145,8 @@ public class MutablePhaseClock {
             boolean isDetailed = (flags & DETAILED) != 0;
             if (wasDetailed != isDetailed) {
                 detailMode = isDetailed;
+                subClock = null;
+                eventOrdinal = 0;
             }
         }
     }
@@ -219,12 +236,31 @@ public class MutablePhaseClock {
         }
     }
 
+    public TickRecord markCurrentTickStamp() {
+        try {
+            readLock.lock();
+            int tickOrdinal = server.getTickCounter();
+            int dim = dimension == null ? 0 : dimension.getId();
+            long gameTime = server.getWorld(dim).getTotalWorldTime();
+            SubPhase subRecord = subClock == null ? null : subClock.createRecord();
+            TickRecord tickRecord = new TickRecord(tickOrdinal, gameTime, dimension, phase, subRecord, eventOrdinal);
+            ++eventOrdinal;
+            return tickRecord;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
     public void pushPhase(GamePhase phase) {
         if (running) {
             try {
                 writeLock.lock();
                 if (this.phase == null && phase != null) {
                     this.phase = phase;
+                    if (detailMode) {
+                        subClock = subClockMap.get(phase);
+                    }
+                    eventOrdinal = 0;
                 }
             } finally {
                 writeLock.unlock();
@@ -239,6 +275,8 @@ public class MutablePhaseClock {
                 writeLock.lock();
                 if (phase != null) {
                     phase = null;
+                    subClock = null;
+                    eventOrdinal = 0;
                 }
             } finally {
                 writeLock.unlock();
@@ -253,6 +291,10 @@ public class MutablePhaseClock {
                 writeLock.lock();
                 if (this.phase != null && phase != null) {
                     this.phase = phase;
+                    if (detailMode) {
+                        subClock = subClockMap.get(phase);
+                    }
+                    eventOrdinal = 0;
                 }
             } finally {
                 writeLock.unlock();
@@ -267,11 +309,44 @@ public class MutablePhaseClock {
                 writeLock.lock();
                 if (phase == oldPhase) {
                     phase = null;
+                    subClock = null;
+                    eventOrdinal = 0;
                 }
             } finally {
                 writeLock.unlock();
             }
             checkValidDimension();
         }
+    }
+
+    public abstract static class SubPhaseClock {
+        private final MutablePhaseClock parentClock;
+        private final Lock writeLock;
+        private final Lock readLock;
+        private final MinecraftServer server;
+
+        public SubPhaseClock(MutablePhaseClock parentClock) {
+            this.parentClock = Objects.requireNonNull(parentClock);
+            writeLock = parentClock.writeLock;
+            readLock = parentClock.readLock;
+            server = parentClock.server;
+            reset();
+        }
+
+        /**
+         * This method does not increase the event ordinal.
+         */
+        public abstract SubPhase createRecord();
+
+        /**
+         * This is called in {@code super()}
+         */
+        public abstract void reset();
+
+        protected abstract void push();
+
+        protected abstract void swap();
+
+        protected abstract void pop();
     }
 }

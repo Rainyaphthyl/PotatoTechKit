@@ -47,7 +47,6 @@ public class TickRecord implements Comparable<TickRecord> {
         if (!(o instanceof TickRecord)) return false;
         TickRecord that = (TickRecord) o;
         if (tickOrdinal != that.tickOrdinal) return false;
-        if (gameTime != that.gameTime) return false;
         if (eventOrdinal != that.eventOrdinal) return false;
         if (dimensionType != that.dimensionType) return false;
         if (gamePhase != that.gamePhase) return false;
@@ -57,7 +56,6 @@ public class TickRecord implements Comparable<TickRecord> {
     @Override
     public int hashCode() {
         int result = (int) (tickOrdinal ^ (tickOrdinal >>> 32));
-        result = 31 * result + (int) (gameTime ^ (gameTime >>> 32));
         result = 31 * result + (dimensionType != null ? dimensionType.hashCode() : 0);
         result = 31 * result + gamePhase.hashCode();
         result = 31 * result + (subPhase != null ? subPhase.hashCode() : 0);
@@ -101,15 +99,13 @@ public class TickRecord implements Comparable<TickRecord> {
         if (gamePhase.dimensional && dimensionType != that.dimensionType) {
             return dimensionType.compareTo(that.dimensionType);
         }
-        int spc;
         if (subPhase != null && that.subPhase != null) {
             try {
-                spc = subPhase.compareTo(that.subPhase);
+                int spc = subPhase.compareTo(that.subPhase);
                 if (spc != 0) return spc;
-                return Integer.compare(eventOrdinal, that.eventOrdinal);
             } catch (UnsupportedOperationException ignored) {
             }
         }
-        return 0;
+        return Integer.compare(eventOrdinal, that.eventOrdinal);
     }
 }

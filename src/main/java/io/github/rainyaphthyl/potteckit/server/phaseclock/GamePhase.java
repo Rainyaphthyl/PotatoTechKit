@@ -1,5 +1,7 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock;
 
+import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock.SubPhaseClock;
+import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.BlockEventClock;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -7,6 +9,8 @@ import net.minecraft.util.text.event.HoverEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +35,7 @@ public enum GamePhase {
     VILLAGE_TICK(true, "Village Tick", "VT"),
     VILLAGE_SIEGE(true, "Village Siege", "VS"),
     PORTAL_REMOVAL(true, "Portal Removal", "PR"),
-    BLOCK_EVENT(true, "Block Events", "BE"),
+    BLOCK_EVENT(true, "Block Events", "BE", BlockEventClock.class),
     WORLD_IDLE_CHECK(true, "World Idle Check", "WIC"),
     DRAGON_FIGHT(true, "Dragon Fight", "DF"),
     GLOBAL_ENTITY_UPDATE(true, "Global Entity Update", "GE"),
@@ -76,17 +80,27 @@ public enum GamePhase {
     public final boolean outOfTick;
     public final String description;
     public final String shortName;
+    public final Class<? extends SubPhaseClock> clockClass;
     private final ITextComponent component;
 
     GamePhase(boolean dimensional, String description, String shortName) {
-        this(dimensional, false, description, shortName);
+        this(dimensional, description, shortName, null);
     }
 
     GamePhase(boolean dimensional, boolean outOfTick, String description, String shortName) {
+        this(dimensional, outOfTick, description, shortName, null);
+    }
+
+    GamePhase(boolean dimensional, String description, String shortName, Class<? extends SubPhaseClock> clockClass) {
+        this(dimensional, false, description, shortName, clockClass);
+    }
+
+    GamePhase(boolean dimensional, boolean outOfTick, String description, String shortName, Class<? extends SubPhaseClock> clockClass) {
         this.dimensional = dimensional;
         this.outOfTick = outOfTick;
         this.description = description;
         this.shortName = shortName;
+        this.clockClass = clockClass;
         component = new TextComponentString(this.shortName);
         Style style = new Style();
         ITextComponent hover = new TextComponentString("(" + ordinal() + ')' + description);
@@ -105,6 +119,20 @@ public enum GamePhase {
     @Override
     public String toString() {
         return shortName;
+    }
+
+    @Nullable
+    public SubPhaseClock createSubPhaseClock(MutablePhaseClock tickClock) {
+        if (clockClass == null) {
+            return null;
+        } else {
+            try {
+                Constructor<? extends SubPhaseClock> constructor = clockClass.getConstructor(MutablePhaseClock.class);
+                return constructor.newInstance(tickClock);
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                return null;
+            }
+        }
     }
 
     @Nonnull

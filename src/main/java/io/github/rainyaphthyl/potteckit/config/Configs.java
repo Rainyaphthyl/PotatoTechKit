@@ -18,6 +18,8 @@ public class Configs {
     public static final HotkeyConfig openConfigScreen = new HotkeyConfig("openConfigScreen", "K,C");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, needServer = true, notVanilla = false, cheating = false)
     public static final HotkeyedBooleanConfig chunkLoadingGraph = new HotkeyedBooleanConfig("chunkLoadingGraph", false, "");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, needServer = true, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig chunkLoadingDetails = new HotkeyedBooleanConfig("chunkLoadingDetails", false, "");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

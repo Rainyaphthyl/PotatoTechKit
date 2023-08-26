@@ -21,8 +21,8 @@ public abstract class MixinMinecraftServer {
 
     @Inject(method = "tick", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/System;nanoTime()J", ordinal = 0))
     public void beforeTickIncrement(CallbackInfo ci) {
-        potatoTechKit$clock.syncFromConfigs();
         potatoTechKit$clock.updateStatus();
+        potatoTechKit$clock.syncFromConfigs();
         potatoTechKit$clock.pushPhase(GamePhase.SERVER_TICK_COUNT);
     }
 
