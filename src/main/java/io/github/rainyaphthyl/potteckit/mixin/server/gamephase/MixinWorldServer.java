@@ -136,6 +136,18 @@ public abstract class MixinWorldServer extends MixinWorld {
         potatoTechKit$clock.pushPhase(GamePhase.BLOCK_EVENT);
     }
 
+    @Inject(method = "sendQueuedBlockEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/world/WorldServer;blockEventCacheIndex:I", opcode = Opcodes.GETFIELD, ordinal = 1))
+    public void blockEventPush(CallbackInfo ci) {
+        // event depth++
+        potatoTechKit$clock.pushSubPhase();
+    }
+
+    @Inject(method = "sendQueuedBlockEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;fireBlockEvent(Lnet/minecraft/block/BlockEventData;)Z"))
+    public void blockEventSwap(CallbackInfo ci) {
+        // ordinal++ at the depth
+        potatoTechKit$clock.swapSubPhase();
+    }
+
     @Inject(method = "sendQueuedBlockEvents", at = @At(value = "RETURN"))
     public void afterBlockEvent(CallbackInfo ci) {
         potatoTechKit$clock.popPhase();

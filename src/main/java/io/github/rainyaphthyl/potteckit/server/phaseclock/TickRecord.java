@@ -4,6 +4,7 @@ import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.SubPhase;
 import net.minecraft.world.DimensionType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -29,7 +30,7 @@ public class TickRecord implements Comparable<TickRecord> {
      */
     public final int eventOrdinal;
 
-    public TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) throws NullPointerException, IllegalArgumentException {
+    private TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) throws NullPointerException, IllegalArgumentException {
         this.tickOrdinal = tickOrdinal;
         this.gameTime = gameTime;
         this.gamePhase = Objects.requireNonNull(gamePhase);
@@ -39,6 +40,15 @@ public class TickRecord implements Comparable<TickRecord> {
         }
         this.subPhase = subPhase;
         this.eventOrdinal = eventOrdinal;
+    }
+
+    @Nullable
+    public static TickRecord getInstance(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) {
+        try {
+            return new TickRecord(tickOrdinal, gameTime, dimensionType, gamePhase, subPhase, eventOrdinal);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -85,8 +95,8 @@ public class TickRecord implements Comparable<TickRecord> {
         builder.append(':').append(gamePhase);
         if (subPhase != null) {
             builder.append(':').append(subPhase);
-            builder.append(':').append(eventOrdinal);
         }
+        builder.append(':').append(eventOrdinal);
         builder.append(']');
         return builder.toString();
     }

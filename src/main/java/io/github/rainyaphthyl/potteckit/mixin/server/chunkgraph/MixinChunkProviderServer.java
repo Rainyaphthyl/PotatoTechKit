@@ -6,7 +6,9 @@ import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadCaptor;
 import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadSource;
 import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock;
 import io.github.rainyaphthyl.potteckit.server.phaseclock.PhaseRecord;
+import io.github.rainyaphthyl.potteckit.server.phaseclock.TickRecord;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
@@ -39,8 +41,12 @@ public abstract class MixinChunkProviderServer {
                 DimensionType dimensionType = world.provider.getDimensionType();
                 MutablePhaseClock phaseClock = MutablePhaseClock.instanceFromServer(server);
                 PhaseRecord record = phaseClock.getRecord();
+                TickRecord tickStamp = phaseClock.markCurrentTickStamp();
                 //region debug
-                ChunkLoadCaptor.debugOnChat(server.getTickCounter(), record, chunk.getPos(), dimensionType, ChunkEvent.LOADING, source, server.getPlayerList());
+                PlayerList playerList = server.getPlayerList();
+                ChunkPos chunkPos = chunk.getPos();
+                ChunkLoadCaptor.debugChunkTickStamp(tickStamp, chunkPos, dimensionType, ChunkEvent.LOADING, source, playerList);
+                ChunkLoadCaptor.debugOnChat(server.getTickCounter(), record, chunkPos, dimensionType, ChunkEvent.LOADING, source, playerList);
                 //endregion
             }
         }

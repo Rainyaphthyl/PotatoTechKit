@@ -21,20 +21,32 @@ public class BlockEventClock extends MutablePhaseClock.SubPhaseClock {
         orderAtDepth = 0;
     }
 
+    /**
+     * @return {@code true} if successful
+     */
     @Override
-    protected void push() {
+    protected boolean push() {
         ++depth;
         orderAtDepth = 0;
+        return true;
     }
 
+    /**
+     * @return {@code true} if successful
+     */
     @Override
-    protected void swap() {
+    protected boolean swap() {
         ++orderAtDepth;
+        return true;
     }
 
+    /**
+     * @return {@code true} if successful
+     */
     @Override
-    protected void pop() {
+    protected boolean pop() {
         --depth;
         orderAtDepth = 0;
+        return true;
     }
 }
