@@ -92,9 +92,10 @@ public class TickRecord implements Comparable<TickRecord> {
         }
         // string with ":" means that the part should be null, instead of unknown.
         // e.g. the dimension part where the phase is not dimensional.
-        builder.append(':').append(gamePhase);
+        // ???
+        builder.append(':').append(gamePhase).append(':');
         if (subPhase != null) {
-            builder.append(':').append(subPhase);
+            builder.append(subPhase);
         }
         builder.append(':').append(eventOrdinal);
         builder.append(']');
