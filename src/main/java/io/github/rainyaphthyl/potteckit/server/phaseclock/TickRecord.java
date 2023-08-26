@@ -14,7 +14,7 @@ public class TickRecord implements Comparable<TickRecord> {
     /**
      * The global and <b>comparable</b> tick counter (int), increasing <b>between</b> ticks.
      */
-    public final long tickOrdinal;
+    public final int tickOrdinal;
     /**
      * The dimensional game time output from Command Blocks, increasing <b>during</b> each tick.
      */
@@ -30,7 +30,7 @@ public class TickRecord implements Comparable<TickRecord> {
      */
     public final int eventOrdinal;
 
-    private TickRecord(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) throws NullPointerException, IllegalArgumentException {
+    private TickRecord(int tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) throws NullPointerException, IllegalArgumentException {
         this.tickOrdinal = tickOrdinal;
         this.gameTime = gameTime;
         this.gamePhase = Objects.requireNonNull(gamePhase);
@@ -43,7 +43,7 @@ public class TickRecord implements Comparable<TickRecord> {
     }
 
     @Nullable
-    public static TickRecord getInstance(long tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) {
+    public static TickRecord getInstance(int tickOrdinal, long gameTime, DimensionType dimensionType, GamePhase gamePhase, SubPhase subPhase, int eventOrdinal) {
         try {
             return new TickRecord(tickOrdinal, gameTime, dimensionType, gamePhase, subPhase, eventOrdinal);
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public class TickRecord implements Comparable<TickRecord> {
 
     @Override
     public int hashCode() {
-        int result = (int) (tickOrdinal ^ (tickOrdinal >>> 32));
+        int result = tickOrdinal;
         result = 31 * result + (dimensionType != null ? dimensionType.hashCode() : 0);
         result = 31 * result + gamePhase.hashCode();
         result = 31 * result + (subPhase != null ? subPhase.hashCode() : 0);
@@ -104,7 +104,7 @@ public class TickRecord implements Comparable<TickRecord> {
     @Override
     public int compareTo(@Nonnull TickRecord that) {
         if (this == that) return 0;
-        if (tickOrdinal != that.tickOrdinal) return Long.compare(tickOrdinal, that.tickOrdinal);
+        if (tickOrdinal != that.tickOrdinal) return Integer.compare(tickOrdinal, that.tickOrdinal);
         if (gamePhase != that.gamePhase) return gamePhase.compareTo(that.gamePhase);
         if (gamePhase.dimensional && dimensionType != that.dimensionType) {
             return dimensionType.compareTo(that.dimensionType);
