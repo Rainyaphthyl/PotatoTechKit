@@ -1,16 +1,29 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock.subphase;
 
 import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
+import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;
 
 public class BlockEventSubPhase extends SubPhase {
-    private final int depth;
-    private final int orderAtDepth;
+    private int depth;
+    private int orderAtDepth;
 
     public BlockEventSubPhase(int depth, int orderAtDepth) {
         this.depth = depth;
         this.orderAtDepth = orderAtDepth;
+    }
+
+    @Override
+    public void readFromPacket(@Nonnull PacketBuffer buffer) {
+        depth = buffer.readVarInt();
+        orderAtDepth = buffer.readVarInt();
+    }
+
+    @Override
+    public void writeToPacket(@Nonnull PacketBuffer buffer) {
+        buffer.writeVarInt(depth);
+        buffer.writeVarInt(orderAtDepth);
     }
 
     @Override

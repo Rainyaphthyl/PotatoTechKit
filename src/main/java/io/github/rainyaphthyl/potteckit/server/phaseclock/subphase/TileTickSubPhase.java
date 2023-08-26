@@ -1,6 +1,7 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock.subphase;
 
 import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
+import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;
 
@@ -13,6 +14,16 @@ public class TileTickSubPhase extends SubPhase {
     @Override
     public int compareTo(@Nonnull SubPhase obj) throws UnsupportedOperationException {
         return 0;
+    }
+
+    @Override
+    public void readFromPacket(@Nonnull PacketBuffer buffer) {
+
+    }
+
+    @Override
+    public void writeToPacket(@Nonnull PacketBuffer buffer) {
+
     }
 
     @Override

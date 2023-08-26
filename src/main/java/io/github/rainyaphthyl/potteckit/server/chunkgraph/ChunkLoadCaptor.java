@@ -3,6 +3,8 @@ package io.github.rainyaphthyl.potteckit.server.chunkgraph;
 import io.github.rainyaphthyl.potteckit.server.phaseclock.PhaseRecord;
 import io.github.rainyaphthyl.potteckit.server.phaseclock.TickRecord;
 import io.github.rainyaphthyl.potteckit.util.NetworkGraph;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
@@ -18,6 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ChunkLoadCaptor {
     public static final boolean debugDetail = true;
+    public static final String CHANNEL_EVENT = "PK|ChEvent";
     private static final ConcurrentMap<Thread, ChunkLoadSource> threadReasonCache = new ConcurrentHashMap<>();
     private final NetworkGraph<ChunkPos, ChunkLoadReason> graph = new NetworkGraph<>(ChunkPos.class, ChunkLoadReason.class);
 
@@ -102,7 +105,11 @@ public class ChunkLoadCaptor {
         playerList.sendMessage(component);
     }
 
-    public static void debugChunkTickStamp(TickRecord record, ChunkPos currPos, @Nonnull DimensionType dimensionType, @Nonnull ChunkEvent event, ChunkLoadSource source, PlayerList playerList) {
+    public static void debugChunkTickStamp(TickRecord record, ChunkPos currPos, @Nonnull DimensionType dimensionType, @Nonnull ChunkEvent event, ChunkLoadSource source, @Nonnull PlayerList playerList) {
+        ChunkPacketBuffer buffer = new ChunkPacketBuffer(Unpooled.buffer());
+        buffer.writeTickRecord(record);
+        SPacketCustomPayload packet = new SPacketCustomPayload(CHANNEL_EVENT, buffer);
+        playerList.sendPacketToAllPlayers(packet);
         ITextComponent component = new TextComponentString(String.valueOf(record));
         component = component.setStyle(new Style().setColor(TextFormatting.WHITE));
         StringBuilder msgBuilder = new StringBuilder(" Chunk ");

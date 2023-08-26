@@ -2,18 +2,17 @@ package io.github.rainyaphthyl.potteckit.server.chunkgraph;
 
 import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
 import io.github.rainyaphthyl.potteckit.server.phaseclock.TickRecord;
+import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.SubPhase;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.DimensionType;
-
-import javax.annotation.Nullable;
 
 public class ChunkPacketBuffer extends PacketBuffer {
     public ChunkPacketBuffer(ByteBuf wrapped) {
         super(wrapped);
     }
 
-    public ChunkPacketBuffer writeTickRecord(@Nullable TickRecord tickRecord) {
+    public ChunkPacketBuffer writeTickRecord(TickRecord tickRecord) {
         if (tickRecord == null) {
             writeVarInt(-1);
         } else {
@@ -25,11 +24,11 @@ public class ChunkPacketBuffer extends PacketBuffer {
             if (gamePhase.dimensional) {
                 writeEnumValue(tickRecord.dimensionType);
             }
+            writeSubPhase(tickRecord.subPhase);
         }
         return this;
     }
 
-    @Nullable
     public TickRecord readTickRecord() {
         int eventOrdinal = readVarInt();
         if (eventOrdinal == -1) {
@@ -43,5 +42,14 @@ public class ChunkPacketBuffer extends PacketBuffer {
             dimensionType = readEnumValue(DimensionType.class);
         }
         return TickRecord.getInstance(tickOrdinal, gameTime, dimensionType, gamePhase, null, eventOrdinal);
+    }
+
+    public void writeSubPhase(SubPhase subPhase) {
+        if (subPhase == null) {
+            writeBoolean(false);
+        } else {
+            writeBoolean(true);
+            subPhase.writeToPacket(this);
+        }
     }
 }

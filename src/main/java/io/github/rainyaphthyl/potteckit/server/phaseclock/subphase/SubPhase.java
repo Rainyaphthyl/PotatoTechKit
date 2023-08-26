@@ -1,6 +1,7 @@
 package io.github.rainyaphthyl.potteckit.server.phaseclock.subphase;
 
 import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
+import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
@@ -30,6 +31,10 @@ public abstract class SubPhase implements Comparable<SubPhase> {
             throw new UnsupportedOperationException(e);
         }
     }
+
+    public abstract void readFromPacket(@Nonnull PacketBuffer buffer);
+
+    public abstract void writeToPacket(@Nonnull PacketBuffer buffer);
 
     @Override
     public abstract boolean equals(Object obj);
