@@ -1,7 +1,7 @@
-package io.github.rainyaphthyl.potteckit.server.phaseclock;
+package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock.SubPhaseClock;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.BlockEventClock;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock.SubPhaseClock;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.BlockEventClock;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;

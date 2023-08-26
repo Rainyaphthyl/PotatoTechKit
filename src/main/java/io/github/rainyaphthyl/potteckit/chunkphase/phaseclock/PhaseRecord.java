@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.server.phaseclock;
+package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock;
 
 import io.github.rainyaphthyl.potteckit.util.NullComparator;
 import net.minecraft.world.DimensionType;

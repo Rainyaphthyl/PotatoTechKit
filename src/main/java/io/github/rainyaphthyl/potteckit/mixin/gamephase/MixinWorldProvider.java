@@ -1,6 +1,6 @@
-package io.github.rainyaphthyl.potteckit.mixin.server.gamephase;
+package io.github.rainyaphthyl.potteckit.mixin.gamephase;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;

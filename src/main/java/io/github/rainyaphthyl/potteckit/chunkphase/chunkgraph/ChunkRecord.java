@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.server.chunkgraph;
+package io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph;
 
 public class ChunkRecord {
     public enum Event {

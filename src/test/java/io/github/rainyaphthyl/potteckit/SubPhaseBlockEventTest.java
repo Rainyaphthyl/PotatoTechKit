@@ -1,7 +1,7 @@
 package io.github.rainyaphthyl.potteckit;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.BlockEventSubPhase;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.SubPhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.BlockEventSubPhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.SubPhase;
 
 import java.util.HashSet;
 import java.util.Set;

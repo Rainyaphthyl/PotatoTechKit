@@ -1,15 +1,13 @@
-package io.github.rainyaphthyl.potteckit.mixin.server.chunkgraph;
+package io.github.rainyaphthyl.potteckit.mixin.chunkgraph;
 
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkEvent;
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkLoadCaptor;
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkLoadSource;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
 import io.github.rainyaphthyl.potteckit.config.Configs;
-import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkEvent;
-import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadCaptor;
-import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadSource;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.PhaseRecord;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.TickRecord;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -40,14 +38,9 @@ public abstract class MixinChunkProviderServer {
             if (server != null) {
                 DimensionType dimensionType = world.provider.getDimensionType();
                 MutablePhaseClock phaseClock = MutablePhaseClock.instanceFromServer(server);
-                PhaseRecord record = phaseClock.getRecord();
                 TickRecord tickStamp = phaseClock.markCurrentTickStamp();
-                //region debug
                 PlayerList playerList = server.getPlayerList();
-                ChunkPos chunkPos = chunk.getPos();
-                ChunkLoadCaptor.debugChunkTickStamp(tickStamp, chunkPos, dimensionType, ChunkEvent.LOADING, source, playerList);
-                ChunkLoadCaptor.debugOnChat(server.getTickCounter(), record, chunkPos, dimensionType, ChunkEvent.LOADING, source, playerList);
-                //endregion
+                ChunkLoadCaptor.debugChunkTickStamp(tickStamp, x, z, dimensionType, ChunkEvent.LOADING, source, playerList);
             }
         }
     }
@@ -60,10 +53,9 @@ public abstract class MixinChunkProviderServer {
             if (server != null && chunk.unloadQueued) {
                 DimensionType dimensionType = world.provider.getDimensionType();
                 MutablePhaseClock phaseClock = MutablePhaseClock.instanceFromServer(server);
-                PhaseRecord record = phaseClock.getRecord();
-                //region debug
-                ChunkLoadCaptor.debugOnChat(server.getTickCounter(), record, chunk.getPos(), dimensionType, ChunkEvent.CANCEL_UNLOAD, source, server.getPlayerList());
-                //endregion
+                TickRecord tickStamp = phaseClock.markCurrentTickStamp();
+                PlayerList playerList = server.getPlayerList();
+                ChunkLoadCaptor.debugChunkTickStamp(tickStamp, x, z, dimensionType, ChunkEvent.CANCEL_UNLOAD, source, playerList);
             }
         }
     }
@@ -76,10 +68,9 @@ public abstract class MixinChunkProviderServer {
             if (server != null && !chunkIn.unloadQueued) {
                 DimensionType dimensionType = world.provider.getDimensionType();
                 MutablePhaseClock phaseClock = MutablePhaseClock.instanceFromServer(server);
-                PhaseRecord record = phaseClock.getRecord();
-                //region debug
-                ChunkLoadCaptor.debugOnChat(server.getTickCounter(), record, chunkIn.getPos(), dimensionType, ChunkEvent.QUEUE_UNLOAD, source, server.getPlayerList());
-                //endregion
+                TickRecord tickStamp = phaseClock.markCurrentTickStamp();
+                PlayerList playerList = server.getPlayerList();
+                ChunkLoadCaptor.debugChunkTickStamp(tickStamp, chunkIn.x, chunkIn.z, dimensionType, ChunkEvent.QUEUE_UNLOAD, source, playerList);
             }
         }
     }
@@ -92,10 +83,9 @@ public abstract class MixinChunkProviderServer {
             if (server != null) {
                 DimensionType dimensionType = world.provider.getDimensionType();
                 MutablePhaseClock phaseClock = MutablePhaseClock.instanceFromServer(server);
-                PhaseRecord record = phaseClock.getRecord();
-                //region debug
-                ChunkLoadCaptor.debugOnChat(server.getTickCounter(), record, chunk.getPos(), dimensionType, ChunkEvent.UNLOADING, source, server.getPlayerList());
-                //endregion
+                TickRecord tickStamp = phaseClock.markCurrentTickStamp();
+                PlayerList playerList = server.getPlayerList();
+                ChunkLoadCaptor.debugChunkTickStamp(tickStamp, chunk.x, chunk.z, dimensionType, ChunkEvent.UNLOADING, source, playerList);
             }
         }
     }
@@ -108,10 +98,9 @@ public abstract class MixinChunkProviderServer {
             if (server != null) {
                 DimensionType dimensionType = world.provider.getDimensionType();
                 MutablePhaseClock phaseClock = MutablePhaseClock.instanceFromServer(server);
-                PhaseRecord record = phaseClock.getRecord();
-                //region debug
-                ChunkLoadCaptor.debugOnChat(server.getTickCounter(), record, new ChunkPos(x, z), dimensionType, ChunkEvent.GENERATING, source, server.getPlayerList());
-                //endregion
+                TickRecord tickStamp = phaseClock.markCurrentTickStamp();
+                PlayerList playerList = server.getPlayerList();
+                ChunkLoadCaptor.debugChunkTickStamp(tickStamp, x, z, dimensionType, ChunkEvent.GENERATING, source, playerList);
             }
         }
     }

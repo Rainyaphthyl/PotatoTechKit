@@ -1,7 +1,7 @@
-package io.github.rainyaphthyl.potteckit.mixin.server.gamephase;
+package io.github.rainyaphthyl.potteckit.mixin.gamephase;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;

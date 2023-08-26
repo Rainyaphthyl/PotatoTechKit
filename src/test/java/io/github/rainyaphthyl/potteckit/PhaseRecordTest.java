@@ -1,7 +1,7 @@
 package io.github.rainyaphthyl.potteckit;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.PhaseRecord;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.PhaseRecord;
 import net.minecraft.world.DimensionType;
 
 import java.util.*;

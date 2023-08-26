@@ -1,8 +1,8 @@
-package io.github.rainyaphthyl.potteckit.server.chunkgraph;
+package io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.TickRecord;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.SubPhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.SubPhase;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.DimensionType;
@@ -12,6 +12,7 @@ public class ChunkPacketBuffer extends PacketBuffer {
         super(wrapped);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public ChunkPacketBuffer writeTickRecord(TickRecord tickRecord) {
         if (tickRecord == null) {
             writeVarInt(-1);
@@ -29,6 +30,28 @@ public class ChunkPacketBuffer extends PacketBuffer {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
+    public ChunkPacketBuffer writeSignedVarInt(int input) {
+        int sign = (input & 0x80000000) >>> 31;
+        long abs = Math.abs((long) input);
+        long value = (abs << 1) | sign;
+        writeVarLong(value);
+        return this;
+    }
+
+    public int readSignedVarInt() {
+        long value = readVarLong();
+        int sign = (int) (value & 0x1L);
+        long abs = value >>> 1;
+        int output;
+        if (sign == 0) {
+            output = (int) abs;
+        } else {
+            output = (int) (-abs);
+        }
+        return output;
+    }
+
     public TickRecord readTickRecord() {
         int eventOrdinal = readVarInt();
         if (eventOrdinal == -1) {
@@ -44,12 +67,14 @@ public class ChunkPacketBuffer extends PacketBuffer {
         return TickRecord.getInstance(tickOrdinal, gameTime, dimensionType, gamePhase, null, eventOrdinal);
     }
 
-    public void writeSubPhase(SubPhase subPhase) {
+    @SuppressWarnings("UnusedReturnValue")
+    public ChunkPacketBuffer writeSubPhase(SubPhase subPhase) {
         if (subPhase == null) {
             writeBoolean(false);
         } else {
             writeBoolean(true);
             subPhase.writeToPacket(this);
         }
+        return this;
     }
 }

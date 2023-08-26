@@ -1,6 +1,6 @@
-package io.github.rainyaphthyl.potteckit.mixin.server.gamephase;
+package io.github.rainyaphthyl.potteckit.mixin.gamephase;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
 import net.minecraft.world.WorldProviderEnd;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

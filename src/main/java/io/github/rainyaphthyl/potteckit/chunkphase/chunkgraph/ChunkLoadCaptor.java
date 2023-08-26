@@ -1,7 +1,7 @@
-package io.github.rainyaphthyl.potteckit.server.chunkgraph;
+package io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.PhaseRecord;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.TickRecord;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.PhaseRecord;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
 import io.github.rainyaphthyl.potteckit.util.NetworkGraph;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.play.server.SPacketCustomPayload;
@@ -105,51 +105,11 @@ public class ChunkLoadCaptor {
         playerList.sendMessage(component);
     }
 
-    public static void debugChunkTickStamp(TickRecord record, ChunkPos currPos, @Nonnull DimensionType dimensionType, @Nonnull ChunkEvent event, ChunkLoadSource source, @Nonnull PlayerList playerList) {
+    public static void debugChunkTickStamp(TickRecord record, int chunkX, int chunkZ, DimensionType dimensionType, ChunkEvent event, @SuppressWarnings("unused") ChunkLoadSource source, @Nonnull PlayerList playerList) {
         ChunkPacketBuffer buffer = new ChunkPacketBuffer(Unpooled.buffer());
-        buffer.writeTickRecord(record);
         SPacketCustomPayload packet = new SPacketCustomPayload(CHANNEL_EVENT, buffer);
+        buffer.writeTickRecord(record).writeSignedVarInt(chunkX).writeSignedVarInt(chunkZ);
+        buffer.writeEnumValue(dimensionType).writeEnumValue(event);
         playerList.sendPacketToAllPlayers(packet);
-        ITextComponent component = new TextComponentString(String.valueOf(record));
-        component = component.setStyle(new Style().setColor(TextFormatting.WHITE));
-        StringBuilder msgBuilder = new StringBuilder(" Chunk ");
-        msgBuilder.append(currPos).append(' ');
-        switch (event) {
-            case LOADING:
-                msgBuilder.append("is loaded");
-                break;
-            case CANCEL_UNLOAD:
-                msgBuilder.append("cancels unloading");
-                break;
-            case QUEUE_UNLOAD:
-                msgBuilder.append("queues for unloading");
-                break;
-            case UNLOADING:
-                msgBuilder.append("is unloaded");
-                break;
-            case GENERATING:
-                msgBuilder.append("is generated");
-                break;
-            default:
-                msgBuilder.append("has undefined behaviors");
-        }
-        ITextComponent body = new TextComponentString(msgBuilder.toString());
-        TextFormatting color;
-        switch (dimensionType) {
-            case OVERWORLD:
-                color = TextFormatting.GREEN;
-                break;
-            case NETHER:
-                color = TextFormatting.RED;
-                break;
-            case THE_END:
-                color = TextFormatting.LIGHT_PURPLE;
-                break;
-            default:
-                color = TextFormatting.GRAY;
-        }
-        body.setStyle(new Style().setColor(color));
-        component.appendSibling(body);
-        playerList.sendMessage(component);
     }
 }

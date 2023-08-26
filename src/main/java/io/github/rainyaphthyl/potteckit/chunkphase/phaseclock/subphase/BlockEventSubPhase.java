@@ -1,6 +1,6 @@
-package io.github.rainyaphthyl.potteckit.server.phaseclock.subphase;
+package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.GamePhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
 import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;

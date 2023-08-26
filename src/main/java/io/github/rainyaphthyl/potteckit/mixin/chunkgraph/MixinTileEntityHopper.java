@@ -1,8 +1,8 @@
-package io.github.rainyaphthyl.potteckit.mixin.server.chunkgraph;
+package io.github.rainyaphthyl.potteckit.mixin.chunkgraph;
 
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkLoadCaptor;
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkLoadReason;
 import io.github.rainyaphthyl.potteckit.config.Configs;
-import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadCaptor;
-import io.github.rainyaphthyl.potteckit.server.chunkgraph.ChunkLoadReason;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.world.WorldServer;

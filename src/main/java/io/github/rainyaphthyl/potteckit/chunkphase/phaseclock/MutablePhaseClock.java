@@ -1,7 +1,7 @@
-package io.github.rainyaphthyl.potteckit.server.phaseclock;
+package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock;
 
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.SubPhase;
 import io.github.rainyaphthyl.potteckit.config.Configs;
-import io.github.rainyaphthyl.potteckit.server.phaseclock.subphase.SubPhase;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;

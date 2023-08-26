@@ -1,6 +1,6 @@
-package io.github.rainyaphthyl.potteckit.server.phaseclock.subphase;
+package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
-import io.github.rainyaphthyl.potteckit.server.phaseclock.MutablePhaseClock;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock;
 
 public class BlockEventClock extends MutablePhaseClock.SubPhaseClock {
     private int depth = 0;
