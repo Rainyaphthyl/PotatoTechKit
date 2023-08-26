@@ -64,7 +64,8 @@ public class ChunkPacketBuffer extends PacketBuffer {
         if (gamePhase.dimensional) {
             dimensionType = readEnumValue(DimensionType.class);
         }
-        return TickRecord.getInstance(tickOrdinal, gameTime, dimensionType, gamePhase, null, eventOrdinal);
+        SubPhase subPhase = readSubPhase(gamePhase);
+        return TickRecord.getInstance(tickOrdinal, gameTime, dimensionType, gamePhase, subPhase, eventOrdinal);
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -76,5 +77,21 @@ public class ChunkPacketBuffer extends PacketBuffer {
             subPhase.writeToPacket(this);
         }
         return this;
+    }
+
+    public SubPhase readSubPhase(GamePhase gamePhase) {
+        if (readBoolean()) {
+            Class<? extends SubPhase> subClass = gamePhase.subClass;
+            if (subClass == null) return null;
+            try {
+                SubPhase subPhase = subClass.newInstance();
+                subPhase.readFromPacket(this);
+                return subPhase;
+            } catch (InstantiationException | IllegalAccessException e) {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 }

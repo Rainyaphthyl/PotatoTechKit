@@ -51,6 +51,19 @@ public class TickRecord implements Comparable<TickRecord> {
         }
     }
 
+    public static char getDimensionChar(@Nonnull DimensionType dimensionType) {
+        switch (dimensionType) {
+            case OVERWORLD:
+                return 'w';
+            case NETHER:
+                return 'n';
+            case THE_END:
+                return 'e';
+            default:
+                return '?';
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,17 +91,8 @@ public class TickRecord implements Comparable<TickRecord> {
         StringBuilder builder = new StringBuilder();
         builder.append('[').append(tickOrdinal).append(':');
         if (dimensionType != null) {
-            switch (dimensionType) {
-                case OVERWORLD:
-                    builder.append('w');
-                    break;
-                case NETHER:
-                    builder.append('n');
-                    break;
-                case THE_END:
-                    builder.append('e');
-                    break;
-            }
+            char letter = getDimensionChar(dimensionType);
+            builder.append(letter);
         }
         // string with ":" means that the part should be null, instead of unknown.
         // e.g. the dimension part where the phase is not dimensional.

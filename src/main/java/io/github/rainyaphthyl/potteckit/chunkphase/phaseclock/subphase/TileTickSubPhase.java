@@ -6,6 +6,9 @@ import net.minecraft.network.PacketBuffer;
 import javax.annotation.Nonnull;
 
 public class TileTickSubPhase extends SubPhase {
+    public TileTickSubPhase() {
+    }
+
     @Override
     public GamePhase parentPhase() {
         return GamePhase.TILE_TICK;

@@ -8,9 +8,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
 
+/**
+ * All inheritors to this class must have a constructor without arguments
+ */
 public abstract class SubPhase implements Comparable<SubPhase> {
     protected static final int FIELD_MASK = Modifier.FINAL | Modifier.STATIC;
     protected static final int FIELD_EXPECTATION = Modifier.FINAL;
+
+    /**
+     * All inheritors to this class must have a constructor without arguments
+     */
+    public SubPhase() {
+    }
 
     public abstract GamePhase parentPhase();
 

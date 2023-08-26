@@ -2,6 +2,8 @@ package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock;
 
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock.SubPhaseClock;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.BlockEventClock;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.BlockEventSubPhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.SubPhase;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -35,7 +37,7 @@ public enum GamePhase {
     VILLAGE_TICK(true, "Village Tick", "VT"),
     VILLAGE_SIEGE(true, "Village Siege", "VS"),
     PORTAL_REMOVAL(true, "Portal Removal", "PR"),
-    BLOCK_EVENT(true, "Block Events", "BE", BlockEventClock.class),
+    BLOCK_EVENT(true, "Block Events", "BE", BlockEventSubPhase.class, BlockEventClock.class),
     WORLD_IDLE_CHECK(true, "World Idle Check", "WIC"),
     DRAGON_FIGHT(true, "Dragon Fight", "DF"),
     GLOBAL_ENTITY_UPDATE(true, "Global Entity Update", "GE"),
@@ -70,6 +72,14 @@ public enum GamePhase {
             if (previous != null) {
                 throw new IllegalArgumentException();
             }
+            Class<? extends SubPhase> subClass = phase.subClass;
+            if (subClass != null) {
+                try {
+                    subClass.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
         }
     }
 
@@ -80,27 +90,30 @@ public enum GamePhase {
     public final boolean outOfTick;
     public final String description;
     public final String shortName;
+    public final Class<? extends SubPhase> subClass;
     public final Class<? extends SubPhaseClock> clockClass;
     private final ITextComponent component;
 
     GamePhase(boolean dimensional, String description, String shortName) {
-        this(dimensional, description, shortName, null);
+        this(dimensional, description, shortName, null, null);
     }
 
     GamePhase(boolean dimensional, boolean outOfTick, String description, String shortName) {
-        this(dimensional, outOfTick, description, shortName, null);
+        this(dimensional, outOfTick, description, shortName, null, null);
     }
 
-    GamePhase(boolean dimensional, String description, String shortName, Class<? extends SubPhaseClock> clockClass) {
-        this(dimensional, false, description, shortName, clockClass);
+    GamePhase(boolean dimensional, String description, String shortName, Class<? extends SubPhase> subClass, Class<? extends SubPhaseClock> clockClass) {
+        this(dimensional, false, description, shortName, subClass, clockClass);
     }
 
-    GamePhase(boolean dimensional, boolean outOfTick, String description, String shortName, Class<? extends SubPhaseClock> clockClass) {
+    GamePhase(boolean dimensional, boolean outOfTick, String description, String shortName, Class<? extends SubPhase> subClass, Class<? extends SubPhaseClock> clockClass) {
         this.dimensional = dimensional;
         this.outOfTick = outOfTick;
         this.description = description;
         this.shortName = shortName;
+        this.subClass = subClass;
         this.clockClass = clockClass;
+        if ((subClass == null) != (clockClass == null)) throw new NullPointerException();
         component = new TextComponentString(this.shortName);
         Style style = new Style();
         ITextComponent hover = new TextComponentString("(" + ordinal() + ')' + description);

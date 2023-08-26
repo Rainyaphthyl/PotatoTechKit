@@ -9,6 +9,9 @@ public class BlockEventSubPhase extends SubPhase {
     private int depth;
     private int orderAtDepth;
 
+    public BlockEventSubPhase() {
+    }
+
     public BlockEventSubPhase(int depth, int orderAtDepth) {
         this.depth = depth;
         this.orderAtDepth = orderAtDepth;
@@ -22,8 +25,8 @@ public class BlockEventSubPhase extends SubPhase {
 
     @Override
     public void writeToPacket(@Nonnull PacketBuffer buffer) {
-        buffer.writeVarInt(depth);
-        buffer.writeVarInt(orderAtDepth);
+        buffer.writeVarInt(getDepth());
+        buffer.writeVarInt(getOrderAtDepth());
     }
 
     @Override
@@ -36,8 +39,8 @@ public class BlockEventSubPhase extends SubPhase {
         if (obj == this) return 0;
         requiresSubClass(obj);
         BlockEventSubPhase that = (BlockEventSubPhase) obj;
-        if (depth != that.depth) return Integer.compare(depth, that.depth);
-        return Integer.compare(orderAtDepth, that.orderAtDepth);
+        if (getDepth() != that.getDepth()) return Integer.compare(getDepth(), that.getDepth());
+        return Integer.compare(getOrderAtDepth(), that.getOrderAtDepth());
     }
 
     @Override
@@ -45,19 +48,27 @@ public class BlockEventSubPhase extends SubPhase {
         if (this == o) return true;
         if (!(o instanceof BlockEventSubPhase)) return false;
         BlockEventSubPhase that = (BlockEventSubPhase) o;
-        if (depth != that.depth) return false;
-        return orderAtDepth == that.orderAtDepth;
+        if (getDepth() != that.getDepth()) return false;
+        return getOrderAtDepth() == that.getOrderAtDepth();
     }
 
     @Override
     public int hashCode() {
-        int result = depth;
-        result = 31 * result + orderAtDepth;
+        int result = getDepth();
+        result = 31 * result + getOrderAtDepth();
         return result;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(depth) + ':' + orderAtDepth;
+        return String.valueOf(getDepth()) + ':' + getOrderAtDepth();
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public int getOrderAtDepth() {
+        return orderAtDepth;
     }
 }
