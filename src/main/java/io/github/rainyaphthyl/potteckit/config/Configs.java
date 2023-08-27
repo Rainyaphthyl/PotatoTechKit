@@ -14,10 +14,16 @@ import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 
 public class Configs {
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = {Domain.GENERIC, Domain.TWEAK})
-    public static final HotkeyedBooleanConfig enablePotteckit = new HotkeyedBooleanConfig("enablePotteckit", true, "");
-    @Config(types = Type.HOTKEY, domains = {Domain.GENERIC, Domain.ACTION})
-    public static final HotkeyConfig openConfigScreen = new HotkeyConfig("openConfigScreen", "K,C");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.GENERIC, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig enablePotteckit = new HotkeyedBooleanConfig("enable_potteckit", true, "", "enable_potteckit", "enable_potteckit");
+    @Config(types = Type.HOTKEY, domains = Domain.GENERIC, notVanilla = false, cheating = false)
+    public static final HotkeyConfig openConfigScreen = new HotkeyConfig("open_config_screen", "K,C");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, needServer = true, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig chunkLoadingGraph = new HotkeyedBooleanConfig("chunk_loading_graph", false, "", "chunk_loading_graph", "chunk_loading_graph");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, needServer = true, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig chunkLoadingDetails = new HotkeyedBooleanConfig("chunk_loading_details", false, "", "chunk_loading_details", "chunk_loading_details");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, notVanilla = false, cheating = false)
+    public static final HotkeyedBooleanConfig chunkLoadingGraphReceiver = new HotkeyedBooleanConfig("chunk_loading_graph_receiver", false, "", "chunk_loading_graph_receiver", "chunk_loading_graph_receiver");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig moreProfilerLevels = new HotkeyedBooleanConfig("moreProfilerLevels", false, "");
     //@Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, enabled = false)

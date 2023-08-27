@@ -11,7 +11,17 @@
     "client.render.MixinChunkRenderDispatcher",
     "client.render.MixinChunkRenderWorker",
     "client.render.MixinRenderChunk",
-    "client.render.MixinRenderGlobal"
+    "client.render.MixinRenderGlobal",
+    "chunkgraph.MixinChunkProviderServer",
+    "chunkgraph.MixinTileEntityHopper",
+    "core.MixinNetHandlerPlayClient",
+    "gamephase.MixinEntityTracker",
+    "gamephase.MixinIntegratedServer",
+    "gamephase.MixinMinecraftServer",
+    "gamephase.MixinWorld",
+    "gamephase.MixinWorldProvider",
+    "gamephase.MixinWorldProviderEnd",
+    "gamephase.MixinWorldServer"
   ],
   "injectors": {
     "defaultRequire": 1
