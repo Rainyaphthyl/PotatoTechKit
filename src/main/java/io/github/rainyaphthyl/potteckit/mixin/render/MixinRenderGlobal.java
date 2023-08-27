@@ -92,6 +92,7 @@ public abstract class MixinRenderGlobal {
         }
     }
 
+    // This mixin fails with tweakeroo-0.31.0
     @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;needsImmediateUpdate()Z"))
     public boolean setImmediateUpdate(RenderChunk instance) {
         if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread()) {
@@ -101,7 +102,7 @@ public abstract class MixinRenderGlobal {
         }
     }
 
-    @ModifyVariable(method = "setupTerrain", name = "flag3", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;needsImmediateUpdate()Z"))
+    @ModifyVariable(method = "setupTerrain", index = 22, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;needsImmediateUpdate()Z"))
     public boolean setPlayerNearbyFlag(boolean flag) {
         if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread()) {
             return false;

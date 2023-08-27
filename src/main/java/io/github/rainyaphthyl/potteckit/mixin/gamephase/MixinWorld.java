@@ -20,9 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinWorld {
     @Shadow
     @Final
-    public WorldProvider provider;
-    @Shadow
-    @Final
     public boolean isRemote;
     @Unique
     protected MutablePhaseClock potatoTechKit$clock = null;
