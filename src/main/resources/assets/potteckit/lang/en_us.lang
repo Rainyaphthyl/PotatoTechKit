@@ -10,8 +10,30 @@ potteckit.config.tab.server=Need Server
 potteckit.config.tab.vanilless=Not Vanilla
 potteckit.config.tab.cheat=Cheating
 
-potteckit.config.name.enablepotteckit=Enable Potteckit
-potteckit.config.comment.enablepotteckit=The global switch of Potato Tech Kit mod
+potteckit.config.name.enable_potteckit=Potteckit Global Switch
+potteckit.config.comment.enable_potteckit=The global switch of Potato Tech Kit mod.
 
-potteckit.hotkey.name.openconfigscreen=Open Config Screen
-potteckit.hotkey.comment.openconfigscreen=Open the config screen of Potato Tech Kit
+potteckit.config.name.chunk_loading_graph=§6Chunk Loading Graph§r
+potteckit.config.comment.chunk_loading_graph=§6(SERVER-SIDE MODIFICATION)§r\nCaptures the chunk loading chains during chunk loaders running.
+potteckit.config.name.chunk_loading_details=§6Chunk Loading Details§r
+potteckit.config.comment.chunk_loading_details=§6(SERVER-SIDE MODIFICATION)§r\nCaptures the sub-phase details of the timestamps (tick records), when the chunk loading captor is running.
+potteckit.config.name.chunk_loading_graph_receiver=§eChunk Loading Graph Client§r
+potteckit.config.comment.chunk_loading_graph_receiver=§e(SINGLE-PLAYER ONLY or NEED SPECIAL PROTOCOLS)§r\nThe client-side tools of Chunk Loading Graph.
+
+potteckit.config.name.more_profiler_levels=More Profiler Levels
+potteckit.config.comment.more_profiler_levels=More detailed info at deeper levels will be added into the profiler graph (the pie charts in the lower right), e.g. more separated entries of "root.gameRenderer.level.terrain_setup.rebuildNear".
+potteckit.config.name.profile_immediate_chunk_rebuild=Immediate Chunk Rebuild Profiler
+potteckit.config.comment.profile_immediate_chunk_rebuild=A chat-based profiler of the laggy immediate chunk rebuild (re-render).
+potteckit.config.name.yeet_chunk_rebuild=Disable Chunk Re-render
+potteckit.config.comment.yeet_chunk_rebuild=Disables the immediate chunk re-render which may cause extreme client-side lag spikes due to a vanilla bug.
+potteckit.config.name.auto_disturb_chunk_rebuild=Auto Disturb Chunk Re-render
+potteckit.config.comment.auto_disturb_chunk_rebuild=Aborts the re-render of some later chunks when the immediate re-render has taken a lot of time in a frame. This has an effect similar to "Chunk Re-render Buffer".
+potteckit.config.name.chunk_rebuild_buffer=Chunk Re-render Buffer
+potteckit.config.comment.chunk_rebuild_buffer=Puts the immediate re-render of some later chunks into asynchronous threads when the it has taken a lot of time in a frame. This has an effect similar to "Auto Disturb Chunk Re-render".
+potteckit.config.name.chunk_rebuild_disturb_threshold=Chunk Re-render Skipping Threshold
+potteckit.config.comment.chunk_rebuild_disturb_threshold=The estimated FPS at which the later chunk re-render should be skipped. This option is related to "Auto Disturb Chunk Re-render" and "Chunk Re-render Buffer".
+potteckit.config.name.async_nearby_chunk_render=Async Nearby Chunk Render
+potteckit.config.comment.async_nearby_chunk_render=Makes the immediate nearby chunk re-render multi-threaded, i.e. to be not immediate and be less laggy.
+
+potteckit.hotkey.name.open_config_screen=Open Config Screen
+potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.

@@ -83,7 +83,7 @@ public class ConfigHandler {
         }
         if (annotation.cheating()) categoryList.add(Category.CHEATING);
         if (annotation.notVanilla()) categoryList.add(Category.NOT_VANILLA);
-        if (annotation.needServer()) categoryList.add(Category.WITH_SERVER);
+        if (annotation.serverSide()) categoryList.add(Category.WITH_SERVER);
         return categoryList.toArray(new Category[0]);
     }
 }

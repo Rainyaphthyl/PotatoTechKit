@@ -1,6 +1,9 @@
 package io.github.rainyaphthyl.potteckit.config.annotation;
 
 public enum Domain {
+    /**
+     * Main menu and mods of mods
+     */
     GENERIC(Category.GENERIC),
     /**
      * Helping players to see more info
