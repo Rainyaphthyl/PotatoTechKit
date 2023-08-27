@@ -11,15 +11,13 @@ import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nonnull;
@@ -92,22 +90,20 @@ public abstract class MixinRenderGlobal {
         }
     }
 
-    // This mixin fails with tweakeroo-0.31.0
-    @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;needsImmediateUpdate()Z"))
-    public boolean setImmediateUpdate(RenderChunk instance) {
-        if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread()) {
-            return false;
-        } else {
-            return instance.needsImmediateUpdate();
+    @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;getPosition()Lnet/minecraft/util/math/BlockPos;"))
+    public BlockPos setImmediateUpdate(RenderChunk instance) {
+        if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread() && instance instanceof AccessRenderChunk) {
+            ((AccessRenderChunk) instance).setNeedImmediate(false);
         }
+        return instance.getPosition();
     }
 
-    @ModifyVariable(method = "setupTerrain", index = 22, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;needsImmediateUpdate()Z"))
-    public boolean setPlayerNearbyFlag(boolean flag) {
+    @ModifyConstant(method = "setupTerrain", constant = @Constant(doubleValue = 768.0))
+    public double setPlayerDistance(double constant) {
         if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread()) {
-            return false;
+            return -1.0;
         } else {
-            return flag;
+            return constant;
         }
     }
 
