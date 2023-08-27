@@ -14,9 +14,9 @@ import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 
 public class Configs {
-    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.GENERIC)
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = {Domain.GENERIC, Domain.TWEAK})
     public static final HotkeyedBooleanConfig enablePotteckit = new HotkeyedBooleanConfig("enable_potteckit", true, "", "enable_potteckit", "enable_potteckit");
-    @Config(types = Type.HOTKEY, domains = Domain.GENERIC)
+    @Config(types = Type.HOTKEY, domains = {Domain.GENERIC, Domain.ACTION})
     public static final HotkeyConfig openConfigScreen = new HotkeyConfig("open_config_screen", "K,C");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER, serverSide = true)
     public static final HotkeyedBooleanConfig chunkLoadingGraph = new HotkeyedBooleanConfig("chunk_loading_graph", false, "", "chunk_loading_graph", "chunk_loading_graph");
@@ -27,9 +27,9 @@ public class Configs {
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig moreProfilerLevels = new HotkeyedBooleanConfig("more_profiler_levels", false, "", "more_profiler_levels", "more_profiler_levels");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.METER)
-    public static final HotkeyedBooleanConfig profileImmediateChunkRebuild = new HotkeyedBooleanConfig("profileImmediateChunkRebuild", false, "");
+    public static final HotkeyedBooleanConfig profileImmediateChunkRebuild = new HotkeyedBooleanConfig("profile_immediate_chunk_rebuild", false, "", "profile_immediate_chunk_rebuild", "profile_immediate_chunk_rebuild");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET)
-    public static final HotkeyedBooleanConfig yeetChunkRebuild = new HotkeyedBooleanConfig("yeetChunkRebuild", false, "");
+    public static final HotkeyedBooleanConfig yeetChunkRebuild = new HotkeyedBooleanConfig("yeet_chunk_rebuild", false, "", "yeet_chunk_rebuild", "yeet_chunk_rebuild");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig autoDisturbChunkRebuild = new HotkeyedBooleanConfig("auto_disturb_chunk_rebuild", false, "", "auto_disturb_chunk_rebuild", "auto_disturb_chunk_rebuild");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
