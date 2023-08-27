@@ -9,9 +9,6 @@ public class BlockEventSubPhase extends SubPhase {
     private int depth;
     private int orderAtDepth;
 
-    public BlockEventSubPhase() {
-    }
-
     public BlockEventSubPhase(int depth, int orderAtDepth) {
         this.depth = depth;
         this.orderAtDepth = orderAtDepth;

@@ -12,7 +12,6 @@ public class ChunkPacketBuffer extends PacketBuffer {
         super(wrapped);
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public ChunkPacketBuffer writeTickRecord(TickRecord tickRecord) {
         if (tickRecord == null) {
             writeVarInt(-1);
@@ -30,7 +29,6 @@ public class ChunkPacketBuffer extends PacketBuffer {
         return this;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public ChunkPacketBuffer writeSignedVarInt(int input) {
         int sign = (input & 0x80000000) >>> 31;
         long abs = Math.abs((long) input);
@@ -81,15 +79,11 @@ public class ChunkPacketBuffer extends PacketBuffer {
 
     public SubPhase readSubPhase(GamePhase gamePhase) {
         if (readBoolean()) {
-            Class<? extends SubPhase> subClass = gamePhase.subClass;
-            if (subClass == null) return null;
-            try {
-                SubPhase subPhase = subClass.newInstance();
+            SubPhase subPhase = SubPhase.createInstance(gamePhase);
+            if (subPhase != null) {
                 subPhase.readFromPacket(this);
-                return subPhase;
-            } catch (InstantiationException | IllegalAccessException e) {
-                return null;
             }
+            return subPhase;
         } else {
             return null;
         }

@@ -72,14 +72,6 @@ public enum GamePhase {
             if (previous != null) {
                 throw new IllegalArgumentException();
             }
-            Class<? extends SubPhase> subClass = phase.subClass;
-            if (subClass != null) {
-                try {
-                    subClass.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }
         }
     }
 

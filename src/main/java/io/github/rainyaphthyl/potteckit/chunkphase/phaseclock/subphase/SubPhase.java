@@ -5,6 +5,7 @@ import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
 
@@ -19,6 +20,28 @@ public abstract class SubPhase implements Comparable<SubPhase> {
      * All inheritors to this class must have a constructor without arguments
      */
     public SubPhase() {
+    }
+
+    public static SubPhase createInstance(GamePhase gamePhase) {
+        if (gamePhase == null) {
+            return null;
+        }
+        Class<? extends SubPhase> subCLass = gamePhase.subClass;
+        if (subCLass == null) {
+            return null;
+        }
+        try {
+            switch (gamePhase) {
+                case BLOCK_EVENT:
+                    return subCLass.getConstructor(int.class, int.class).newInstance(0, 0);
+                case TILE_TICK:
+                    return subCLass.getConstructor().newInstance();
+                default:
+                    return null;
+            }
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            return null;
+        }
     }
 
     public abstract GamePhase parentPhase();
