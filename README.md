@@ -9,7 +9,8 @@
 
 ### Features and Functions
 
-- [ChangeLog](ChangeLog.md)
+1. Press `K + C` to open the config screen.
+2. [ChangeLog](ChangeLog.md).
 
 ## Development
 

@@ -72,7 +72,7 @@ litemod {
         displayName = modName
         version = modVersion
         mcversion = mcVersion
-        description = "Potato's Technical Kit"
+        description = "A development kit for Vanilla Technical Minecraft, also with some plain features and fixes."
         author = project.author
         mixinConfigs += "mixins.potteckit.json"
     }

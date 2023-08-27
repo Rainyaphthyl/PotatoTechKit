@@ -2,7 +2,7 @@
   {
     "modid": "potteckit",
     "name": "PotatoTechKit",
-    "description": "",
+    "description": "A development kit for Vanilla Technical Minecraft, also with some plain features and fixes.",
     "version": "${modVersion}",
     "mcversion": "${mcVersion}",
     "url": "https://github.com/Rainyaphthyl/PotatoTechKit",
