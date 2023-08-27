@@ -9,6 +9,7 @@ public class InvIntegerConfig extends IntegerConfig {
     protected double product;
     protected double inverseValue;
 
+    @SuppressWarnings("unused")
     public InvIntegerConfig(String name, int defaultValue) {
         this(name, defaultValue, 1.0);
     }
@@ -17,10 +18,12 @@ public class InvIntegerConfig extends IntegerConfig {
         this(name, product, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, name);
     }
 
+    @SuppressWarnings("unused")
     public InvIntegerConfig(String name, int defaultValue, double product, String commentTranslationKey) {
         this(name, product, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, commentTranslationKey);
     }
 
+    @SuppressWarnings("unused")
     public InvIntegerConfig(String name, double product, int defaultValue, int minValue, int maxValue) {
         this(name, product, defaultValue, minValue, maxValue, name);
     }

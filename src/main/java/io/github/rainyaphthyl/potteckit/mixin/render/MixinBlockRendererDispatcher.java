@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.mixin.client.render;
+package io.github.rainyaphthyl.potteckit.mixin.render;
 
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import net.minecraft.block.state.IBlockState;

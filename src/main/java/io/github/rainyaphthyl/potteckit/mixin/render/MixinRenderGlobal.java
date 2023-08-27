@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.mixin.client.render;
+package io.github.rainyaphthyl.potteckit.mixin.render;
 
 import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
 import fi.dy.masa.malilib.overlay.message.MessageOutput;
