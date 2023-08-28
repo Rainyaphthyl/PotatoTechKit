@@ -4,6 +4,9 @@
   "package": "io.github.rainyaphthyl.potteckit.mixin",
   "refmap": "mixins.potteckit.refmap.json",
   "mixins": [
+    "access.AccessChunkRenderWorker",
+    "access.AccessMinecraft",
+    "access.AccessRenderChunk",
     "chunkgraph.MixinChunkProviderServer",
     "chunkgraph.MixinTileEntityHopper",
     "core.MixinNetHandlerPlayClient",
@@ -13,7 +16,12 @@
     "gamephase.MixinWorld",
     "gamephase.MixinWorldProvider",
     "gamephase.MixinWorldProviderEnd",
-    "gamephase.MixinWorldServer"
+    "gamephase.MixinWorldServer",
+    "render.MixinBlockRendererDispatcher",
+    "render.MixinChunkRenderDispatcher",
+    "render.MixinChunkRenderWorker",
+    "render.MixinRenderChunk",
+    "render.MixinRenderGlobal"
   ],
   "injectors": {
     "defaultRequire": 1

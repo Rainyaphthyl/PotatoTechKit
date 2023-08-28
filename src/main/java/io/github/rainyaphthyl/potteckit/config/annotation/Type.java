@@ -8,5 +8,6 @@ public enum Type {
     /**
      * Config with any hotkey
      */
-    HOTKEY
+    HOTKEY,
+    NUMBER,
 }
