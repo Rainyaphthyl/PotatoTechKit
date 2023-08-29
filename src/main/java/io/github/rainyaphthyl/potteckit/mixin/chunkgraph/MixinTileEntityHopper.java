@@ -5,6 +5,7 @@ import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkLoadReason;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +20,8 @@ public abstract class MixinTileEntityHopper extends TileEntity {
             if (world instanceof WorldServer) {
                 int chunkX = pos.getX() >> 4;
                 int chunkZ = pos.getZ() >> 4;
-                ChunkLoadCaptor.pushThreadSource(chunkX, chunkZ, ChunkLoadReason.HOPPER_POINTING);
+                DimensionType dimensionType = world.provider.getDimensionType();
+                ChunkLoadCaptor.pushThreadSource(chunkX, chunkZ, dimensionType, ChunkLoadReason.HOPPER_POINTING);
             }
         }
     }
