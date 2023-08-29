@@ -21,6 +21,10 @@ public abstract class MixinWorld {
     @Shadow
     @Final
     public boolean isRemote;
+
+    @Shadow
+    public abstract long getTotalWorldTime();
+
     @Unique
     protected MutablePhaseClock potatoTechKit$clock = null;
 

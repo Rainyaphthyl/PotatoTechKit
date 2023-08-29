@@ -8,8 +8,11 @@ import javax.annotation.Nonnull;
 
 public class TileTickClock extends MutablePhaseClock.SubPhaseClock {
     private int priority;
+    private long scheduledTime;
     private long delay;
     private long entryID;
+    private long relativeID;
+    private long prevStdID;
 
     public TileTickClock(MutablePhaseClock parentClock) {
         super(parentClock);
@@ -17,14 +20,17 @@ public class TileTickClock extends MutablePhaseClock.SubPhaseClock {
 
     @Override
     public SubPhase createRecord() {
-        return new TileTickSubPhase(delay, priority, entryID);
+        return new TileTickSubPhase(delay, priority, relativeID);
     }
 
     @Override
     public void reset() {
         priority = Integer.MIN_VALUE;
+        scheduledTime = 0L;
         delay = 0L;
         entryID = 0L;
+        relativeID = 0L;
+        prevStdID = 0L;
     }
 
     @Override
@@ -44,22 +50,28 @@ public class TileTickClock extends MutablePhaseClock.SubPhaseClock {
 
     @Override
     protected boolean operate(@Nonnull Object... args) {
-        if (args.length < 1) return false;
-        Object object = args[0];
-        if (!(object instanceof NextTickListEntry)) return false;
-        NextTickListEntry currEntry = (NextTickListEntry) object;
+        if (args.length < 2) return false;
+        if (!(args[0] instanceof Long)) return false;
+        long currWorldTime = (Long) args[0];
+        if (!(args[1] instanceof NextTickListEntry)) return false;
+        NextTickListEntry currEntry = (NextTickListEntry) args[1];
         // delay
-        long tempDelay = currEntry.scheduledTime;
-        boolean flag = tempDelay == delay;
-        delay = tempDelay;
+        long tempSchedule = currEntry.scheduledTime;
+        boolean noChange = tempSchedule == scheduledTime;
+        scheduledTime = tempSchedule;
+        delay = scheduledTime - currWorldTime;
         // priority
         int tempPriority = currEntry.priority;
-        flag &= tempPriority == priority;
+        noChange &= tempPriority == priority;
         priority = tempPriority;
         // ID
         long tempID = ((AccessNextTickListEntry) currEntry).getTickEntryID();
-        flag &= tempID == entryID;
+        if (!noChange) {
+            prevStdID = tempID;
+        }
+        noChange &= tempID == entryID;
         entryID = tempID;
-        return !flag;
+        relativeID = entryID - prevStdID;
+        return !noChange;
     }
 }

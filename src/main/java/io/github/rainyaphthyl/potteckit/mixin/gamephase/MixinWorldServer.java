@@ -82,7 +82,7 @@ public abstract class MixinWorldServer extends MixinWorld {
 
     @Inject(method = "tickUpdates", locals = LocalCapture.CAPTURE_FAILEXCEPTION, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;"))
     public void tileTickCount(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, int i, Iterator<NextTickListEntry> iterator, NextTickListEntry currEntry, int k) {
-        potatoTechKit$clock.operateSubPhase(GamePhase.TILE_TICK, currEntry);
+        potatoTechKit$clock.operateSubPhase(GamePhase.TILE_TICK, getTotalWorldTime(), currEntry);
     }
 
     @Inject(method = "tickUpdates", at = @At(value = "RETURN"))

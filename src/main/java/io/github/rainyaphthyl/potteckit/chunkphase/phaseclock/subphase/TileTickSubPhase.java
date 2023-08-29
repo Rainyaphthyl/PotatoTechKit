@@ -6,14 +6,17 @@ import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
 import javax.annotation.Nonnull;
 
 public class TileTickSubPhase extends SubPhase {
+    /**
+     * normally as {@code 0}; in case the TT executes earlier or later than schedule
+     */
     private long delay;
     private int priority;
-    private long entryID;
+    private long relativeID;
 
-    public TileTickSubPhase(long delay, int priority, long entryID) {
+    public TileTickSubPhase(long delay, int priority, long relativeID) {
         this.delay = delay;
         this.priority = priority;
-        this.entryID = entryID;
+        this.relativeID = relativeID;
     }
 
     @Override
@@ -32,10 +35,10 @@ public class TileTickSubPhase extends SubPhase {
             return 1;
         } else if (getPriority() != that.getPriority()) {
             return getPriority() - that.getPriority();
-        } else if (getEntryID() < that.getEntryID()) {
+        } else if (getRelativeID() < that.getRelativeID()) {
             return -1;
         } else {
-            return getEntryID() > that.getEntryID() ? 1 : 0;
+            return getRelativeID() > that.getRelativeID() ? 1 : 0;
         }
     }
 
@@ -43,14 +46,14 @@ public class TileTickSubPhase extends SubPhase {
     public void readFromPacket(@Nonnull ChunkPacketBuffer buffer) {
         delay = buffer.readVarLong();
         priority = buffer.readSignedVarInt();
-        entryID = buffer.readVarLong();
+        relativeID = buffer.readVarLong();
     }
 
     @Override
     public void writeToPacket(@Nonnull ChunkPacketBuffer buffer) {
         buffer.writeVarLong(getDelay());
         buffer.writeSignedVarInt(getPriority());
-        buffer.writeVarLong(getEntryID());
+        buffer.writeVarLong(getRelativeID());
     }
 
     @Override
@@ -60,15 +63,20 @@ public class TileTickSubPhase extends SubPhase {
         TileTickSubPhase that = (TileTickSubPhase) o;
         if (getDelay() != that.getDelay()) return false;
         if (getPriority() != that.getPriority()) return false;
-        return getEntryID() == that.getEntryID();
+        return getRelativeID() == that.getRelativeID();
     }
 
     @Override
     public int hashCode() {
         int result = (int) (getDelay() ^ (getDelay() >>> 32));
         result = 31 * result + getPriority();
-        result = 31 * result + (int) (getEntryID() ^ (getEntryID() >>> 32));
+        result = 31 * result + (int) (getRelativeID() ^ (getRelativeID() >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(getDelay()) + ':' + getPriority() + ':' + getRelativeID();
     }
 
     public long getDelay() {
@@ -79,7 +87,7 @@ public class TileTickSubPhase extends SubPhase {
         return priority;
     }
 
-    public long getEntryID() {
-        return entryID;
+    public long getRelativeID() {
+        return relativeID;
     }
 }

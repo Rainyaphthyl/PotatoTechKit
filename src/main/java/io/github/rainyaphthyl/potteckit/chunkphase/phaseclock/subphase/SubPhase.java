@@ -4,7 +4,6 @@ import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkPacketBuffer;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
@@ -75,30 +74,5 @@ public abstract class SubPhase implements Comparable<SubPhase> {
     public abstract int hashCode();
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        Class<? extends SubPhase> subClass = getClass();
-        Field[] fields = subClass.getDeclaredFields();
-        for (int i = 0; i < fields.length; ++i) {
-            Field field = fields[i];
-            int modifiers = field.getModifiers();
-            if ((modifiers & FIELD_MASK) == FIELD_EXPECTATION) {
-                try {
-                    boolean access = field.isAccessible();
-                    field.setAccessible(true);
-                    Object object = field.get(this);
-                    field.setAccessible(access);
-                    if (i > 0) {
-                        builder.append(':');
-                    }
-                    if (object != null) {
-                        builder.append(object);
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return builder.toString();
-    }
+    public abstract String toString();
 }
