@@ -1,7 +1,7 @@
 package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkPacketBuffer;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
-import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
@@ -26,16 +26,16 @@ public abstract class SubPhase implements Comparable<SubPhase> {
         if (gamePhase == null) {
             return null;
         }
-        Class<? extends SubPhase> subCLass = gamePhase.subClass;
-        if (subCLass == null) {
+        Class<? extends SubPhase> subClass = gamePhase.subClass;
+        if (subClass == null) {
             return null;
         }
         try {
             switch (gamePhase) {
                 case BLOCK_EVENT:
-                    return subCLass.getConstructor(int.class, int.class).newInstance(0, 0);
+                    return subClass.getConstructor(int.class, int.class).newInstance(0, 0);
                 case TILE_TICK:
-                    return subCLass.getConstructor().newInstance();
+                    return subClass.getConstructor(long.class, int.class, long.class).newInstance(0L, 0, 0L);
                 default:
                     return null;
             }
@@ -64,9 +64,9 @@ public abstract class SubPhase implements Comparable<SubPhase> {
         }
     }
 
-    public abstract void readFromPacket(@Nonnull PacketBuffer buffer);
+    public abstract void readFromPacket(@Nonnull ChunkPacketBuffer buffer);
 
-    public abstract void writeToPacket(@Nonnull PacketBuffer buffer);
+    public abstract void writeToPacket(@Nonnull ChunkPacketBuffer buffer);
 
     @Override
     public abstract boolean equals(Object obj);

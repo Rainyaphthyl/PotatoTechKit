@@ -1,9 +1,7 @@
 package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock;
 
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock.SubPhaseClock;
-import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.BlockEventClock;
-import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.BlockEventSubPhase;
-import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.SubPhase;
+import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -30,7 +28,7 @@ public enum GamePhase {
     MOB_SPAWNING(true, "Mob Spawning", "MS"),
     CHUNK_UNLOAD(true, "Chunk Unload", "CU"),
     WORLD_TIME_UPDATE(true, "World Time Counting", "WTC"),
-    TILE_TICK(true, "Tile Tick", "TT"),
+    TILE_TICK(true, "Tile Tick", "TT", TileTickSubPhase.class, TileTickClock.class),
     PLAYER_LIGHT_CHECK(true, "Player Light Check", "PLC"),
     CHUNK_TICK(true, "Chunk Tick", "CT"),
     PLAYER_CHUNK_MAP(true, "Player Chunk Map", "PCM"),
