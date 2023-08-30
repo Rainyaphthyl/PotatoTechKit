@@ -34,6 +34,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig autoDisturbChunkRebuild = new HotkeyedBooleanConfig("auto_disturb_chunk_rebuild", false, "", "auto_disturb_chunk_rebuild", "auto_disturb_chunk_rebuild");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig chunkRebuildBuffer = new HotkeyedBooleanConfig("chunk_rebuild_buffer", false, "", "chunk_rebuild_buffer", "chunk_rebuild_buffer");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
+    public static final HotkeyedBooleanConfig chunkRebuildAutoBlacklist = new HotkeyedBooleanConfig("chunk_rebuild_auto_blacklist", false, "", "chunk_rebuild_auto_blacklist", "chunk_rebuild_auto_blacklist");
     @Config(types = Type.NUMBER, domains = Domain.TWEAK)
     public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunk_rebuild_disturb_threshold", 0.75e+9, 40, 1, 120, "chunk_rebuild_disturb_threshold");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
