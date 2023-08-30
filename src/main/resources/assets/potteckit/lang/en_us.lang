@@ -35,5 +35,8 @@ potteckit.config.comment.chunk_rebuild_disturb_threshold=The estimated FPS at wh
 potteckit.config.name.async_nearby_chunk_render=Async Nearby Chunk Render
 potteckit.config.comment.async_nearby_chunk_render=Makes the immediate nearby chunk re-render multi-threaded, i.e. to be not immediate and be less laggy.
 
+potteckit.config.name.block_state_texture_sync=§6Block-state Texture Sync§r
+potteckit.config.name.block_state_texture_sync_list=§6Block-state Texture Sync List§r
+
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.
