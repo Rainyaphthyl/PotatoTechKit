@@ -5,13 +5,20 @@ import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.mixin.access.AccessMinecraft;
 import io.github.rainyaphthyl.potteckit.mixin.access.AccessRenderChunk;
+import io.github.rainyaphthyl.potteckit.util.Reference;
+import it.unimi.dsi.fastutil.longs.Long2LongMap;
+import it.unimi.dsi.fastutil.longs.Long2LongMaps;
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,22 +28,38 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nonnull;
+import java.util.EnumMap;
+import java.util.Map;
 
 @Mixin(RenderGlobal.class)
 public abstract class MixinRenderGlobal {
+    /**
+     * {@code Map<Block.toLong, worldTime on adding>}
+     */
+    @Unique
+    private final Map<DimensionType, Long2LongMap> potatoTechKit$sectionBlacklists = new EnumMap<>(DimensionType.class);
     /**
      * Called only from the Minecraft Client Thread
      */
     @Unique
     private boolean potatoTechKit$timeOut = false;
+    @Unique
+    private boolean potatoTechKit$laggy = false;
     @Shadow
     @Final
     private Minecraft mc;
 
+    {
+        for (DimensionType dim : DimensionType.values()) {
+            potatoTechKit$sectionBlacklists.putIfAbsent(dim, Long2LongMaps.synchronize(new Long2LongOpenHashMap()));
+        }
+    }
+
     @Inject(method = "setupTerrain", at = @At(value = "HEAD"))
     public void resetPendingTag(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
-        if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread() && Configs.enablePotteckit.getBooleanValue()) {
+        if ((potatoTechKit$timeOut || potatoTechKit$laggy) && mc.isCallingFromMinecraftThread() && Configs.enablePotteckit.getBooleanValue()) {
             potatoTechKit$timeOut = false;
+            potatoTechKit$laggy = false;
         }
     }
 
@@ -64,8 +87,7 @@ public abstract class MixinRenderGlobal {
 
     @Inject(method = "setupTerrain", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/RenderGlobal;displayListEntitiesDirty:Z", opcode = Opcodes.PUTFIELD, ordinal = 2), cancellable = true)
     public void checkTimeOut(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
-        if ((Configs.chunkRebuildBuffer.getBooleanValue() || Configs.autoDisturbChunkRebuild.getBooleanValue())
-                && mc.isCallingFromMinecraftThread() && Configs.enablePotteckit.getBooleanValue()) {
+        if ((Configs.chunkRebuildBuffer.getBooleanValue() || Configs.autoDisturbChunkRebuild.getBooleanValue()) && mc.isCallingFromMinecraftThread() && Configs.enablePotteckit.getBooleanValue()) {
             if (mc.isGamePaused()) {
                 potatoTechKit$timeOut = false;
             } else {
@@ -92,24 +114,55 @@ public abstract class MixinRenderGlobal {
 
     @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;getPosition()Lnet/minecraft/util/math/BlockPos;"))
     public BlockPos setImmediateUpdate(RenderChunk instance) {
-        if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread() && instance instanceof AccessRenderChunk) {
-            ((AccessRenderChunk) instance).setNeedImmediate(false);
+        if (mc.isCallingFromMinecraftThread()) {
+            if (Configs.chunkRebuildAutoBlacklist.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
+                if (mc.isGamePaused()) {
+                    potatoTechKit$laggy = false;
+                } else {
+                    potatoTechKit$laggy = false;
+                    World renderWorld = instance.getWorld();
+                    if (renderWorld instanceof WorldClient) {
+                        DimensionType dimensionType = renderWorld.provider.getDimensionType();
+                        Long2LongMap blacklist = potatoTechKit$sectionBlacklists.get(dimensionType);
+                        long blockIndex = instance.getPosition().toLong();
+                        if (blacklist.containsKey(blockIndex)) {
+                            long currTime = renderWorld.getTotalWorldTime();
+                            long prevTime = blacklist.get(blockIndex);
+                            final long timeToLive = 900;
+                            if (currTime - prevTime > timeToLive) {
+                                blacklist.remove(blockIndex);
+                                //region debug
+                                Reference.LOGGER.info("Forgive section at {}, with {} section(s) in {}", BlockPos.fromLong(blockIndex), blacklist.size(), dimensionType);
+                                //endregion
+                            } else {
+                                potatoTechKit$laggy = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if ((potatoTechKit$timeOut || potatoTechKit$laggy) && instance instanceof AccessRenderChunk) {
+                ((AccessRenderChunk) instance).setNeedImmediate(false);
+            }
         }
         return instance.getPosition();
     }
 
     @ModifyConstant(method = "setupTerrain", constant = @Constant(doubleValue = 768.0))
     public double setPlayerDistance(double constant) {
-        if (potatoTechKit$timeOut && mc.isCallingFromMinecraftThread()) {
+        if ((potatoTechKit$timeOut || potatoTechKit$laggy) && mc.isCallingFromMinecraftThread()) {
             return -1.0;
         } else {
             return constant;
         }
     }
 
+    /**
+     * AsyncNearbyChunkRender & profileImmediateChunkRebuild & ChunkRebuildAutoBlacklist
+     */
     @Redirect(method = "setupTerrain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/ChunkRenderDispatcher;updateChunkNow(Lnet/minecraft/client/renderer/chunk/RenderChunk;)Z"))
-    public boolean profileChunkRebuild(@Nonnull ChunkRenderDispatcher instance, RenderChunk renderChunk) {
-        if (Configs.enablePotteckit.getBooleanValue()) {
+    public boolean onChunkRebuild(@Nonnull ChunkRenderDispatcher instance, RenderChunk renderChunk) {
+        if (Configs.enablePotteckit.getBooleanValue() && mc.isCallingFromMinecraftThread()) {
             long timeStart = System.nanoTime();
             boolean flag;
             if (Configs.asyncNearbyChunkRender.getBooleanValue()) {
@@ -118,11 +171,29 @@ public abstract class MixinRenderGlobal {
             } else {
                 flag = instance.updateChunkNow(renderChunk);
             }
-            if (Configs.profileImmediateChunkRebuild.getBooleanValue()) {
+            boolean timing = (Configs.chunkRebuildAutoBlacklist.getBooleanValue() && renderChunk.needsImmediateUpdate()) || Configs.profileImmediateChunkRebuild.getBooleanValue();
+            if (timing) {
                 long timeEnd = System.nanoTime();
                 long duration = timeEnd - timeStart;
-                double millis = duration / 1.0e6;
-                MessageOutput.CHAT.send("Chunk at " + renderChunk.getPosition() + " took " + String.format("%.3f", millis) + " ms", MessageDispatcher.generic());
+                final double rate = 1.0;
+                double threshold = Configs.chunkRebuildBufferThreshold.getInverseValue() / rate;
+                if (Configs.profileImmediateChunkRebuild.getBooleanValue()) {
+                    double millis = duration / 1.0e6;
+                    MessageOutput.CHAT.send("Chunk at " + renderChunk.getPosition() + " took " + String.format("%.3f", millis) + " ms", MessageDispatcher.generic());
+                }
+                if (Configs.chunkRebuildAutoBlacklist.getBooleanValue() && duration > threshold) {
+                    World renderWorld = renderChunk.getWorld();
+                    if (renderWorld instanceof WorldClient) {
+                        DimensionType dimensionType = renderWorld.provider.getDimensionType();
+                        Long2LongMap blacklist = potatoTechKit$sectionBlacklists.get(dimensionType);
+                        long blockIndex = renderChunk.getPosition().toLong();
+                        long worldTime = renderWorld.getTotalWorldTime();
+                        blacklist.put(blockIndex, worldTime);
+                        //region debug
+                        Reference.LOGGER.info("Ban the section at {} on {}, with {} section(s) in {}", BlockPos.fromLong(blockIndex), worldTime, blacklist.size(), dimensionType);
+                        //endregion
+                    }
+                }
             }
             return flag;
         } else {
