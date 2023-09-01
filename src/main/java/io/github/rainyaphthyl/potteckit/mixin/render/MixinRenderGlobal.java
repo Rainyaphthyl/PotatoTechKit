@@ -5,7 +5,6 @@ import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.mixin.access.AccessMinecraft;
 import io.github.rainyaphthyl.potteckit.mixin.access.AccessRenderChunk;
-import io.github.rainyaphthyl.potteckit.util.Reference;
 import it.unimi.dsi.fastutil.longs.Long2LongMap;
 import it.unimi.dsi.fastutil.longs.Long2LongMaps;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
@@ -49,7 +48,8 @@ public abstract class MixinRenderGlobal {
     @Final
     private Minecraft mc;
 
-    {
+    @Inject(method = "<init>", at = @At(value = "RETURN"))
+    public void onInit(Minecraft mcIn, CallbackInfo ci) {
         for (DimensionType dim : DimensionType.values()) {
             potatoTechKit$sectionBlacklists.putIfAbsent(dim, Long2LongMaps.synchronize(new Long2LongOpenHashMap()));
         }
@@ -128,11 +128,11 @@ public abstract class MixinRenderGlobal {
                         if (blacklist.containsKey(blockIndex)) {
                             long currTime = renderWorld.getTotalWorldTime();
                             long prevTime = blacklist.get(blockIndex);
-                            final long timeToLive = 900;
-                            if (currTime - prevTime > timeToLive) {
+                            if (currTime > prevTime) {
                                 blacklist.remove(blockIndex);
                                 //region debug
-                                Reference.LOGGER.info("Forgive section at {}, with {} section(s) in {}", BlockPos.fromLong(blockIndex), blacklist.size(), dimensionType);
+                                String message = "Forgive the section of " + BlockPos.fromLong(blockIndex) + "at " + currTime + ", with " + blacklist.size() + " section(s) in " + dimensionType;
+                                MessageOutput.CHAT.send(message, MessageDispatcher.generic());
                                 //endregion
                             } else {
                                 potatoTechKit$laggy = true;
@@ -175,8 +175,8 @@ public abstract class MixinRenderGlobal {
             if (timing) {
                 long timeEnd = System.nanoTime();
                 long duration = timeEnd - timeStart;
-                final double rate = 1.0;
-                double threshold = Configs.chunkRebuildBufferThreshold.getInverseValue() / rate;
+                final double rate = 4.0;
+                double threshold = Configs.chunkRebuildBufferThreshold.getInverseValue() * rate;
                 if (Configs.profileImmediateChunkRebuild.getBooleanValue()) {
                     double millis = duration / 1.0e6;
                     MessageOutput.CHAT.send("Chunk at " + renderChunk.getPosition() + " took " + String.format("%.3f", millis) + " ms", MessageDispatcher.generic());
@@ -188,9 +188,11 @@ public abstract class MixinRenderGlobal {
                         Long2LongMap blacklist = potatoTechKit$sectionBlacklists.get(dimensionType);
                         long blockIndex = renderChunk.getPosition().toLong();
                         long worldTime = renderWorld.getTotalWorldTime();
-                        blacklist.put(blockIndex, worldTime);
+                        long banTime = (long) (900 * duration / threshold);
+                        blacklist.put(blockIndex, worldTime + banTime);
                         //region debug
-                        Reference.LOGGER.info("Ban the section at {} on {}, with {} section(s) in {}", BlockPos.fromLong(blockIndex), worldTime, blacklist.size(), dimensionType);
+                        String message = "Ban the section of " + BlockPos.fromLong(blockIndex) + " at " + worldTime + ", with " + blacklist.size() + " section(s) in " + dimensionType;
+                        MessageOutput.CHAT.send(message, MessageDispatcher.generic());
                         //endregion
                     }
                 }
