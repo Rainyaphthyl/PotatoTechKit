@@ -3,6 +3,7 @@ package io.github.rainyaphthyl.potteckit.config;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.HotkeyConfig;
 import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
+import fi.dy.masa.malilib.config.option.IntegerConfig;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
@@ -34,10 +35,12 @@ public class Configs {
     public static final HotkeyedBooleanConfig autoDisturbChunkRebuild = new HotkeyedBooleanConfig("auto_disturb_chunk_rebuild", false, "", "auto_disturb_chunk_rebuild", "auto_disturb_chunk_rebuild");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig chunkRebuildBuffer = new HotkeyedBooleanConfig("chunk_rebuild_buffer", false, "", "chunk_rebuild_buffer", "chunk_rebuild_buffer");
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK)
+    public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunk_rebuild_disturb_threshold", 0.75e+9, 40, 1, 120, "chunk_rebuild_disturb_threshold");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig chunkRebuildAutoBlacklist = new HotkeyedBooleanConfig("chunk_rebuild_auto_blacklist", false, "", "chunk_rebuild_auto_blacklist", "chunk_rebuild_auto_blacklist");
     @Config(types = Type.NUMBER, domains = Domain.TWEAK)
-    public static final InvIntegerConfig chunkRebuildBufferThreshold = new InvIntegerConfig("chunk_rebuild_disturb_threshold", 0.75e+9, 40, 1, 120, "chunk_rebuild_disturb_threshold");
+    public static final IntegerConfig chunkRebuildBlacklistThreshold = new IntegerConfig("chunk_rebuild_blacklist_threshold", 200, 0, 1000, "chunk_rebuild_blacklist_threshold");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig asyncNearbyChunkRender = new HotkeyedBooleanConfig("async_nearby_chunk_render", false, "", "async_nearby_chunk_render", "async_nearby_chunk_render");
 
