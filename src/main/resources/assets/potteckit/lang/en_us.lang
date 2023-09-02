@@ -40,7 +40,9 @@ potteckit.config.name.async_nearby_chunk_render=Async Nearby Chunk Render
 potteckit.config.comment.async_nearby_chunk_render=Makes the immediate nearby chunk re-render multi-threaded, i.e. to be not immediate and be less laggy.
 
 potteckit.config.name.block_state_texture_sync=§6Block-state Texture Sync§r
+potteckit.config.comment.block_state_texture_sync=§6(SERVER-SIDE MODIFICATION)§r\nSends the "block update" packets to clients forcibly when a block state is updated, if the block is included in "§6Block-state Texture Sync List§r". This is designed to synchronize the textures of hoppers, droppers, and dispensers, when you are using a special resource pack.
 potteckit.config.name.block_state_texture_sync_list=§6Block-state Texture Sync List§r
+potteckit.config.comment.block_state_texture_sync_list=§6(SERVER-SIDE MODIFICATION)§r\nThe list of blocks to be effected by "§6Block-state Texture Sync§r".
 
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.
