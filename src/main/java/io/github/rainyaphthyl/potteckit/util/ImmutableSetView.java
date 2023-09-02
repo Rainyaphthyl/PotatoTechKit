@@ -31,16 +31,19 @@ public class ImmutableSetView<T> implements Set<T> {
     }
 
     @Override
+    @Nonnull
     public Iterator<T> iterator() {
         return new IteratorView();
     }
 
     @Override
+    @Nonnull
     public Object[] toArray() {
         return parent.toArray(new Object[0]);
     }
 
     @Override
+    @Nonnull
     public <S> S[] toArray(@Nonnull S[] a) {
         return parent.toArray(a);
     }
