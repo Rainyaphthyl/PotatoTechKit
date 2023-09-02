@@ -30,10 +30,17 @@ potteckit.config.name.auto_disturb_chunk_rebuild=Auto Disturb Chunk Re-render
 potteckit.config.comment.auto_disturb_chunk_rebuild=Aborts the re-render of some later chunks when the immediate re-render has taken a lot of time in a frame. This has an effect similar to "Chunk Re-render Buffer".
 potteckit.config.name.chunk_rebuild_buffer=Chunk Re-render Buffer
 potteckit.config.comment.chunk_rebuild_buffer=Puts the immediate re-render of some later chunks into asynchronous threads when the it has taken a lot of time in a frame. This has an effect similar to "Auto Disturb Chunk Re-render".
+potteckit.config.name.chunk_rebuild_auto_blacklist=Chunk Re-render Auto Blacklist
+potteckit.config.comment.chunk_rebuild_auto_blacklist=Marks a section as "too laggy" and forget the rendering of it for a while, if it has just caused a severe FPS drop. This may be useful when some sections (sub-chunks) with complex block models are updated frequently.
 potteckit.config.name.chunk_rebuild_disturb_threshold=Chunk Re-render Skipping Threshold
 potteckit.config.comment.chunk_rebuild_disturb_threshold=The estimated FPS at which the later chunk re-render should be skipped. This option is related to "Auto Disturb Chunk Re-render" and "Chunk Re-render Buffer".
+potteckit.config.name.chunk_rebuild_blacklist_threshold=Chunk Re-render Blacklist Threshold
+potteckit.config.comment.chunk_rebuild_blacklist_threshold=In milliseconds per section.
 potteckit.config.name.async_nearby_chunk_render=Async Nearby Chunk Render
 potteckit.config.comment.async_nearby_chunk_render=Makes the immediate nearby chunk re-render multi-threaded, i.e. to be not immediate and be less laggy.
+
+potteckit.config.name.block_state_texture_sync=§6Block-state Texture Sync§r
+potteckit.config.name.block_state_texture_sync_list=§6Block-state Texture Sync List§r
 
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.
