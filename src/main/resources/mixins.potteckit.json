@@ -22,7 +22,8 @@
     "render.MixinChunkRenderDispatcher",
     "render.MixinChunkRenderWorker",
     "render.MixinRenderChunk",
-    "render.MixinRenderGlobal"
+    "render.MixinRenderGlobal",
+    "sync.MixinWorld"
   ],
   "injectors": {
     "defaultRequire": 1
