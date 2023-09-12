@@ -44,5 +44,8 @@ potteckit.config.comment.block_state_texture_sync=§6(SERVER-SIDE MODIFICATION)�
 potteckit.config.name.block_state_texture_sync_list=§6Block-state Texture Sync List§r
 potteckit.config.comment.block_state_texture_sync_list=§6(SERVER-SIDE MODIFICATION)§r\nThe list of blocks to be effected by "§6Block-state Texture Sync§r".
 
+potteckit.config.name.optifine_spawning_fix=Optifine Spawning Fix
+potteckit.config.comment.optifine_spawning_fix=Fixes a bug of OptiFine.
+
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.
