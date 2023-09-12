@@ -20,8 +20,8 @@ potteckit.config.comment.chunk_loading_details=§6(SERVER-SIDE MODIFICATION)§r\
 potteckit.config.name.chunk_loading_graph_receiver=§eChunk Loading Graph Client§r
 potteckit.config.comment.chunk_loading_graph_receiver=§e(SINGLE-PLAYER ONLY or NEED SPECIAL PROTOCOLS)§r\nThe client-side tools of Chunk Loading Graph.
 
-potteckit.config.name.more_profiler_levels=More Profiler Levels
-potteckit.config.comment.more_profiler_levels=More detailed info at deeper levels will be added into the profiler graph (the pie charts in the lower right), e.g. more separated entries of "root.gameRenderer.level.terrain_setup.rebuildNear".
+potteckit.config.name.more_profiler_levels=§7More Profiler Levels§r
+potteckit.config.comment.more_profiler_levels=§cNot compatible with §oOptifine§r\nMore detailed info at deeper levels will be added into the profiler graph (the pie charts in the lower right), e.g. more separated entries of "root.gameRenderer.level.terrain_setup.rebuildNear".
 potteckit.config.name.profile_immediate_chunk_rebuild=Immediate Chunk Rebuild Profiler
 potteckit.config.comment.profile_immediate_chunk_rebuild=A chat-based profiler of the laggy immediate chunk rebuild (re-render).
 potteckit.config.name.yeet_chunk_rebuild=Disable Chunk Re-render

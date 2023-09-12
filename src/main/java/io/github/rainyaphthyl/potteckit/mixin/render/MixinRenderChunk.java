@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(RenderChunk.class)
+@Mixin(value = RenderChunk.class)
 public abstract class MixinRenderChunk {
     @Unique
     private final Minecraft potatoTechKit$client = Minecraft.getMinecraft();
@@ -44,7 +44,8 @@ public abstract class MixinRenderChunk {
         }
     }
 
-    @Inject(method = "rebuildChunk", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;worldView:Lnet/minecraft/world/ChunkCache;", ordinal = 0))
+    //@Inject(method = "rebuildChunk", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;worldView:Lnet/minecraft/world/ChunkCache;", ordinal = 0))
+    @Inject(method = "rebuildChunk", at = @At(value = "NEW", target = "()Lnet/minecraft/client/renderer/chunk/VisGraph;"))
     public void swapRendering(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
         if (potatoTechKit$client.isCallingFromMinecraftThread()) {
             if (potatoTechKit$profiling) {
@@ -53,32 +54,35 @@ public abstract class MixinRenderChunk {
         }
     }
 
-    @Inject(method = "rebuildChunk", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;worldView:Lnet/minecraft/world/ChunkCache;", ordinal = 1))
-    public void startGetBlock(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
-        if (potatoTechKit$client.isCallingFromMinecraftThread()) {
-            if (potatoTechKit$profiling) {
-                potatoTechKit$profiler.startSection("getBlock");
-            }
-        }
-    }
+    //@Inject(method = "rebuildChunk", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/chunk/RenderChunk;worldView:Lnet/minecraft/world/ChunkCache;", ordinal = 1))
+    //@Inject(method = "rebuildChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/ChunkCache;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;"))
+    //public void startGetBlock(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
+    //    if (potatoTechKit$client.isCallingFromMinecraftThread()) {
+    //        if (potatoTechKit$profiling) {
+    //            potatoTechKit$profiler.startSection("getBlock");
+    //        }
+    //    }
+    //}
 
     @Inject(method = "rebuildChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/state/IBlockState;isOpaqueCube()Z"))
     public void swapSetOpaque(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
         if (potatoTechKit$client.isCallingFromMinecraftThread()) {
             if (potatoTechKit$profiling) {
-                potatoTechKit$profiler.endStartSection("opaque");
+                //potatoTechKit$profiler.endStartSection("opaque");
+                potatoTechKit$profiler.startSection("opaque");
             }
         }
     }
 
-    @Inject(method = "rebuildChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;hasTileEntity()Z"))
-    public void swapTileEntity(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
-        if (potatoTechKit$client.isCallingFromMinecraftThread()) {
-            if (potatoTechKit$profiling) {
-                potatoTechKit$profiler.endStartSection("tileEntity");
-            }
-        }
-    }
+    // TODO: 2023/9/12,0012 Fix optifine conflict
+    //@Inject(method = "rebuildChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;hasTileEntity()Z"))
+    //public void swapTileEntity(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
+    //    if (potatoTechKit$client.isCallingFromMinecraftThread()) {
+    //        if (potatoTechKit$profiling) {
+    //            potatoTechKit$profiler.endStartSection("tileEntity");
+    //        }
+    //    }
+    //}
 
     @Inject(method = "rebuildChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getRenderLayer()Lnet/minecraft/util/BlockRenderLayer;"))
     public void endTileEntity(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
