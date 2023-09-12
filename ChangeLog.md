@@ -10,22 +10,18 @@ This is a **pre-release** version.
 
 ### Mod Versions
 
-- Current version: `0.1.0`
-- Previous version: `0.0.0`
-- Previous build version: `0.0.0`
+- Current version: `0.1.1`
+- Previous version: `0.1.0`
+- Previous build version: `0.1.0`
 - Previous release version: `null`
 
 ## Abstract
 
 ## New Features
 
-| Option                              |    Side    |        Type         | Default                      |
-|-------------------------------------|:----------:|:-------------------:|------------------------------|
-| Chunk Re-render Auto Blacklist      |   client   | Boolean with Hotkey | `false`, `null`              |
-| Chunk Re-render Blacklist Threshold |   client   |       Integer       | `200`                        |
-| Block-state Texture Sync            | **server** | Boolean with Hotkey | `false`, `null`              |
-| Block-state Texture Sync List       | **server** |   List of Blocks    | `hopper, dropper, dispenser` |
-
 ## Modified Features
+
+- Option `More Profiler Levels` does not conflict with
+  _OptiFine_, while the function has been weakened and is no longer recommended to use.
 
 ## Code Changes

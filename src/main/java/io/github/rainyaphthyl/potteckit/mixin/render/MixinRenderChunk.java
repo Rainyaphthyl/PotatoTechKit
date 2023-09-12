@@ -74,7 +74,7 @@ public abstract class MixinRenderChunk {
         }
     }
 
-    // TODO: 2023/9/12,0012 Fix optifine conflict
+    // Fix optifine conflict
     //@Inject(method = "rebuildChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;hasTileEntity()Z"))
     //public void swapTileEntity(float x, float y, float z, ChunkCompileTaskGenerator generator, CallbackInfo ci) {
     //    if (potatoTechKit$client.isCallingFromMinecraftThread()) {
