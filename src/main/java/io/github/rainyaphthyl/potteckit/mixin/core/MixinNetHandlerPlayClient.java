@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nonnull;
 
 @Mixin(NetHandlerPlayClient.class)
-public class MixinNetHandlerPlayClient {
+public abstract class MixinNetHandlerPlayClient {
     @Inject(method = "handleCustomPayload", at = @At(value = "RETURN"))
     public void onHandleCustomPayload(@Nonnull SPacketCustomPayload packetIn, CallbackInfo ci) {
         String channelName = packetIn.getChannelName();
