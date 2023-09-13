@@ -14,14 +14,14 @@ potteckit.config.name.enable_potteckit=Potteckit Global Switch
 potteckit.config.comment.enable_potteckit=The global switch of Potato Tech Kit mod.
 
 potteckit.config.name.chunk_loading_graph=§6Chunk Loading Graph§r
-potteckit.config.comment.chunk_loading_graph=§6(SERVER-SIDE MODIFICATION)§r\nCaptures the chunk loading chains during chunk loaders running.
+potteckit.config.comment.chunk_loading_graph=§6(Server-side Modification)§r\nCaptures the chunk loading chains during chunk loaders running.
 potteckit.config.name.chunk_loading_details=§6Chunk Loading Details§r
-potteckit.config.comment.chunk_loading_details=§6(SERVER-SIDE MODIFICATION)§r\nCaptures the sub-phase details of the timestamps (tick records), when the chunk loading captor is running.
+potteckit.config.comment.chunk_loading_details=§6(Server-side Modification)§r\nCaptures the sub-phase details of the timestamps (tick records), when the chunk loading captor is running.
 potteckit.config.name.chunk_loading_graph_receiver=§eChunk Loading Graph Client§r
-potteckit.config.comment.chunk_loading_graph_receiver=§e(SINGLE-PLAYER ONLY or NEED SPECIAL PROTOCOLS)§r\nThe client-side tools of Chunk Loading Graph.
+potteckit.config.comment.chunk_loading_graph_receiver=§e(Single-player Only or Need Special Protocols)§r\nThe client-side tools of Chunk Loading Graph.
 
-potteckit.config.name.more_profiler_levels=More Profiler Levels
-potteckit.config.comment.more_profiler_levels=More detailed info at deeper levels will be added into the profiler graph (the pie charts in the lower right), e.g. more separated entries of "root.gameRenderer.level.terrain_setup.rebuildNear".
+potteckit.config.name.more_profiler_levels=§7More Profiler Levels§r
+potteckit.config.comment.more_profiler_levels=§cNot compatible with §oOptifine§r\nMore detailed info at deeper levels will be added into the profiler graph (the pie charts in the lower right), e.g. more separated entries of "root.gameRenderer.level.terrain_setup.rebuildNear".
 potteckit.config.name.profile_immediate_chunk_rebuild=Immediate Chunk Rebuild Profiler
 potteckit.config.comment.profile_immediate_chunk_rebuild=A chat-based profiler of the laggy immediate chunk rebuild (re-render).
 potteckit.config.name.yeet_chunk_rebuild=Disable Chunk Re-render
@@ -40,9 +40,12 @@ potteckit.config.name.async_nearby_chunk_render=Async Nearby Chunk Render
 potteckit.config.comment.async_nearby_chunk_render=Makes the immediate nearby chunk re-render multi-threaded, i.e. to be not immediate and be less laggy.
 
 potteckit.config.name.block_state_texture_sync=§6Block-state Texture Sync§r
-potteckit.config.comment.block_state_texture_sync=§6(SERVER-SIDE MODIFICATION)§r\nSends the "block update" packets to clients forcibly when a block state is updated, if the block is included in "§6Block-state Texture Sync List§r". This is designed to synchronize the textures of hoppers, droppers, and dispensers, when you are using a special resource pack.
+potteckit.config.comment.block_state_texture_sync=§6(Server-side Modification)§r\nSends the "block update" packets to clients forcibly when a block state is updated, if the block is included in "§6Block-state Texture Sync List§r". This is designed to synchronize the textures of hoppers, droppers, and dispensers, when you are using a special resource pack.
 potteckit.config.name.block_state_texture_sync_list=§6Block-state Texture Sync List§r
-potteckit.config.comment.block_state_texture_sync_list=§6(SERVER-SIDE MODIFICATION)§r\nThe list of blocks to be effected by "§6Block-state Texture Sync§r".
+potteckit.config.comment.block_state_texture_sync_list=§6(Server-side Modification)§r\nThe list of blocks to be effected by "§6Block-state Texture Sync§r".
+
+potteckit.config.name.optifine_spawning_fix=§6Optifine Spawning Fix§r
+potteckit.config.comment.optifine_spawning_fix=§6(Server-side Modification)§r\nFixes the bug of Optifine that mob spawning is suppressed when a player has just joined the world, or that mob spawning continues when a player has just swapped to spectator mode, before the player moves across chunks.\nThis is unnecessary in liteloaded vanilla without Optifine.
 
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.

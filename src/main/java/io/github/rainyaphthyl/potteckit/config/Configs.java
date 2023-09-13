@@ -50,6 +50,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig blockStateTextureSync = new HotkeyedBooleanConfig("block_state_texture_sync", false, "", "block_state_texture_sync", "block_state_texture_sync");
     @Config(types = Type.LIST, domains = Domain.TWEAK, serverSide = true)
     public static final BlockListConfig blockStateTextureSyncList = BlockListConfig.create("block_state_texture_sync_list", ImmutableList.of(Blocks.HOPPER, Blocks.DROPPER, Blocks.DISPENSER));
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, serverSide = true)
+    public static final HotkeyedBooleanConfig optifineSpawningFix = new HotkeyedBooleanConfig("optifine_spawning_fix", false, "", "optifine_spawning_fix", "optifine_spawning_fix");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

@@ -18,6 +18,7 @@
     "gamephase.MixinWorldProvider",
     "gamephase.MixinWorldProviderEnd",
     "gamephase.MixinWorldServer",
+    "optifix.MixinWorldEntitySpawner",
     "render.MixinBlockRendererDispatcher",
     "render.MixinChunkRenderDispatcher",
     "render.MixinChunkRenderWorker",
