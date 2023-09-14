@@ -35,6 +35,8 @@ public abstract class SubPhase implements Comparable<SubPhase> {
                     return subClass.getConstructor(int.class, int.class).newInstance(0, 0);
                 case TILE_TICK:
                     return subClass.getConstructor(long.class, int.class, long.class).newInstance(0L, 0, 0L);
+                case TILE_ENTITY_UPDATE:
+                    return subClass.getConstructor(int.class).newInstance(0);
                 default:
                     return null;
             }

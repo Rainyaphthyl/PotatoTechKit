@@ -5,18 +5,20 @@ import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock;
 import javax.annotation.Nonnull;
 
 public class TileEntityClock extends MutablePhaseClock.SubPhaseClock {
+    private int ordinal;
+
     public TileEntityClock(MutablePhaseClock parentClock) {
         super(parentClock);
     }
 
     @Override
     public SubPhase createRecord() {
-        return null;
+        return new TileEntitySubPhase(ordinal);
     }
 
     @Override
     public void reset() {
-
+        ordinal = 0;
     }
 
     @Override
@@ -26,7 +28,8 @@ public class TileEntityClock extends MutablePhaseClock.SubPhaseClock {
 
     @Override
     protected boolean swap() {
-        return false;
+        ++ordinal;
+        return true;
     }
 
     @Override

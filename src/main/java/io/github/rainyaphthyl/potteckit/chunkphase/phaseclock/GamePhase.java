@@ -43,7 +43,7 @@ public enum GamePhase {
     PLAYER_UPDATE(true, "Player Entities", "PE"),
     ENTITY_UPDATE(true, "Entity Update", "EU"),
     TILE_ENTITY_UNLOAD(true, "Tile Entity Unload", "TER"),
-    TILE_ENTITY_UPDATE(true, "Tile Entity Update", "TEU"),
+    TILE_ENTITY_UPDATE(true, "Tile Entity Update", "TEU", TileEntitySubPhase.class, TileEntityClock.class),
     TILE_ENTITY_PENDING(true, "Tile Entity Appending", "TEA"),
     ENTITY_TRACKING(true, "Entity Tracking", "ET"),
     CONNECTION_UPDATE(false, "Connection Update", "NU"),
