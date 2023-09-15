@@ -104,7 +104,7 @@ public abstract class MixinWorld {
         }
     }
 
-    @Inject(method = "updateEntities", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
+    @Inject(method = "updateEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/tileentity/TileEntity;isInvalid()Z", ordinal = 0))
     public void tileEntityUpdateSubSwap(CallbackInfo ci) {
         if (potatoTechKit$clock != null) {
             potatoTechKit$clock.swapSubPhase();
