@@ -24,6 +24,9 @@ public abstract class MixinWorld {
     @Unique
     protected MutablePhaseClock potatoTechKit$clock = null;
 
+    @Shadow
+    public abstract long getTotalWorldTime();
+
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     public void onConstruct(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client, CallbackInfo ci) {
         if (isRemote) {
@@ -98,6 +101,13 @@ public abstract class MixinWorld {
     public void swapTileEntityUpdate(CallbackInfo ci) {
         if (potatoTechKit$clock != null) {
             potatoTechKit$clock.swapPhase(GamePhase.TILE_ENTITY_UPDATE);
+        }
+    }
+
+    @Inject(method = "updateEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/tileentity/TileEntity;isInvalid()Z", ordinal = 0))
+    public void tileEntityUpdateSubSwap(CallbackInfo ci) {
+        if (potatoTechKit$clock != null) {
+            potatoTechKit$clock.swapSubPhase();
         }
     }
 

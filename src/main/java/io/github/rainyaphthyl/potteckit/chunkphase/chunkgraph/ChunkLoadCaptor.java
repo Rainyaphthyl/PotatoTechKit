@@ -4,6 +4,9 @@ import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.PhaseRecord;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
 import io.github.rainyaphthyl.potteckit.util.NetworkGraph;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMaps;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.ChunkPos;
@@ -21,11 +24,18 @@ import java.util.concurrent.ConcurrentMap;
 public class ChunkLoadCaptor {
     public static final boolean debugDetail = true;
     public static final String CHANNEL_EVENT = "PK|ChEvent";
+    public static final long NULL_CHUNK = 0x8000_800000_800000L;
     private static final ConcurrentMap<Thread, ChunkLoadSource> threadReasonCache = new ConcurrentHashMap<>();
+    private static final Object2LongMap<Thread> threadChunkPosCache = Object2LongMaps.synchronize(new Object2LongOpenHashMap<>());
+
+    static {
+        threadChunkPosCache.defaultReturnValue(NULL_CHUNK);
+    }
+
     private final NetworkGraph<ChunkPos, ChunkLoadReason> graph = new NetworkGraph<>(ChunkPos.class, ChunkLoadReason.class);
 
-    public static void pushThreadSource(int chunkX, int chunkZ, ChunkLoadReason reason) {
-        ChunkLoadSource source = new ChunkLoadSource(chunkX, chunkZ, reason);
+    public static void pushThreadSource(int chunkX, int chunkZ, DimensionType dimensionType, ChunkLoadReason reason) {
+        ChunkLoadSource source = new ChunkLoadSource(chunkX, chunkZ, dimensionType, reason);
         pushThreadSource(source);
     }
 
@@ -48,6 +58,13 @@ public class ChunkLoadCaptor {
     public static void removeThreadSource() {
         Thread thread = Thread.currentThread();
         threadReasonCache.remove(thread);
+    }
+
+    public static long chunkToLong(int chunkX, int chunkZ, int dimOrdinal) {
+        long code = (long) chunkX & 0xFFFFFFL;
+        code |= ((long) chunkZ & 0xFFFFFFL) << 24;
+        code |= ((long) dimOrdinal & 0xFFFFL) << 48;
+        return code;
     }
 
     public static void debugOnChat(int tickCount, PhaseRecord record, ChunkPos currPos, @Nonnull DimensionType dimensionType, @Nonnull ChunkEvent event, ChunkLoadSource source, PlayerList playerList) {
