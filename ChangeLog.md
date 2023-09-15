@@ -10,24 +10,21 @@ This is a **pre-release** version.
 
 ### Mod Versions
 
-- Current version: `0.1.2`
-- Previous version: `0.1.1`
-- Previous annotated version: `0.1.0`
+- Current version: `0.1.3`
+- Previous version: `0.1.2`
+- Previous annotated version: `0.1.2`
 - Previous release version: `null`
 
 ## Abstract
 
 ## New Features
 
-| Option                |    Side    |        Type         | Default         |
-|-----------------------|:----------:|:-------------------:|-----------------|
-| Optifine Spawning Fix | **server** | Boolean with Hotkey | `false`, `null` |
+New sub-phase details in Game Phase Clocks:
 
-### Optifine Spawning Fix
-
-Fixes the bug of Optifine that mob spawning is suppressed when a player has just joined the world, or that mob spawning continues when a player has just swapped to spectator mode, before the player moves across chunks.
-
-This is unnecessary in liteloaded vanilla without Optifine.
+| abbr |       phase        |     arg 0     |     arg 1      |       arg 2       |
+|:----:|:------------------:|:-------------:|:--------------:|:-----------------:|
+|  TT  |     Tile Tick      | `long` delay  | `int` priority | `long` relativeID |
+| TEU  | Tile Entity Update | `int` ordinal |       \        |         \         |
 
 ## Modified Features
 

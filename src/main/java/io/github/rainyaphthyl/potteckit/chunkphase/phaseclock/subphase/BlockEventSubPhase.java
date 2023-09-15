@@ -1,7 +1,7 @@
 package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkPacketBuffer;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
-import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;
 
@@ -15,13 +15,13 @@ public class BlockEventSubPhase extends SubPhase {
     }
 
     @Override
-    public void readFromPacket(@Nonnull PacketBuffer buffer) {
+    public void readFromPacket(@Nonnull ChunkPacketBuffer buffer) {
         depth = buffer.readVarInt();
         orderAtDepth = buffer.readVarInt();
     }
 
     @Override
-    public void writeToPacket(@Nonnull PacketBuffer buffer) {
+    public void writeToPacket(@Nonnull ChunkPacketBuffer buffer) {
         buffer.writeVarInt(getDepth());
         buffer.writeVarInt(getOrderAtDepth());
     }

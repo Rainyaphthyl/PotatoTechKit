@@ -1,10 +1,9 @@
 package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
+import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkPacketBuffer;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
-import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
@@ -26,16 +25,18 @@ public abstract class SubPhase implements Comparable<SubPhase> {
         if (gamePhase == null) {
             return null;
         }
-        Class<? extends SubPhase> subCLass = gamePhase.subClass;
-        if (subCLass == null) {
+        Class<? extends SubPhase> subClass = gamePhase.subClass;
+        if (subClass == null) {
             return null;
         }
         try {
             switch (gamePhase) {
                 case BLOCK_EVENT:
-                    return subCLass.getConstructor(int.class, int.class).newInstance(0, 0);
+                    return subClass.getConstructor(int.class, int.class).newInstance(0, 0);
                 case TILE_TICK:
-                    return subCLass.getConstructor().newInstance();
+                    return subClass.getConstructor(long.class, int.class, long.class).newInstance(0L, 0, 0L);
+                case TILE_ENTITY_UPDATE:
+                    return subClass.getConstructor(int.class).newInstance(0);
                 default:
                     return null;
             }
@@ -64,9 +65,9 @@ public abstract class SubPhase implements Comparable<SubPhase> {
         }
     }
 
-    public abstract void readFromPacket(@Nonnull PacketBuffer buffer);
+    public abstract void readFromPacket(@Nonnull ChunkPacketBuffer buffer);
 
-    public abstract void writeToPacket(@Nonnull PacketBuffer buffer);
+    public abstract void writeToPacket(@Nonnull ChunkPacketBuffer buffer);
 
     @Override
     public abstract boolean equals(Object obj);
@@ -75,30 +76,5 @@ public abstract class SubPhase implements Comparable<SubPhase> {
     public abstract int hashCode();
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        Class<? extends SubPhase> subClass = getClass();
-        Field[] fields = subClass.getDeclaredFields();
-        for (int i = 0; i < fields.length; ++i) {
-            Field field = fields[i];
-            int modifiers = field.getModifiers();
-            if ((modifiers & FIELD_MASK) == FIELD_EXPECTATION) {
-                try {
-                    boolean access = field.isAccessible();
-                    field.setAccessible(true);
-                    Object object = field.get(this);
-                    field.setAccessible(access);
-                    if (i > 0) {
-                        builder.append(':');
-                    }
-                    if (object != null) {
-                        builder.append(object);
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return builder.toString();
-    }
+    public abstract String toString();
 }

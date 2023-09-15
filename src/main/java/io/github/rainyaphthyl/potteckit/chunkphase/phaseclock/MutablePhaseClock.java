@@ -6,6 +6,7 @@ import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -235,6 +236,22 @@ public class MutablePhaseClock {
         }
     }
 
+    /**
+     * Specific operation to each sub-phase
+     */
+    public void operateSubPhase(GamePhase gamePhase, Object... args) {
+        if (subClock != null && gamePhase != null && args != null) {
+            try {
+                writeLock.lock();
+                if (gamePhase == phase && subClock.operate(args)) {
+                    eventOrdinal = 0;
+                }
+            } finally {
+                writeLock.unlock();
+            }
+        }
+    }
+
     public void pushSubPhase() {
         if (subClock != null) {
             try {
@@ -395,5 +412,10 @@ public class MutablePhaseClock {
         protected abstract boolean swap();
 
         protected abstract boolean pop();
+
+        /**
+         * @return {@code true} if the event ordinal need to be increased later
+         */
+        protected abstract boolean operate(@Nonnull Object... args);
     }
 }

@@ -4,6 +4,7 @@ import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -11,8 +12,12 @@ import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Surrogate;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.Iterator;
 
 @Mixin(WorldServer.class)
 public abstract class MixinWorldServer extends MixinWorld {
@@ -74,6 +79,22 @@ public abstract class MixinWorldServer extends MixinWorld {
     @Inject(method = "tickUpdates", at = @At(value = "HEAD"))
     public void beforeTileTick(boolean runAllPending, CallbackInfoReturnable<Boolean> cir) {
         potatoTechKit$clock.pushPhase(GamePhase.TILE_TICK);
+    }
+
+    @Surrogate
+    @Inject(method = "tickUpdates", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;isAreaLoaded(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
+    public void tileTickCount(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, int i, Iterator<NextTickListEntry> iterator, NextTickListEntry currEntry, int k) {
+        potatoTechKit$clock.operateSubPhase(GamePhase.TILE_TICK, getTotalWorldTime(), currEntry);
+    }
+
+    /**
+     * in case previous fails
+     */
+    @Surrogate
+    @SuppressWarnings("InvalidInjectorMethodSignature")
+    @Inject(method = "tickUpdates", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;isAreaLoaded(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
+    public void tileTickCount(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, Iterator<NextTickListEntry> iterator, NextTickListEntry currEntry, int k) {
+        potatoTechKit$clock.operateSubPhase(GamePhase.TILE_TICK, getTotalWorldTime(), currEntry);
     }
 
     @Inject(method = "tickUpdates", at = @At(value = "RETURN"))

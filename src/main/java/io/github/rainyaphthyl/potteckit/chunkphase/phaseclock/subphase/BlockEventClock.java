@@ -2,6 +2,8 @@ package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.MutablePhaseClock;
 
+import javax.annotation.Nonnull;
+
 public class BlockEventClock extends MutablePhaseClock.SubPhaseClock {
     private int depth = 0;
     private int orderAtDepth = 0;
@@ -48,5 +50,10 @@ public class BlockEventClock extends MutablePhaseClock.SubPhaseClock {
         --depth;
         orderAtDepth = 0;
         return true;
+    }
+
+    @Override
+    protected boolean operate(@Nonnull Object... args) {
+        return false;
     }
 }
