@@ -28,13 +28,12 @@ New sub-phase details in Game Phase Clocks:
 |  TT  |     Tile Tick      | `long` delay  | `int` priority | `long` relativeID |
 | TEU  | Tile Entity Update | `int` ordinal |       \        |         \         |
 
-### Fix LAN Quitting Freeze
+### Fix LAN Bugs
 
-Fixes [MC-72943](https://bugs.mojang.com/browse/MC-72943) in `1.12.2`.
-
-| Option                  |   Side   |        Type         | Default        |
-|-------------------------|:--------:|:-------------------:|----------------|
-| Fix LAN Quitting Freeze | **both** | Boolean with Hotkey | `true`, `null` |
+|         Option          |                        Issue                        |   Side   | Default |
+|:-----------------------:|:---------------------------------------------------:|:--------:|:-------:|
+| Fix LAN Quitting Freeze | [MC-72943](https://bugs.mojang.com/browse/MC-72943) | **both** | `true`  |
+|  Fix LAN Skin Absence   | [MC-52974](https://bugs.mojang.com/browse/MC-52974) | **both** | `true`  |
 
 ## Modified Features
 
