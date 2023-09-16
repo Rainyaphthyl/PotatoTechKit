@@ -5,11 +5,13 @@ import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.HotkeyConfig;
 import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
 import fi.dy.masa.malilib.config.option.IntegerConfig;
+import fi.dy.masa.malilib.config.option.OptionListConfig;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
 import io.github.rainyaphthyl.potteckit.config.annotation.Type;
+import io.github.rainyaphthyl.potteckit.config.option.EnumRealmStatus;
 import io.github.rainyaphthyl.potteckit.config.option.InvIntegerConfig;
 import io.github.rainyaphthyl.potteckit.gui.GuiConfigScreen;
 import io.github.rainyaphthyl.potteckit.gui.InvIntegerConfigWidget;
@@ -52,6 +54,12 @@ public class Configs {
     public static final BlockListConfig blockStateTextureSyncList = BlockListConfig.create("block_state_texture_sync_list", ImmutableList.of(Blocks.HOPPER, Blocks.DROPPER, Blocks.DISPENSER));
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, serverSide = true)
     public static final HotkeyedBooleanConfig optifineSpawningFix = new HotkeyedBooleanConfig("optifine_spawning_fix", false, "", "optifine_spawning_fix", "optifine_spawning_fix");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, serverSide = true)
+    public static final HotkeyedBooleanConfig fixLanQuittingFreeze = new HotkeyedBooleanConfig("fix_lan_quit_freeze", true, "", "fix_lan_quit_freeze", "fix_lan_quit_freeze");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, serverSide = true)
+    public static final HotkeyedBooleanConfig fixLanSkinAbsence = new HotkeyedBooleanConfig("fix_lan_skin_absence", true, "", "fix_lan_skin_absence", "fix_lan_skin_absence");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.YEET)
+    public static final OptionListConfig<EnumRealmStatus> yeetRealmPage = new OptionListConfig<>("yeet_realm_page", EnumRealmStatus.DISABLED, EnumRealmStatus.list, "yeet_realm_page", "yeet_realm_page");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

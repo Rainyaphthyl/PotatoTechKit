@@ -10,6 +10,8 @@
     "access.AccessRenderChunk",
     "chunkgraph.MixinChunkProviderServer",
     "chunkgraph.MixinTileEntityHopper",
+    "core.MixinGuiMainMenu",
+    "core.MixinMinecraft",
     "core.MixinNetHandlerPlayClient",
     "gamephase.MixinEntityTracker",
     "gamephase.MixinIntegratedServer",
