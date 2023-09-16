@@ -47,10 +47,12 @@ potteckit.config.comment.block_state_texture_sync_list=§6(Server-side Modificat
 potteckit.config.name.optifine_spawning_fix=§6Optifine Spawning Fix§r
 potteckit.config.comment.optifine_spawning_fix=§6(Server-side Modification)§r\nFixes the bug of Optifine that mob spawning is suppressed when a player has just joined the world, or that mob spawning continues when a player has just swapped to spectator mode, before the player moves across chunks.\nThis is unnecessary in liteloaded vanilla without Optifine.
 
-potteckit.config.name.fix_lan_quit_freeze=§eFix LAN Quitting Freeze§r
-potteckit.config.comment.fix_lan_quit_freeze=§e(Single-player Only)§r\nFixes MC-72943 that the client probably gets frozen when quitting an "Open to LAN" server.
-potteckit.config.name.fix_lan_skin_absence=§e(Fix LAN Skin Absence)§r
-potteckit.config.comment.fix_lan_skin_absence=§e(Single-player Only)§r\nFixes MC-52974: Host's skin not visible to other players when in LAN world.
+potteckit.config.name.fix_lan_quit_freeze=§6Fix LAN Quitting Freeze§r
+potteckit.config.comment.fix_lan_quit_freeze=§6(Single-player Only)§r\nFixes MC-72943 that the client probably gets frozen when quitting an "Open to LAN" server.
+potteckit.config.name.fix_lan_skin_absence=§6Fix LAN Skin Absence§r
+potteckit.config.comment.fix_lan_skin_absence=§6(Single-player Only)§r\nFixes MC-52974: Host's skin not visible to other players when in LAN world.\nThis option should be enabled on the host's client.
+potteckit.config.name.yeet_realm_page=Realm Page Access
+potteckit.config.comment.yeet_realm_page=Your client has been outdated and not compatible with Realms! You should not keep the button clickable! Keep playing 1.12.2 and forget it! :P
 
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.

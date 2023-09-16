@@ -30,10 +30,18 @@ New sub-phase details in Game Phase Clocks:
 
 ### Fix LAN Bugs
 
-|         Option          |                        Issue                        |   Side   | Default |
-|:-----------------------:|:---------------------------------------------------:|:--------:|:-------:|
-| Fix LAN Quitting Freeze | [MC-72943](https://bugs.mojang.com/browse/MC-72943) | **both** | `true`  |
-|  Fix LAN Skin Absence   | [MC-52974](https://bugs.mojang.com/browse/MC-52974) | **both** | `true`  |
+|         Config          |                        Issue                        |    Side    | Default |
+|:-----------------------:|:---------------------------------------------------:|:----------:|:-------:|
+| Fix LAN Quitting Freeze | [MC-72943](https://bugs.mojang.com/browse/MC-72943) | **server** | `true`  |
+|  Fix LAN Skin Absence   | [MC-52974](https://bugs.mojang.com/browse/MC-52974) | **server** | `true`  |
+
+### Miscellaneous
+
+- Realm Page Access
+  - Side: client
+  - Type: Option List
+  - Default: `disabled`
+  - Values: `vanilla`, `disabled`, `invisible`
 
 ## Modified Features
 
