@@ -54,6 +54,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig optifineSpawningFix = new HotkeyedBooleanConfig("optifine_spawning_fix", false, "", "optifine_spawning_fix", "optifine_spawning_fix");
     @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, serverSide = true)
     public static final HotkeyedBooleanConfig fixLanQuittingFreeze = new HotkeyedBooleanConfig("fix_lan_quit_freeze", true, "", "fix_lan_quit_freeze", "fix_lan_quit_freeze");
+    @Config(types = {Type.TOGGLE, Type.HOTKEY}, domains = Domain.FIX, serverSide = true)
+    public static final HotkeyedBooleanConfig fixLanSkinAbsence = new HotkeyedBooleanConfig("fix_lan_skin_absence", true, "", "fix_lan_skin_absence", "fix_lan_skin_absence");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
