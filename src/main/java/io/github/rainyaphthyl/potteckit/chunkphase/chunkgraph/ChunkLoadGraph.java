@@ -1,7 +1,9 @@
 package io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph;
 
+import com.google.common.collect.ImmutableList;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
 import io.github.rainyaphthyl.potteckit.config.Configs;
+import io.github.rainyaphthyl.potteckit.config.option.ChunkFilterEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
@@ -27,6 +29,18 @@ public class ChunkLoadGraph {
             ChunkEvent event = buffer.readEnumValue(ChunkEvent.class);
             Minecraft client = Minecraft.getMinecraft();
             client.addScheduledTask(() -> {
+                ImmutableList<ChunkFilterEntry> filterList = Configs.chunkLoadFilterList.getValue();
+                for (ChunkFilterEntry filter : filterList) {
+                    if (filter != null) {
+                        boolean flag = filter.timeDimension == null || filter.timeDimension == tickRecord.dimensionType;
+                        if (flag) flag = filter.gamePhase == null || filter.gamePhase == tickRecord.gamePhase;
+                        if (flag) flag = filter.chunkEvent == null || filter.chunkEvent == event;
+                        if (flag) flag = filter.chunkDimension == null || filter.chunkDimension == targetDim;
+                        if (filter.inverse == flag) {
+                            return;
+                        }
+                    }
+                }
                 StringBuilder builder = new StringBuilder();
                 builder.append(tickRecord).append(' ');
                 ITextComponent component = new TextComponentString(builder.toString());

@@ -10,5 +10,6 @@ public enum Type {
      */
     HOTKEY,
     NUMBER,
-    LIST
+    LIST,
+    ENUM
 }

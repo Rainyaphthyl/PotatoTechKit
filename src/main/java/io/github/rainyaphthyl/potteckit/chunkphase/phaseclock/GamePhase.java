@@ -83,7 +83,6 @@ public enum GamePhase {
     public final Class<? extends SubPhase> subClass;
     public final Class<? extends SubPhaseClock> clockClass;
     private final ITextComponent component;
-
     GamePhase(boolean dimensional, String description, String shortName) {
         this(dimensional, description, shortName, null, null);
     }
@@ -109,6 +108,10 @@ public enum GamePhase {
         ITextComponent hover = new TextComponentString("(" + ordinal() + ')' + description);
         style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hover));
         component.setStyle(style);
+    }
+
+    public static GamePhase fromShortName(String key) {
+        return phaseMapByName.get(key);
     }
 
     public static boolean isNullOrDimensional(GamePhase phase) {
