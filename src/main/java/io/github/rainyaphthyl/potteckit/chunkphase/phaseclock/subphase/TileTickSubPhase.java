@@ -1,7 +1,7 @@
 package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
-import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkPacketBuffer;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
+import io.github.rainyaphthyl.potteckit.input.PotteckitPacketBuffer;
 
 import javax.annotation.Nonnull;
 
@@ -43,14 +43,14 @@ public class TileTickSubPhase extends SubPhase {
     }
 
     @Override
-    public void readFromPacket(@Nonnull ChunkPacketBuffer buffer) {
+    public void readFromPacket(@Nonnull PotteckitPacketBuffer buffer) {
         delay = buffer.readVarLong();
         priority = buffer.readSignedVarInt();
         relativeID = buffer.readVarLong();
     }
 
     @Override
-    public void writeToPacket(@Nonnull ChunkPacketBuffer buffer) {
+    public void writeToPacket(@Nonnull PotteckitPacketBuffer buffer) {
         buffer.writeVarLong(getDelay());
         buffer.writeSignedVarInt(getPriority());
         buffer.writeVarLong(getRelativeID());

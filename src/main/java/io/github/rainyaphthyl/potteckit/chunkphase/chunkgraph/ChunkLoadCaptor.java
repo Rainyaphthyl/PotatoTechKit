@@ -2,6 +2,7 @@ package io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph;
 
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.PhaseRecord;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
+import io.github.rainyaphthyl.potteckit.input.PotteckitPacketBuffer;
 import io.github.rainyaphthyl.potteckit.util.NetworkGraph;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
@@ -123,7 +124,7 @@ public class ChunkLoadCaptor {
     }
 
     public static void debugChunkTickStamp(TickRecord record, int chunkX, int chunkZ, DimensionType dimensionType, ChunkEvent event, @SuppressWarnings("unused") ChunkLoadSource source, @Nonnull PlayerList playerList) {
-        ChunkPacketBuffer buffer = new ChunkPacketBuffer(Unpooled.buffer());
+        PotteckitPacketBuffer buffer = new PotteckitPacketBuffer(Unpooled.buffer());
         SPacketCustomPayload packet = new SPacketCustomPayload(CHANNEL_EVENT, buffer);
         buffer.writeTickRecord(record).writeSignedVarInt(chunkX).writeSignedVarInt(chunkZ);
         buffer.writeEnumValue(dimensionType).writeEnumValue(event);

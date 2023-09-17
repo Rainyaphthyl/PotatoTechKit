@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph;
+package io.github.rainyaphthyl.potteckit.input;
 
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
@@ -7,12 +7,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.DimensionType;
 
-public class ChunkPacketBuffer extends PacketBuffer {
-    public ChunkPacketBuffer(ByteBuf wrapped) {
+public class PotteckitPacketBuffer extends PacketBuffer {
+    public PotteckitPacketBuffer(ByteBuf wrapped) {
         super(wrapped);
     }
 
-    public ChunkPacketBuffer writeTickRecord(TickRecord tickRecord) {
+    public PotteckitPacketBuffer writeTickRecord(TickRecord tickRecord) {
         if (tickRecord == null) {
             writeVarInt(-1);
         } else {
@@ -29,7 +29,7 @@ public class ChunkPacketBuffer extends PacketBuffer {
         return this;
     }
 
-    public ChunkPacketBuffer writeSignedVarInt(int input) {
+    public PotteckitPacketBuffer writeSignedVarInt(int input) {
         int sign = (input & 0x80000000) >>> 31;
         long abs = Math.abs((long) input);
         long value = (abs << 1) | sign;
@@ -67,7 +67,7 @@ public class ChunkPacketBuffer extends PacketBuffer {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public ChunkPacketBuffer writeSubPhase(SubPhase subPhase) {
+    public PotteckitPacketBuffer writeSubPhase(SubPhase subPhase) {
         if (subPhase == null) {
             writeBoolean(false);
         } else {

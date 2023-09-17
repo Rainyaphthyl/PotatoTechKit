@@ -2,6 +2,7 @@ package io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph;
 
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
 import io.github.rainyaphthyl.potteckit.config.Configs;
+import io.github.rainyaphthyl.potteckit.input.PotteckitPacketBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
@@ -19,7 +20,7 @@ public class ChunkLoadGraph {
     public static void receiveChunkEventPacket(@Nonnull SPacketCustomPayload packetIn) {
         if (Configs.chunkLoadingGraphReceiver.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
             PacketBuffer rawBuffer = packetIn.getBufferData();
-            ChunkPacketBuffer buffer = rawBuffer instanceof ChunkPacketBuffer ? (ChunkPacketBuffer) rawBuffer : new ChunkPacketBuffer(rawBuffer);
+            PotteckitPacketBuffer buffer = rawBuffer instanceof PotteckitPacketBuffer ? (PotteckitPacketBuffer) rawBuffer : new PotteckitPacketBuffer(rawBuffer);
             TickRecord tickRecord = buffer.readTickRecord();
             int targetCX = buffer.readSignedVarInt();
             int targetCZ = buffer.readSignedVarInt();

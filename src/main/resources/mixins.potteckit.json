@@ -4,6 +4,7 @@
   "package": "io.github.rainyaphthyl.potteckit.mixin",
   "refmap": "mixins.potteckit.refmap.json",
   "mixins": [
+    "access.AccessChunkProviderClient",
     "access.AccessChunkRenderWorker",
     "access.AccessMinecraft",
     "access.AccessNextTickListEntry",

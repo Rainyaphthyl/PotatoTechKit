@@ -1,7 +1,7 @@
 package io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.subphase;
 
-import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkPacketBuffer;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
+import io.github.rainyaphthyl.potteckit.input.PotteckitPacketBuffer;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
@@ -65,9 +65,9 @@ public abstract class SubPhase implements Comparable<SubPhase> {
         }
     }
 
-    public abstract void readFromPacket(@Nonnull ChunkPacketBuffer buffer);
+    public abstract void readFromPacket(@Nonnull PotteckitPacketBuffer buffer);
 
-    public abstract void writeToPacket(@Nonnull ChunkPacketBuffer buffer);
+    public abstract void writeToPacket(@Nonnull PotteckitPacketBuffer buffer);
 
     @Override
     public abstract boolean equals(Object obj);
