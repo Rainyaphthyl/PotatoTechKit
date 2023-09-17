@@ -32,11 +32,11 @@ public class ChunkLoadGraph {
                 ImmutableList<ChunkFilterEntry> filterList = Configs.chunkLoadFilterList.getValue();
                 for (ChunkFilterEntry filter : filterList) {
                     if (filter != null) {
-                        boolean flag = filter.timeDimension == null || filter.timeDimension == tickRecord.dimensionType;
-                        if (flag) flag = filter.gamePhase == null || filter.gamePhase == tickRecord.gamePhase;
-                        if (flag) flag = filter.chunkEvent == null || filter.chunkEvent == event;
-                        if (flag) flag = filter.chunkDimension == null || filter.chunkDimension == targetDim;
-                        if (filter.inverse == flag) {
+                        boolean flag = filter.timeDimension() == null || filter.timeDimension() == tickRecord.dimensionType;
+                        if (flag) flag = filter.gamePhase() == null || filter.gamePhase() == tickRecord.gamePhase;
+                        if (flag) flag = filter.chunkEvent() == null || filter.chunkEvent() == event;
+                        if (flag) flag = filter.chunkDimension() == null || filter.chunkDimension() == targetDim;
+                        if (filter.inverse() == flag) {
                             return;
                         }
                     }

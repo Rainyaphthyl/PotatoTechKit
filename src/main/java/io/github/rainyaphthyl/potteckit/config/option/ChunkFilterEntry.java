@@ -7,23 +7,22 @@ import net.minecraft.world.DimensionType;
 
 import javax.annotation.Nullable;
 
-public class ChunkFilterEntry {
-    public final boolean inverse;
-    public final DimensionType timeDimension;
-    public final GamePhase gamePhase;
-    public final ChunkEvent chunkEvent;
-    public final DimensionType chunkDimension;
+public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
+    public static final ChunkFilterEntry NULL_WHITE = new ChunkFilterEntry(DimensionType.OVERWORLD, GamePhase.CHUNK_UNLOAD, ChunkEvent.LOADING, DimensionType.OVERWORLD);
+
+    protected ChunkFilterEntry(Class<?>[] typeArray, Object[] valueArray, boolean lazyCopy) {
+        super(typeArray, valueArray, lazyCopy);
+    }
 
     public ChunkFilterEntry(DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
         this(false, timeDimension, gamePhase, chunkEvent, chunkDimension);
     }
 
-    public ChunkFilterEntry(boolean inverse, DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
-        this.inverse = inverse;
-        this.gamePhase = gamePhase;
-        this.timeDimension = timeDimension;
-        this.chunkEvent = chunkEvent;
-        this.chunkDimension = chunkDimension;
+    public ChunkFilterEntry(Boolean inverse, DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
+        super(
+                new Class<?>[]{Boolean.class, DimensionType.class, GamePhase.class, ChunkEvent.class, DimensionType.class},
+                new Object[]{inverse == null ? Boolean.FALSE : inverse, timeDimension, gamePhase, chunkEvent, chunkDimension}
+        );
     }
 
     public static ChunkFilterEntry fromString(String key) {
@@ -65,27 +64,65 @@ public class ChunkFilterEntry {
         }
     }
 
+    public boolean inverse() {
+        return (Boolean) getValue(0);
+    }
+
+    public DimensionType timeDimension() {
+        return (DimensionType) getValue(1);
+    }
+
+    public GamePhase gamePhase() {
+        return (GamePhase) getValue(2);
+    }
+
+    public ChunkEvent chunkEvent() {
+        return (ChunkEvent) getValue(3);
+    }
+
+    public DimensionType chunkDimension() {
+        return (DimensionType) getValue(4);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (inverse) {
+        if (inverse()) {
             builder.append('!');
         }
-        if (timeDimension != null) {
-            builder.append(TickRecord.getDimensionChar(timeDimension));
+        if (timeDimension() != null) {
+            builder.append(TickRecord.getDimensionChar(timeDimension()));
         }
         builder.append(':');
-        if (gamePhase != null) {
-            builder.append(gamePhase.shortName);
+        if (gamePhase() != null) {
+            builder.append(gamePhase().shortName);
         }
         builder.append(':');
-        if (chunkEvent != null) {
-            builder.append(chunkEvent.shortName);
+        if (chunkEvent() != null) {
+            builder.append(chunkEvent().shortName);
         }
         builder.append(':');
-        if (timeDimension != null) {
-            builder.append(TickRecord.getDimensionChar(timeDimension));
+        if (timeDimension() != null) {
+            builder.append(TickRecord.getDimensionChar(timeDimension()));
         }
         return builder.toString();
+    }
+
+    @Override
+    public ChunkFilterEntry copyModified(int[] indices, Object... newValues) {
+        if (indices == null || newValues == null || indices.length != newValues.length) {
+            return this;
+        }
+        Object[] args = new Object[valueArray.length];
+        System.arraycopy(valueArray, 0, args, 0, valueArray.length);
+        for (int i = 0; i < indices.length; ++i) {
+            int index = indices[i];
+            if (index >= 0 && index < valueArray.length && typeArray[index].isAssignableFrom(newValues[i].getClass())) {
+                args[index] = newValues[i];
+            } else {
+                return this;
+            }
+        }
+        return new ChunkFilterEntry(typeArray, args, true);
     }
 }
