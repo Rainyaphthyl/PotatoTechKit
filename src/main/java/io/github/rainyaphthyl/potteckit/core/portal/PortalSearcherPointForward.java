@@ -1,5 +1,6 @@
 package io.github.rainyaphthyl.potteckit.core.portal;
 
+import io.github.rainyaphthyl.potteckit.core.SilentChunkReader;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -9,7 +10,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.border.WorldBorder;
 
@@ -23,7 +23,7 @@ public class PortalSearcherPointForward extends PortalSearcher {
     private final DimensionType dimSource;
     private final Vec3d posSource;
     private boolean initialized = false;
-    private IBlockAccess reader = null;
+    private SilentChunkReader reader = null;
     private WorldServer world = null;
     private BlockPos posDestOrigin = null;
     private BlockPos posDestTarget = null;
@@ -84,8 +84,7 @@ public class PortalSearcherPointForward extends PortalSearcher {
                 return;
         }
         initialized = true;
-        // TODO: 2023/9/19,0019 Replace reader with Silent Chunk Reader
-        reader = world;
+        reader = SilentChunkReader.getAccessTo(world);
         posDestOrigin = clampTeleportDestination(x, y, z);
     }
 
