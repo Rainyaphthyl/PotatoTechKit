@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
@@ -15,7 +16,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.border.WorldBorder;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -99,17 +102,22 @@ public class PortalSearcherPointForward extends PortalSearcher {
         int actualLimit = world.getActualHeight() - 1;
         BlockPos.MutableBlockPos posResult = new BlockPos.MutableBlockPos();
         BlockPos.MutableBlockPos posPortal = new BlockPos.MutableBlockPos();
+        Set<ChunkPos> emptyChunkSet = new HashSet<>();
+        Set<ChunkPos> validChunkSet = new HashSet<>();
         double distSqMin = -1.0;
         for (int bx = -128; bx <= 128; ++bx) {
             int xDetect = posDestOrigin.getX() + bx;
             for (int bz = -128; bz <= 128; ++bz) {
-                if ((bz & 0xF) == 0) {
-                    server.getPlayerList().sendMessage(new TextComponentString("Progress: " + bx + ", " + bz));
-                }
                 int zDetect = posDestOrigin.getZ() + bz;
                 posPortal.setPos(xDetect, 0, zDetect);
                 for (int yDetect = actualLimit; yDetect >= 0; --yDetect) {
                     posPortal.setY(yDetect);
+                    if (!world.isBlockLoaded(posPortal)) {
+                        emptyChunkSet.add(new ChunkPos(posPortal));
+                        continue;
+                    } else {
+                        validChunkSet.add(new ChunkPos(posPortal));
+                    }
                     IBlockState stateToDetect = reader.getBlockState(posPortal);
                     if (stateToDetect.getBlock() == Blocks.PORTAL) {
                         // find the lowest portal block in current portal pattern to detect
@@ -122,15 +130,21 @@ public class PortalSearcherPointForward extends PortalSearcher {
                         yDetect = yBottom + 1;
                         posPortal.setY(yDetect);
                         double distSqTemp = posPortal.distanceSq(posDestOrigin);
+                        char colorCode = '7';
                         if (distSqMin < 0.0 || distSqTemp < distSqMin) {
                             distSqMin = distSqTemp;
                             posResult.setPos(posPortal);
+                            colorCode = 'f';
                         }
+                        server.getPlayerList().sendMessage(new TextComponentString("§" + colorCode + posPortal + " : " + distSqTemp + " / " + distSqMin + "§r"), true);
                     }
                 }
             }
         }
         distSqCache = distSqMin;
         posDestTarget = posResult.toImmutable();
+        int empty = emptyChunkSet.size();
+        int valid = validChunkSet.size();
+        server.getPlayerList().sendMessage(new TextComponentString("§7Chunk invalidity: " + empty + " / " + (empty + valid) + "§r"), true);
     }
 }
