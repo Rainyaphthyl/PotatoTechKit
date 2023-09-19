@@ -1,5 +1,8 @@
 package io.github.rainyaphthyl.potteckit.core;
 
+import io.github.rainyaphthyl.potteckit.mixin.access.AccessChunkProviderServer;
+import io.github.rainyaphthyl.potteckit.mixin.access.AccessWorld;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -8,6 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldType;
@@ -18,7 +22,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -26,9 +30,9 @@ import java.util.concurrent.ConcurrentMap;
 @MethodsReturnNonnullByDefault
 public class SilentChunkReader implements IBlockAccess {
     private static final ConcurrentMap<WorldServer, SilentChunkReader> instances = new ConcurrentHashMap<>();
-    private final WorldServer world;
+    protected final WorldServer world;
 
-    private SilentChunkReader(WorldServer world) {
+    protected SilentChunkReader(WorldServer world) {
         this.world = world;
     }
 
@@ -39,10 +43,15 @@ public class SilentChunkReader implements IBlockAccess {
     @Nullable
     @Override
     public TileEntity getTileEntity(BlockPos pos) {
-        if (world.isBlockLoaded(pos)) {
+        boolean outOfRange = true;
+        if (world instanceof AccessWorld) {
+            outOfRange = ((AccessWorld) world).invokeIsOutsideBuildHeight(pos);
+        }
+        if (!outOfRange) {
             Chunk chunk = spectateLoadedChunk(pos);
             if (chunk != null) {
-                return chunk.getTileEntityMap().get(pos);
+                Map<BlockPos, TileEntity> tileEntityMap = chunk.getTileEntityMap();
+                return tileEntityMap.get(pos);
             }
         }
         return null;
@@ -55,8 +64,11 @@ public class SilentChunkReader implements IBlockAccess {
 
     @Override
     public IBlockState getBlockState(BlockPos pos) {
-        boolean outOfRange = pos.getY() < 0 || pos.getY() >= 256;
-        if (!outOfRange && world.isBlockLoaded(pos)) {
+        boolean outOfRange = true;
+        if (world instanceof AccessWorld) {
+            outOfRange = ((AccessWorld) world).invokeIsOutsideBuildHeight(pos);
+        }
+        if (!outOfRange) {
             Chunk chunk = spectateLoadedChunk(pos);
             if (chunk != null) {
                 return chunk.getBlockState(pos);
@@ -97,12 +109,13 @@ public class SilentChunkReader implements IBlockAccess {
      * Do not modify the {@code unloadQueued} flag
      */
     @Nullable
-    private Chunk spectateLoadedChunk(int chunkX, int chunkZ) {
+    protected Chunk spectateLoadedChunk(int chunkX, int chunkZ) {
         ChunkProviderServer chunkProvider = world.getChunkProvider();
-        Collection<Chunk> loadedChunks = chunkProvider.getLoadedChunks();
-        for (Chunk chunk : loadedChunks) {
-            if (chunk.x == chunkX && chunk.z == chunkZ) {
-                return chunk;
+        if (chunkProvider instanceof AccessChunkProviderServer) {
+            long index = ChunkPos.asLong(chunkX, chunkZ);
+            Long2ObjectMap<Chunk> loadedChunksMap = ((AccessChunkProviderServer) chunkProvider).getLoadedChunksMap();
+            if (loadedChunksMap.containsKey(index)) {
+                return loadedChunksMap.get(index);
             }
         }
         return null;
@@ -112,7 +125,7 @@ public class SilentChunkReader implements IBlockAccess {
      * Do not modify the {@code unloadQueued} flag
      */
     @Nullable
-    private Chunk spectateLoadedChunk(BlockPos blockPos) {
+    protected Chunk spectateLoadedChunk(BlockPos blockPos) {
         return spectateLoadedChunk(blockPos.getX() >> 4, blockPos.getZ() >> 4);
     }
 }

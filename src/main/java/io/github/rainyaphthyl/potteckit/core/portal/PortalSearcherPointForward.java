@@ -10,6 +10,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.border.WorldBorder;
 
@@ -23,7 +24,7 @@ public class PortalSearcherPointForward extends PortalSearcher {
     private final DimensionType dimSource;
     private final Vec3d posSource;
     private boolean initialized = false;
-    private SilentChunkReader reader = null;
+    private IBlockAccess reader = null;
     private WorldServer world = null;
     private BlockPos posDestOrigin = null;
     private BlockPos posDestTarget = null;
@@ -64,6 +65,7 @@ public class PortalSearcherPointForward extends PortalSearcher {
     }
 
     private void initDestOrigin() {
+        initialized = false;
         double x = posSource.x;
         double y = posSource.y;
         double z = posSource.z;
@@ -80,12 +82,11 @@ public class PortalSearcherPointForward extends PortalSearcher {
                 world = server.getWorld(DimensionType.NETHER.getId());
                 break;
             default:
-                initialized = false;
                 return;
         }
-        initialized = true;
         reader = SilentChunkReader.getAccessTo(world);
         posDestOrigin = clampTeleportDestination(x, y, z);
+        initialized = true;
     }
 
     /**
@@ -95,29 +96,32 @@ public class PortalSearcherPointForward extends PortalSearcher {
         if (!initialized) {
             return;
         }
-        final int actualLimit = world.getActualHeight() - 1;
-        final BlockPos.MutableBlockPos posResult = new BlockPos.MutableBlockPos();
-        final BlockPos.MutableBlockPos posPortal = new BlockPos.MutableBlockPos();
-        double distSqMin = Double.MAX_VALUE;
+        int actualLimit = world.getActualHeight() - 1;
+        BlockPos.MutableBlockPos posResult = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos posPortal = new BlockPos.MutableBlockPos();
+        double distSqMin = -1.0;
         for (int bx = -128; bx <= 128; ++bx) {
-            final int xDetect = posDestOrigin.getX() + bx;
+            int xDetect = posDestOrigin.getX() + bx;
             for (int bz = -128; bz <= 128; ++bz) {
-                final int zDetect = posDestOrigin.getZ() + bz;
+                if ((bz & 0xF) == 0) {
+                    server.getPlayerList().sendMessage(new TextComponentString("Progress: " + bx + ", " + bz));
+                }
+                int zDetect = posDestOrigin.getZ() + bz;
                 posPortal.setPos(xDetect, 0, zDetect);
                 for (int yDetect = actualLimit; yDetect >= 0; --yDetect) {
                     posPortal.setY(yDetect);
-                    final IBlockState stateToDetect = reader.getBlockState(posPortal);
+                    IBlockState stateToDetect = reader.getBlockState(posPortal);
                     if (stateToDetect.getBlock() == Blocks.PORTAL) {
                         // find the lowest portal block in current portal pattern to detect
-                        int yBottom = yDetect - 1;
-                        posPortal.setY(yBottom);
-                        while (reader.getBlockState(posPortal).getBlock() == Blocks.PORTAL) {
+                        int yBottom = yDetect;
+                        do {
                             --yBottom;
                             posPortal.setY(yBottom);
-                        }
+                            stateToDetect = reader.getBlockState(posPortal);
+                        } while (stateToDetect.getBlock() == Blocks.PORTAL);
                         yDetect = yBottom + 1;
-                        posPortal.setY(yBottom + 1);
-                        final double distSqTemp = posPortal.distanceSq(posDestOrigin);
+                        posPortal.setY(yDetect);
+                        double distSqTemp = posPortal.distanceSq(posDestOrigin);
                         if (distSqMin < 0.0 || distSqTemp < distSqMin) {
                             distSqMin = distSqTemp;
                             posResult.setPos(posPortal);
