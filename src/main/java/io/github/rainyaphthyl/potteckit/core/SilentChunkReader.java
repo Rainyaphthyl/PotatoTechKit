@@ -112,11 +112,13 @@ public class SilentChunkReader implements IBlockAccess {
     protected Chunk spectateLoadedChunk(int chunkX, int chunkZ) {
         ChunkProviderServer chunkProvider = world.getChunkProvider();
         if (chunkProvider instanceof AccessChunkProviderServer) {
+            Chunk chunk = null;
             long index = ChunkPos.asLong(chunkX, chunkZ);
             Long2ObjectMap<Chunk> loadedChunksMap = ((AccessChunkProviderServer) chunkProvider).getLoadedChunksMap();
             if (loadedChunksMap.containsKey(index)) {
-                return loadedChunksMap.get(index);
+                chunk = loadedChunksMap.get(index);
             }
+            return chunk;
         }
         return null;
     }
