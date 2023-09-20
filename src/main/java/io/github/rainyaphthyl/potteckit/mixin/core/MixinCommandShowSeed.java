@@ -1,7 +1,8 @@
 package io.github.rainyaphthyl.potteckit.mixin.core;
 
 import io.github.rainyaphthyl.potteckit.core.portal.PortalSearcherPointForward;
-import net.minecraft.command.CommandLocate;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandShowSeed;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;
@@ -14,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nonnull;
 
-@Mixin(CommandLocate.class)
-public abstract class MixinCommandLocate {
+@Mixin(CommandShowSeed.class)
+public abstract class MixinCommandShowSeed extends CommandBase {
     @Inject(method = "execute", at = @At(value = "HEAD"), cancellable = true)
     public void onExecute(MinecraftServer server, ICommandSender sender, @Nonnull String[] args, CallbackInfo ci) {
         if (args.length == 3) {

@@ -12,7 +12,7 @@
     "access.AccessWorld",
     "chunkgraph.MixinChunkProviderServer",
     "chunkgraph.MixinTileEntityHopper",
-    "core.MixinCommandLocate",
+    "core.MixinCommandShowSeed",
     "core.MixinGuiMainMenu",
     "core.MixinMinecraft",
     "core.MixinNetHandlerPlayClient",
