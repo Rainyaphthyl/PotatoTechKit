@@ -82,7 +82,7 @@ public class PortalSearcherRangeForward extends PortalSearcher {
                 if (threadDeque.add(thread)) {
                     ++permits;
                 }
-                if (permits >= MAX_THREAD_NUM) {
+                if (permits >= maxThreadNum) {
                     break;
                 }
             } while (iterator.hasNext());

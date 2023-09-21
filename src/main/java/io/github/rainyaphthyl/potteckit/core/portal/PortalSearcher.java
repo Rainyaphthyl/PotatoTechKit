@@ -1,5 +1,6 @@
 package io.github.rainyaphthyl.potteckit.core.portal;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AtomicDouble;
 import io.github.rainyaphthyl.potteckit.core.ChunkReader;
 import io.github.rainyaphthyl.potteckit.util.Reference;
@@ -19,6 +20,8 @@ import net.minecraft.world.chunk.Chunk;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +32,7 @@ public abstract class PortalSearcher implements Runnable {
     public static final double INTER_DIM_RATE = 8.0;
     public static final double BORDER_WIDTH = 16.0;
     public static final int BORDER_POS = 29999872;
-    protected static final int MAX_THREAD_NUM = 1;
+    protected final int maxThreadNum;
     protected final MinecraftServer server;
     protected final DimensionType dimSource;
     protected final Lock lock = new ReentrantLock();
@@ -38,6 +41,9 @@ public abstract class PortalSearcher implements Runnable {
     public PortalSearcher(MinecraftServer server, DimensionType dimSource) {
         this.server = Objects.requireNonNull(server);
         this.dimSource = Objects.requireNonNull(dimSource);
+        int i = Math.max(1, (int) ((double) Runtime.getRuntime().maxMemory() * 0.3D) / 10485760);
+        int j = Math.max(1, MathHelper.clamp(Runtime.getRuntime().availableProcessors(), 1, i / 5));
+        maxThreadNum = MathHelper.clamp(j * 10, 1, i);
     }
 
     @Override
@@ -122,6 +128,97 @@ public abstract class PortalSearcher implements Runnable {
                                     if (posResultPool != null) {
                                         posResultPool.setPos(posPortal);
                                     }
+                                    colorCode = 'f';
+                                }
+                                server.getPlayerList().sendMessage(new TextComponentString("§" + colorCode + posPortal + " : " + distSqTemp + " / " + distSqMin + "§r"), true);
+                            }
+                        }
+                    }
+                }
+                semaphore.release();
+            } catch (InterruptedException ignored) {
+            }
+        };
+        Thread thread = new Thread(threadGroup, task, "Portal Approach " + posOrigin);
+        thread.setDaemon(true);
+        return thread;
+    }
+
+    /**
+     * in case multiple targets have an equal distance to the original position
+     */
+    protected Tuple<Double, List<BlockPos>> findAllClosestTargets(BlockPos posDestOrigin) {
+        Semaphore semaphore = new Semaphore(0);
+        List<BlockPos> posResultList = new ArrayList<>();
+        AtomicDouble distSqMinPool = new AtomicDouble(-1.0);
+        Thread thread = asyncTaskFindAllClosestTargets(posDestOrigin, semaphore, posResultList, distSqMinPool, null);
+        thread.start();
+        boolean acquired = false;
+        try {
+            acquired = semaphore.tryAcquire(45L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Reference.LOGGER.warn("Interrupted: {}: {}", this, e);
+        }
+        if (!acquired) {
+            posResultList.clear();
+            distSqMinPool.set(-1.0);
+            thread.interrupt();
+            server.getPlayerList().sendMessage(new TextComponentString("§cFailed to check nearest portal...§r"), true);
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Reference.LOGGER.warn("Interrupted: {}: {}", this, e);
+            } finally {
+                server.getPlayerList().sendMessage(new TextComponentString("§cStopped portal checking§r"), true);
+            }
+        }
+        return new Tuple<>(distSqMinPool.get(), ImmutableList.copyOf(posResultList));
+    }
+
+    @ParametersAreNonnullByDefault
+    protected Thread asyncTaskFindAllClosestTargets(BlockPos posDestOrigin, Semaphore semaphore, List<BlockPos> posResultList, AtomicDouble distSqMinPool, @SuppressWarnings("SameParameterValue") @Nullable ThreadGroup threadGroup) {
+        BlockPos posOrigin = posDestOrigin.toImmutable();
+        Runnable task = () -> {
+            try {
+                ChunkReader reader = ChunkReader.getAccessTo(worldDest);
+                double distSqMin = -1.0;
+                if (reader == null) {
+                    return;
+                }
+                int actualLimit = worldDest.getActualHeight() - 1;
+                BlockPos.MutableBlockPos posPortal = new BlockPos.MutableBlockPos();
+                for (int bx = -128; bx <= 128; ++bx) {
+                    int xDetect = posOrigin.getX() + bx;
+                    for (int bz = -128; bz <= 128; ++bz) {
+                        int zDetect = posOrigin.getZ() + bz;
+                        posPortal.setPos(xDetect, 0, zDetect);
+                        Chunk chunk = reader.spectateLoadedChunk(posPortal, true);
+                        if (chunk == null) {
+                            throw new InterruptedException("Empty chunk time out!");
+                        }
+                        for (int yDetect = actualLimit; yDetect >= 0; --yDetect) {
+                            posPortal.setY(yDetect);
+                            IBlockState stateToDetect = chunk.getBlockState(posPortal);
+                            if (stateToDetect.getBlock() == Blocks.PORTAL) {
+                                // find the lowest portal block in current portal pattern to detect
+                                int yBottom = yDetect;
+                                do {
+                                    --yBottom;
+                                    posPortal.setY(yBottom);
+                                    stateToDetect = chunk.getBlockState(posPortal);
+                                } while (stateToDetect.getBlock() == Blocks.PORTAL);
+                                yDetect = yBottom + 1;
+                                posPortal.setY(yDetect);
+                                double distSqTemp = posPortal.distanceSq(posOrigin);
+                                char colorCode = '7';
+                                if (distSqMin < 0.0 || distSqTemp <= distSqMin) {
+                                    if (distSqTemp != distSqMin) {
+                                        distSqMin = distSqTemp;
+                                        posResultList.clear();
+                                        distSqMinPool.set(distSqMin);
+                                    }
+                                    BlockPos posPossible = posPortal.toImmutable();
+                                    posResultList.add(posPossible);
                                     colorCode = 'f';
                                 }
                                 server.getPlayerList().sendMessage(new TextComponentString("§" + colorCode + posPortal + " : " + distSqTemp + " / " + distSqMin + "§r"), true);
