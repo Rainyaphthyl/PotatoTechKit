@@ -29,6 +29,7 @@ public abstract class PortalSearcher implements Runnable {
     public static final double INTER_DIM_RATE = 8.0;
     public static final double BORDER_WIDTH = 16.0;
     public static final int BORDER_POS = 29999872;
+    protected static final int MAX_THREAD_NUM = 1;
     protected final MinecraftServer server;
     protected final DimensionType dimSource;
     protected final Lock lock = new ReentrantLock();
@@ -51,7 +52,8 @@ public abstract class PortalSearcher implements Runnable {
         Semaphore semaphore = new Semaphore(0);
         BlockPos.MutableBlockPos posResult = new BlockPos.MutableBlockPos();
         AtomicDouble distSqMin = new AtomicDouble(-1.0);
-        Thread thread = asyncFindClosestTarget(posDestOrigin, semaphore, posResult, distSqMin, null);
+        Thread thread = asyncTaskFindClosestTarget(posDestOrigin, semaphore, posResult, distSqMin, null);
+        thread.start();
         boolean acquired = false;
         try {
             acquired = semaphore.tryAcquire(45L, TimeUnit.SECONDS);
@@ -75,7 +77,7 @@ public abstract class PortalSearcher implements Runnable {
     }
 
     @ParametersAreNonnullByDefault
-    protected Thread asyncFindClosestTarget(BlockPos posDestOrigin, Semaphore semaphore, @Nullable BlockPos.MutableBlockPos posResultPool, @Nullable AtomicDouble distSqMinPool, @Nullable ThreadGroup threadGroup) {
+    protected Thread asyncTaskFindClosestTarget(BlockPos posDestOrigin, Semaphore semaphore, @Nullable BlockPos.MutableBlockPos posResultPool, @Nullable AtomicDouble distSqMinPool, @Nullable ThreadGroup threadGroup) {
         BlockPos posOrigin = posDestOrigin.toImmutable();
         Runnable task = () -> {
             try {
@@ -92,12 +94,12 @@ public abstract class PortalSearcher implements Runnable {
                     for (int bz = -128; bz <= 128; ++bz) {
                         int zDetect = posOrigin.getZ() + bz;
                         posPortal.setPos(xDetect, 0, zDetect);
+                        Chunk chunk = reader.spectateLoadedChunk(posPortal, true);
+                        if (chunk == null) {
+                            throw new InterruptedException("Empty chunk time out!");
+                        }
                         for (int yDetect = actualLimit; yDetect >= 0; --yDetect) {
                             posPortal.setY(yDetect);
-                            Chunk chunk = reader.spectateLoadedChunk(posPortal, true);
-                            if (chunk == null) {
-                                throw new InterruptedException("Empty chunk time out!");
-                            }
                             IBlockState stateToDetect = chunk.getBlockState(posPortal);
                             if (stateToDetect.getBlock() == Blocks.PORTAL) {
                                 // find the lowest portal block in current portal pattern to detect
@@ -133,7 +135,6 @@ public abstract class PortalSearcher implements Runnable {
         };
         Thread thread = new Thread(threadGroup, task, "Portal Approach " + posOrigin);
         thread.setDaemon(true);
-        thread.start();
         return thread;
     }
 

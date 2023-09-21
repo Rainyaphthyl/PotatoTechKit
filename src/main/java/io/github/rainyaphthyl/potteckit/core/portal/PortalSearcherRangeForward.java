@@ -34,15 +34,16 @@ public class PortalSearcherRangeForward extends PortalSearcher {
                 for (Map.Entry<BlockPos, Collection<AxisAlignedBB>> entry : portalPieceInvMap.asMap().entrySet()) {
                     BlockPos posTarget = entry.getKey();
                     Collection<AxisAlignedBB> pieceSources = entry.getValue();
-                    SortedSet<AxisAlignedBB> pieceList = new TreeSet<>(pieceSources);
                     StringBuilder builder = new StringBuilder();
                     builder.append("Portal Mapping to ").append(posTarget).append(":\n");
-                    for (AxisAlignedBB piece : pieceList) {
+                    for (AxisAlignedBB piece : pieceSources) {
                         builder.append("  ").append(piece).append('\n');
                     }
                     server.getPlayerList().sendMessage(new TextComponentString(builder.toString()));
                     Reference.LOGGER.info(builder.toString());
                 }
+            } catch (Exception e) {
+                Reference.LOGGER.warn(e);
             } finally {
                 lock.unlock();
             }
@@ -66,31 +67,51 @@ public class PortalSearcherRangeForward extends PortalSearcher {
         Iterable<BlockPos> destSet = BlockPos.getAllInBox(posDestMin, posDestMax);
         Semaphore semaphore = new Semaphore(0);
         Map<BlockPos, BlockPos.MutableBlockPos> blockMapPool = new HashMap<>();
-        int permits = 0;
+        Iterator<BlockPos> iterator = destSet.iterator();
         ThreadGroup threadGroup = new ThreadGroup("Portal Approaches");
-        for (BlockPos posDest : destSet) {
-            BlockPos.MutableBlockPos posResult = blockMapPool.computeIfAbsent(posDest, k -> new BlockPos.MutableBlockPos());
-            Thread thread = asyncFindClosestTarget(posDest, semaphore, posResult, null, threadGroup);
-            if (thread != null) {
-                ++permits;
-            }
-        }
-        boolean acquired = false;
-        try {
-            acquired = semaphore.tryAcquire(permits, 45L, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Reference.LOGGER.warn("{}: {}, {}", e, this, semaphore);
-        }
-        if (!acquired) {
-            threadGroup.interrupt();
-            Thread[] threadList = new Thread[permits];
-            threadGroup.enumerate(threadList);
-            for (Thread thread : threadList) {
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    Reference.LOGGER.warn(e);
+        Deque<Thread> threadDeque = new ArrayDeque<>();
+        int count = 0;
+        while (iterator.hasNext()) {
+            threadDeque.clear();
+            int permits = 0;
+            do {
+                BlockPos posDest = iterator.next();
+                BlockPos.MutableBlockPos posResult = blockMapPool.computeIfAbsent(posDest, k -> new BlockPos.MutableBlockPos());
+                Thread thread = asyncTaskFindClosestTarget(posDest, semaphore, posResult, null, threadGroup);
+                thread.setName("Portal Approach " + (count++));
+                if (threadDeque.add(thread)) {
+                    ++permits;
                 }
+                if (permits >= MAX_THREAD_NUM) {
+                    break;
+                }
+            } while (iterator.hasNext());
+            if (permits != threadDeque.size()) {
+                break;
+            }
+            for (Thread thread : threadDeque) {
+                thread.start();
+                server.getPlayerList().sendMessage(new TextComponentString("§7" + thread + " started§r"));
+            }
+            boolean acquired = false;
+            try {
+                acquired = semaphore.tryAcquire(permits, 15L * permits, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Reference.LOGGER.warn("{}: {}, {}", e, this, semaphore);
+            }
+            String message = "§fFinished " + count + " tasks§r";
+            server.getPlayerList().sendMessage(new TextComponentString(message));
+            if (!acquired) {
+                for (Thread thread : threadDeque) {
+                    try {
+                        thread.interrupt();
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        Reference.LOGGER.warn(e);
+                    }
+                }
+                server.getPlayerList().sendMessage(new TextComponentString("§cSearching failed!§r"));
+                break;
             }
         }
         return blockMapPool;
