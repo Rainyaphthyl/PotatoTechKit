@@ -249,7 +249,9 @@ public abstract class PortalSearcher implements Runnable {
                                     posResultList.add(posPossible);
                                     colorCode = 'f';
                                 }
-                                server.getPlayerList().sendMessage(new TextComponentString("§" + colorCode + posPortal + " : " + distSqTemp + " / " + distSqMin + "§r"), true);
+                                String message = "§" + colorCode + posPortal + " : " + distSqTemp + " / " + distSqMin + "§r";
+                                //server.getPlayerList().sendMessage(new TextComponentString(message), true);
+                                MessageOutput.VANILLA_HOTBAR.send(message, MessageDispatcher.generic());
                             }
                         }
                     }
@@ -307,21 +309,44 @@ public abstract class PortalSearcher implements Runnable {
     }
 
     protected AxisAlignedBB getMappingAreaTo(int blockX, int blockY, int blockZ) {
+        return getMappingAreaTo(blockX, blockY, blockZ, blockX, blockY, blockZ);
+    }
+
+    protected AxisAlignedBB getMappingAreaTo(@Nonnull BlockPos from, @Nonnull BlockPos to) {
+        return getMappingAreaTo(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
+    }
+
+    protected AxisAlignedBB getMappingAreaTo(int xMinB, int yMinB, int zMinB, int xMaxB, int yMaxB, int zMaxB) {
+        if (xMinB > xMaxB) {
+            int temp = xMinB;
+            xMinB = xMaxB;
+            xMaxB = temp;
+        }
+        if (yMinB > yMaxB) {
+            int temp = yMinB;
+            yMinB = yMaxB;
+            yMaxB = temp;
+        }
+        if (zMinB > zMaxB) {
+            int temp = zMinB;
+            zMinB = zMaxB;
+            zMaxB = temp;
+        }
         WorldBorder borderObj = worldDest.getWorldBorder();
-        double minX = blockX;
-        if (blockX <= -BORDER_POS || minX <= borderObj.minX() + BORDER_WIDTH) {
+        double minX = xMinB;
+        if (xMinB <= -BORDER_POS || minX <= borderObj.minX() + BORDER_WIDTH) {
             minX = -Double.MAX_VALUE;
         }
-        double minZ = blockZ;
-        if (blockZ <= -BORDER_POS || minZ <= borderObj.minZ() + BORDER_WIDTH) {
+        double minZ = zMinB;
+        if (zMinB <= -BORDER_POS || minZ <= borderObj.minZ() + BORDER_WIDTH) {
             minZ = -Double.MAX_VALUE;
         }
-        double maxX = blockX + 1;
-        if (blockX >= BORDER_POS || maxX >= borderObj.maxX() - BORDER_WIDTH) {
+        double maxX = xMaxB + 1;
+        if (xMinB >= BORDER_POS || maxX >= borderObj.maxX() - BORDER_WIDTH) {
             maxX = Double.MAX_VALUE;
         }
-        double maxZ = blockZ + 1;
-        if (blockZ >= BORDER_POS || maxZ >= borderObj.maxZ() - BORDER_WIDTH) {
+        double maxZ = zMaxB + 1;
+        if (zMinB >= BORDER_POS || maxZ >= borderObj.maxZ() - BORDER_WIDTH) {
             maxZ = Double.MAX_VALUE;
         }
         switch (dimSource) {
@@ -339,7 +364,7 @@ public abstract class PortalSearcher implements Runnable {
                 maxZ *= INTER_DIM_RATE;
                 break;
         }
-        double maxY = blockY + 1;
-        return new AxisAlignedBB(minX, blockY, minZ, maxX, maxY, maxZ);
+        double maxY = yMaxB + 1;
+        return new AxisAlignedBB(minX, yMinB, minZ, maxX, maxY, maxZ);
     }
 }

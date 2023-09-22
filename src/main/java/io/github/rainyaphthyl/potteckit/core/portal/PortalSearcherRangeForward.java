@@ -2,6 +2,7 @@ package io.github.rainyaphthyl.potteckit.core.portal;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import io.github.rainyaphthyl.potteckit.util.Generic;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -11,6 +12,7 @@ import net.minecraft.world.DimensionType;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -40,68 +42,62 @@ public class PortalSearcherRangeForward extends PortalSearcher {
         if (LOCK.tryLock()) {
             try {
                 initialize();
-                Map<BlockPos, ? extends BlockPos> blockMapPool = findTargetFromDestOrigins();
-                Multimap<BlockPos, BlockPos> portalPieceInvMap = findTargetsFromParts(blockMapPool);
-                for (Map.Entry<BlockPos, Collection<BlockPos>> entry : portalPieceInvMap.asMap().entrySet()) {
-                    BlockPos posTarget = entry.getKey();
-                    Collection<BlockPos> pieceSources = entry.getValue();
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("Portal Mapping to ").append(posTarget).append(":");
-                    for (BlockPos posPiece : pieceSources) {
-                        AxisAlignedBB piece = getMappingAreaTo(posPiece).intersect(boxSource);
-                        builder.append("\n  ").append(piece);
+                Map<BlockPos, AxisAlignedBB> boxMap = binaryExpansiveFindTargets();
+                StringBuilder builder = new StringBuilder();
+                if (boxMap.isEmpty()) {
+                    Map<BlockPos, ? extends BlockPos> blockMapPool = findTargetFromDestOrigins();
+                    Multimap<BlockPos, BlockPos> portalPieceInvMap = findTargetsFromParts(blockMapPool);
+                    for (Map.Entry<BlockPos, Collection<BlockPos>> entry : portalPieceInvMap.asMap().entrySet()) {
+                        BlockPos posTarget = entry.getKey();
+                        Collection<BlockPos> pieceSources = entry.getValue();
+                        builder.append("Portal Mapping to ").append(posTarget).append(":\n");
+                        for (BlockPos posPiece : pieceSources) {
+                            AxisAlignedBB piece = getMappingAreaTo(posPiece).intersect(boxSource);
+                            builder.append("  ").append(piece).append('\n');
+                        }
                     }
-                    server.getPlayerList().sendMessage(new TextComponentString(builder.toString()));
-                    Reference.LOGGER.info(builder.toString());
+                } else {
+                    for (Map.Entry<BlockPos, AxisAlignedBB> entry : boxMap.entrySet()) {
+                        BlockPos target = entry.getKey();
+                        AxisAlignedBB boxPiece = entry.getValue();
+                        builder.append("Portal Mapping to ").append(target).append(":\n");
+                        AxisAlignedBB piece = boxPiece.intersect(boxSource);
+                        builder.append("  ").append(piece).append('\n');
+                    }
                 }
+                server.getPlayerList().sendMessage(new TextComponentString(builder.toString()));
+                Reference.LOGGER.info(builder.toString());
             } catch (Exception e) {
                 Reference.LOGGER.warn(e);
             } finally {
                 LOCK.unlock();
             }
+        } else {
+            server.getPlayerList().sendMessage(new TextComponentString("§cTask has been running...§r"));
         }
     }
 
     @Nonnull
-    private Map<BlockPos, BlockPos> binaryExpansiveFindTargets() {
-        Map<BlockPos, BlockPos> blockSearchedMap = new HashMap<>();
-        int xMin = posDestMin.getX();
-        int yMin = posDestMin.getY();
-        int zMin = posDestMin.getZ();
-        int xMax = posDestMax.getX();
-        int yMax = posDestMax.getY();
-        int zMax = posDestMax.getZ();
-        int x = xMin;
-        int y = yMin;
-        int z = zMin;
-        // check in X-axis
-        BlockPos.MutableBlockPos posMin = new BlockPos.MutableBlockPos(posDestMin);
-        BlockPos.MutableBlockPos posItr = new BlockPos.MutableBlockPos(posDestMin);
-        BlockPos.MutableBlockPos posMax = new BlockPos.MutableBlockPos(xMax, yMin, zMin);
-        BlockPos targetMin = null;
-        for (; x <= xMax; ++x) {
-            posItr.setPos(x, y, z);
-            targetMin = findUniqueClosestTarget(posItr);
-            if (targetMin != null) {
-                xMin = x;
-                break;
+    private Map<BlockPos, AxisAlignedBB> binaryExpansiveFindTargets() {
+        Map<BlockPos, AxisAlignedBB> blockSearchedMap = new ConcurrentHashMap<>();
+        boolean equal = true;
+        BlockPos target = null;
+        Iterator<BlockPos> iterator = Generic.getCornersInBox(posDestMin, posDestMax).iterator();
+        // binary iterating...
+        while (equal && iterator.hasNext()) {
+            BlockPos posCorner = iterator.next();
+            BlockPos temp = findUniqueClosestTarget(posCorner);
+            if (temp == null) {
+                equal = false;
+            } else if (target == null) {
+                target = temp;
+            } else if (!target.equals(temp)) {
+                equal = false;
             }
         }
-        x = xMax;
-        for (int floor = xMin, ceil = xMax; floor < ceil; x = (floor + ceil) / 2) {
-            posItr.setPos(x, y, z);
-            BlockPos targetItr = findUniqueClosestTarget(posItr);
-            if (Objects.equals(targetMin, targetItr)) {
-                floor = x;
-            } else {
-                ceil = x - 1;
-            }
-        }
-        // the "right-side" boundary
-        xMax = posItr.getX();
-        for (x = xMin; x <= xMax; ++x) {
-            posItr.setPos(x, y, z);
-            blockSearchedMap.put(posItr.toImmutable(), targetMin);
+        if (equal) {
+            AxisAlignedBB originArea = getMappingAreaTo(posDestMin, posDestMax);
+            blockSearchedMap.put(target, originArea);
         }
         return blockSearchedMap;
     }
