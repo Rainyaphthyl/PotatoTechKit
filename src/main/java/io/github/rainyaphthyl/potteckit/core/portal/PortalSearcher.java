@@ -21,8 +21,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -32,10 +35,11 @@ public abstract class PortalSearcher implements Runnable {
     public static final double INTER_DIM_RATE = 8.0;
     public static final double BORDER_WIDTH = 16.0;
     public static final int BORDER_POS = 29999872;
+    protected static final Lock LOCK = new ReentrantLock();
     protected final int maxThreadNum;
     protected final MinecraftServer server;
     protected final DimensionType dimSource;
-    protected final Lock lock = new ReentrantLock();
+    protected final ConcurrentMap<BlockPos, Tuple<Double, List<BlockPos>>> targetCache = new ConcurrentHashMap<>();
     protected WorldServer worldDest = null;
 
     public PortalSearcher(MinecraftServer server, DimensionType dimSource) {
@@ -147,7 +151,13 @@ public abstract class PortalSearcher implements Runnable {
     /**
      * in case multiple targets have an equal distance to the original position
      */
+    @Nonnull
     protected Tuple<Double, List<BlockPos>> findAllClosestTargets(BlockPos posDestOrigin) {
+        posDestOrigin = posDestOrigin.toImmutable();
+        Tuple<Double, List<BlockPos>> result = targetCache.getOrDefault(posDestOrigin, null);
+        if (result != null) {
+            return result;
+        }
         Semaphore semaphore = new Semaphore(0);
         List<BlockPos> posResultList = new ArrayList<>();
         AtomicDouble distSqMinPool = new AtomicDouble(-1.0);
@@ -171,8 +181,23 @@ public abstract class PortalSearcher implements Runnable {
             } finally {
                 server.getPlayerList().sendMessage(new TextComponentString("§cStopped portal checking§r"), true);
             }
+            return new Tuple<>(-1.0, Collections.emptyList());
         }
-        return new Tuple<>(distSqMinPool.get(), ImmutableList.copyOf(posResultList));
+        result = new Tuple<>(distSqMinPool.get(), ImmutableList.copyOf(posResultList));
+        targetCache.put(posDestOrigin, result);
+        return result;
+    }
+
+    @Nullable
+    protected BlockPos findUniqueClosestTarget(BlockPos posDestOrigin) {
+        Tuple<Double, List<BlockPos>> tuple = findAllClosestTargets(posDestOrigin);
+        if (tuple.getFirst() >= 0.0) {
+            List<BlockPos> list = tuple.getSecond();
+            if (list.size() == 1) {
+                return list.get(0).toImmutable();
+            }
+        }
+        return null;
     }
 
     @ParametersAreNonnullByDefault

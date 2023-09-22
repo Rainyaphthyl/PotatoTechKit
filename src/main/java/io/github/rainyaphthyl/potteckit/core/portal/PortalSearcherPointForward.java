@@ -21,7 +21,7 @@ public class PortalSearcherPointForward extends PortalSearcher {
 
     @Override
     public void run() {
-        if (lock.tryLock()) {
+        if (LOCK.tryLock()) {
             try {
                 initialize();
                 Tuple<BlockPos, Double> result = findClosestDestination(posDestOrigin);
@@ -31,7 +31,7 @@ public class PortalSearcherPointForward extends PortalSearcher {
                 server.getPlayerList().sendMessage(new TextComponentString(message));
                 Reference.LOGGER.info(message);
             } finally {
-                lock.unlock();
+                LOCK.unlock();
             }
         }
     }

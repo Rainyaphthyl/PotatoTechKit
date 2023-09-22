@@ -24,19 +24,31 @@ public class PortalSearcherRangeForward extends PortalSearcher {
         this.boxSource = Objects.requireNonNull(boxSource);
     }
 
+    @Nonnull
+    protected static Multimap<BlockPos, BlockPos> findTargetsFromParts(@Nonnull Map<? extends BlockPos, ? extends BlockPos> blockMapPool) {
+        Multimap<BlockPos, BlockPos> portalPieceInvMap = HashMultimap.create();
+        for (Map.Entry<? extends BlockPos, ? extends BlockPos> entry : blockMapPool.entrySet()) {
+            BlockPos posDestOrigin = entry.getKey().toImmutable();
+            BlockPos posTarget = entry.getValue().toImmutable();
+            portalPieceInvMap.put(posTarget, posDestOrigin);
+        }
+        return portalPieceInvMap;
+    }
+
     @Override
     public void run() {
-        if (lock.tryLock()) {
+        if (LOCK.tryLock()) {
             try {
                 initialize();
-                Map<BlockPos, BlockPos.MutableBlockPos> blockMapPool = findTargetFromDestOrigins();
-                Multimap<BlockPos, AxisAlignedBB> portalPieceInvMap = findTargetsFromParts(blockMapPool);
-                for (Map.Entry<BlockPos, Collection<AxisAlignedBB>> entry : portalPieceInvMap.asMap().entrySet()) {
+                Map<BlockPos, BlockPos> blockMapPool = binaryExpansiveFindTargets();
+                Multimap<BlockPos, BlockPos> portalPieceInvMap = findTargetsFromParts(blockMapPool);
+                for (Map.Entry<BlockPos, Collection<BlockPos>> entry : portalPieceInvMap.asMap().entrySet()) {
                     BlockPos posTarget = entry.getKey();
-                    Collection<AxisAlignedBB> pieceSources = entry.getValue();
+                    Collection<BlockPos> pieceSources = entry.getValue();
                     StringBuilder builder = new StringBuilder();
                     builder.append("Portal Mapping to ").append(posTarget).append(":\n");
-                    for (AxisAlignedBB piece : pieceSources) {
+                    for (BlockPos posPiece : pieceSources) {
+                        AxisAlignedBB piece = getMappingAreaTo(posPiece).intersect(boxSource);
                         builder.append("  ").append(piece).append('\n');
                     }
                     server.getPlayerList().sendMessage(new TextComponentString(builder.toString()));
@@ -45,23 +57,56 @@ public class PortalSearcherRangeForward extends PortalSearcher {
             } catch (Exception e) {
                 Reference.LOGGER.warn(e);
             } finally {
-                lock.unlock();
+                LOCK.unlock();
             }
         }
     }
 
     @Nonnull
-    private Multimap<BlockPos, AxisAlignedBB> findTargetsFromParts(@Nonnull Map<BlockPos, BlockPos.MutableBlockPos> blockMapPool) {
-        Multimap<BlockPos, AxisAlignedBB> portalPieceInvMap = HashMultimap.create();
-        for (Map.Entry<BlockPos, BlockPos.MutableBlockPos> entry : blockMapPool.entrySet()) {
-            BlockPos posDestOrigin = entry.getKey().toImmutable();
-            BlockPos posTarget = entry.getValue().toImmutable();
-            AxisAlignedBB boxSourcePiece = getMappingAreaTo(posDestOrigin).intersect(boxSource);
-            portalPieceInvMap.put(posTarget, boxSourcePiece);
+    private Map<BlockPos, BlockPos> binaryExpansiveFindTargets() {
+        Map<BlockPos, BlockPos> blockSearchedMap = new HashMap<>();
+        int xMin = posDestMin.getX();
+        int yMin = posDestMin.getY();
+        int zMin = posDestMin.getZ();
+        int xMax = posDestMax.getX();
+        int yMax = posDestMax.getY();
+        int zMax = posDestMax.getZ();
+        int x = xMin;
+        int y = yMin;
+        int z = zMin;
+        // check in X-axis
+        BlockPos.MutableBlockPos posMin = new BlockPos.MutableBlockPos(posDestMin);
+        BlockPos.MutableBlockPos posItr = new BlockPos.MutableBlockPos(posDestMin);
+        BlockPos.MutableBlockPos posMax = new BlockPos.MutableBlockPos(xMax, yMin, zMin);
+        BlockPos targetMin = null;
+        for (; x <= xMax; ++x) {
+            posItr.setPos(x, y, z);
+            targetMin = findUniqueClosestTarget(posItr);
+            if (targetMin != null) {
+                xMin = x;
+                break;
+            }
         }
-        return portalPieceInvMap;
+        x = xMax;
+        for (int floor = xMin, ceil = xMax; floor < ceil; x = (floor + ceil) / 2) {
+            posItr.setPos(x, y, z);
+            BlockPos targetItr = findUniqueClosestTarget(posItr);
+            if (Objects.equals(targetMin, targetItr)) {
+                floor = x;
+            } else {
+                ceil = x - 1;
+            }
+        }
+        // the "right-side" boundary
+        xMax = posItr.getX();
+        for (x = xMin; x <= xMax; ++x) {
+            posItr.setPos(x, y, z);
+            blockSearchedMap.put(posItr.toImmutable(), targetMin);
+        }
+        return blockSearchedMap;
     }
 
+    @SuppressWarnings("unused")
     @Nonnull
     private Map<BlockPos, BlockPos.MutableBlockPos> findTargetFromDestOrigins() {
         Iterable<BlockPos> destSet = BlockPos.getAllInBox(posDestMin, posDestMax);
