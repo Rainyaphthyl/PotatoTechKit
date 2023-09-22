@@ -83,6 +83,9 @@ public class SilentChunkReader extends ChunkReader {
         }
         if (isNew) {
             chunkCache.put(index, chunk);
+            if (chunkCache.size() > 4096) {
+                chunkCache.clear();
+            }
         }
         return chunk;
     }
