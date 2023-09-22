@@ -2,6 +2,8 @@ package io.github.rainyaphthyl.potteckit.core.portal;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AtomicDouble;
+import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
+import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import io.github.rainyaphthyl.potteckit.core.ChunkReader;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.block.state.IBlockState;
@@ -45,9 +47,8 @@ public abstract class PortalSearcher implements Runnable {
     public PortalSearcher(MinecraftServer server, DimensionType dimSource) {
         this.server = Objects.requireNonNull(server);
         this.dimSource = Objects.requireNonNull(dimSource);
-        int i = Math.max(1, (int) ((double) Runtime.getRuntime().maxMemory() * 0.3D) / 10485760);
-        int j = Math.max(1, MathHelper.clamp(Runtime.getRuntime().availableProcessors(), 1, i / 5));
-        maxThreadNum = MathHelper.clamp(j * 10, 1, i);
+        //int i = Math.max(1, (int) ((double) Runtime.getRuntime().maxMemory() * 0.3D) / 10485760);
+        maxThreadNum = Math.max(1, Runtime.getRuntime().availableProcessors());
     }
 
     @Override
@@ -134,7 +135,9 @@ public abstract class PortalSearcher implements Runnable {
                                     }
                                     colorCode = 'f';
                                 }
-                                server.getPlayerList().sendMessage(new TextComponentString("§" + colorCode + posPortal + " : " + distSqTemp + " / " + distSqMin + "§r"), true);
+                                String message = "§" + colorCode + posPortal + " : " + distSqTemp + " / " + distSqMin + "§r";
+                                //server.getPlayerList().sendMessage(new TextComponentString(message), true);
+                                MessageOutput.VANILLA_HOTBAR.send(message, MessageDispatcher.generic());
                             }
                         }
                     }

@@ -40,16 +40,16 @@ public class PortalSearcherRangeForward extends PortalSearcher {
         if (LOCK.tryLock()) {
             try {
                 initialize();
-                Map<BlockPos, BlockPos> blockMapPool = binaryExpansiveFindTargets();
+                Map<BlockPos, ? extends BlockPos> blockMapPool = findTargetFromDestOrigins();
                 Multimap<BlockPos, BlockPos> portalPieceInvMap = findTargetsFromParts(blockMapPool);
                 for (Map.Entry<BlockPos, Collection<BlockPos>> entry : portalPieceInvMap.asMap().entrySet()) {
                     BlockPos posTarget = entry.getKey();
                     Collection<BlockPos> pieceSources = entry.getValue();
                     StringBuilder builder = new StringBuilder();
-                    builder.append("Portal Mapping to ").append(posTarget).append(":\n");
+                    builder.append("Portal Mapping to ").append(posTarget).append(":");
                     for (BlockPos posPiece : pieceSources) {
                         AxisAlignedBB piece = getMappingAreaTo(posPiece).intersect(boxSource);
-                        builder.append("  ").append(piece).append('\n');
+                        builder.append("\n  ").append(piece);
                     }
                     server.getPlayerList().sendMessage(new TextComponentString(builder.toString()));
                     Reference.LOGGER.info(builder.toString());
@@ -106,7 +106,6 @@ public class PortalSearcherRangeForward extends PortalSearcher {
         return blockSearchedMap;
     }
 
-    @SuppressWarnings("unused")
     @Nonnull
     private Map<BlockPos, BlockPos.MutableBlockPos> findTargetFromDestOrigins() {
         Iterable<BlockPos> destSet = BlockPos.getAllInBox(posDestMin, posDestMax);
