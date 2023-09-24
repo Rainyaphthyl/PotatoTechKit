@@ -14,29 +14,36 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         super(typeArray, valueArray, lazyCopy);
     }
 
-    public ChunkFilterEntry(Boolean accepting, DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
+    public ChunkFilterEntry(Boolean inverse, DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
+        this(inverse, timeDimension, gamePhase, chunkEvent, chunkDimension, 0);
+    }
+
+    public ChunkFilterEntry(Boolean inverse, DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension, Integer multiplicity) {
         super(
-                new Class<?>[]{Boolean.class, DimensionType.class, GamePhase.class, ChunkEvent.class, DimensionType.class},
-                new Object[]{accepting == null ? Boolean.FALSE : accepting, timeDimension, gamePhase, chunkEvent, chunkDimension}
+                new Class<?>[]{Boolean.class, DimensionType.class, GamePhase.class, ChunkEvent.class, DimensionType.class, Integer.class},
+                new Object[]{inverse == null ? Boolean.FALSE : inverse,
+                        timeDimension, gamePhase, chunkEvent, chunkDimension,
+                        multiplicity == null ? 0 : multiplicity}
         );
     }
-    // TODO: 2023/9/24,0024 Add field: "duration" or "depth", to reject a chunk multiple times after an event. E.g. Reject the following unloading after the unloading queueing.
+    // TODO: 2023/9/24,0024 Add field: "duration" or "depth", to reject a chunk multiple times after an event. E.g. Reject the following unloading after the unloading queueing, and even the next loading.
 
     public static ChunkFilterEntry fromObjectArray(Object... objects) {
-        if (objects != null && objects.length == 5
-                && objects[0] instanceof Boolean
-                && objects[1] instanceof DimensionType
-                && objects[2] instanceof GamePhase
-                && objects[3] instanceof ChunkEvent
-                && objects[4] instanceof DimensionType
+        if (objects != null && objects.length >= 5
+                && (objects[0] == null || objects[0] instanceof Boolean)
+                && (objects[1] == null || objects[1] instanceof DimensionType)
+                && (objects[2] == null || objects[2] instanceof GamePhase)
+                && (objects[3] == null || objects[3] instanceof ChunkEvent)
+                && (objects[4] == null || objects[4] instanceof DimensionType)
         ) {
-            return new ChunkFilterEntry(
-                    (Boolean) objects[0], (DimensionType) objects[1], (GamePhase) objects[2],
-                    (ChunkEvent) objects[3], (DimensionType) objects[4]
-            );
-        } else {
-            return null;
+            Integer multiplicity = 0;
+            if (objects.length >= 6 && objects[5] instanceof Integer) {
+                multiplicity = (Integer) objects[5];
+            }
+            return new ChunkFilterEntry((Boolean) objects[0], (DimensionType) objects[1], (GamePhase) objects[2], (ChunkEvent) objects[3], (DimensionType) objects[4], multiplicity);
         }
+        return null;
+
     }
 
     public static ChunkFilterEntry fromString(String key) {
@@ -46,14 +53,15 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         boolean inverse = key.startsWith("!");
         String mainKey = key.substring(key.lastIndexOf('!') + 1);
         String[] args = mainKey.split("^:$", -1);
-        if (args.length != 4) {
+        if (args.length != 5) {
             return null;
         }
         DimensionType timeDimension = fromDimensionString(args[0]);
         GamePhase gamePhase = GamePhase.fromShortName(args[1]);
         ChunkEvent chunkEvent = ChunkEvent.fromShortName(args[2]);
         DimensionType chunkDimension = fromDimensionString(args[3]);
-        return new ChunkFilterEntry(inverse, timeDimension, gamePhase, chunkEvent, chunkDimension);
+        Integer multiplicity = Integer.parseInt(args[4]);
+        return new ChunkFilterEntry(inverse, timeDimension, gamePhase, chunkEvent, chunkDimension, multiplicity);
     }
 
     @Nullable
@@ -78,7 +86,7 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         }
     }
 
-    public boolean rejecting() {
+    public boolean inverse() {
         return (Boolean) getValue(0);
     }
 
@@ -98,18 +106,22 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         return (DimensionType) getValue(4);
     }
 
-    public boolean reject(DimensionType timeDim, GamePhase gamePhase, ChunkEvent event, DimensionType posDim) {
+    public int multiplicity() {
+        return (Integer) getValue(5);
+    }
+
+    public boolean ignores(DimensionType timeDim, GamePhase gamePhase, ChunkEvent event, DimensionType posDim) {
         boolean matched = timeDimension() == null || timeDimension() == timeDim;
         if (matched) matched = gamePhase() == null || gamePhase() == gamePhase;
         if (matched) matched = chunkEvent() == null || chunkEvent() == event;
         if (matched) matched = chunkDimension() == null || chunkDimension() == posDim;
-        return rejecting() == matched;
+        return inverse() != matched;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (rejecting()) {
+        if (inverse()) {
             builder.append('!');
         }
         if (timeDimension() != null) {
@@ -124,9 +136,10 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
             builder.append(chunkEvent().shortName);
         }
         builder.append(':');
-        if (timeDimension() != null) {
-            builder.append(TickRecord.getDimensionChar(timeDimension()));
+        if (chunkDimension() != null) {
+            builder.append(TickRecord.getDimensionChar(chunkDimension()));
         }
+        builder.append(':').append(multiplicity());
         return builder.toString();
     }
 
@@ -146,11 +159,5 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
             }
         }
         return new ChunkFilterEntry(typeArray, args, true);
-    }
-
-    public enum Action {
-        PASS,
-        ACCEPT,
-        REJECT
     }
 }

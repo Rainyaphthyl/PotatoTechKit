@@ -7,10 +7,7 @@ import fi.dy.masa.malilib.gui.widget.list.entry.DataListEntryWidgetData;
 import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkEvent;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.TickRecord;
-import io.github.rainyaphthyl.potteckit.config.option.multipart.ChunkFilterEntry;
-import io.github.rainyaphthyl.potteckit.config.option.multipart.ChunkFilterListConfig;
-import io.github.rainyaphthyl.potteckit.config.option.multipart.MultiPartListConfig;
-import io.github.rainyaphthyl.potteckit.config.option.multipart.WrappedValue;
+import io.github.rainyaphthyl.potteckit.config.option.multipart.*;
 import net.minecraft.world.DimensionType;
 
 public class ChunkFilterListConfigWidget extends MultiPartListConfigWidget<ChunkFilterEntry> {
@@ -30,18 +27,25 @@ public class ChunkFilterListConfigWidget extends MultiPartListConfigWidget<Chunk
                             return String.valueOf(TickRecord.getDimensionChar(value));
                         }
                     }, null);
+                    ImmutableList.Builder<PartialValue<Object>> builder = ImmutableList.builder();
+                    for (int depth = 0; depth < 8; ++depth) {
+                        builder.add(new WrappedValue<>(depth));
+                    }
+                    ImmutableList<PartialValue<Object>> repeatLevelList = builder.build();
                     return new MultiPartListEntryEditWidget<>(iv, cd, dv, ImmutableList.of(
                             new MultiPartListEntryEditWidget.PartBundle<>(
                                     Boolean.class,
                                     ImmutableList.of(new WrappedValue<>(true), new WrappedValue<>(false)),
-                                    value -> value == Boolean.TRUE ? "reject" : "accept",
+                                    value -> value == Boolean.TRUE ? "except" : "ignore",
                                     null),
                             dimensionFactoryBundle,
                             MultiPartListEntryEditWidget.PartBundle.createEnumObjectFactories(
                                     GamePhase.class, value -> value.shortName, null),
                             MultiPartListEntryEditWidget.PartBundle.createEnumObjectFactories(
                                     ChunkEvent.class, value -> value.shortName, null),
-                            dimensionFactoryBundle
+                            dimensionFactoryBundle,
+                            new MultiPartListEntryEditWidget.PartBundle<>(
+                                    Integer.class, repeatLevelList, String::valueOf, null)
                     ), ChunkFilterEntry::fromObjectArray, null);
                 },
                 "Title Test"
