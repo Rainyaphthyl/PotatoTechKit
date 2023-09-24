@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.config.option;
+package io.github.rainyaphthyl.potteckit.config.option.multipart;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.option.list.ValueListConfig;

@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.config.option;
+package io.github.rainyaphthyl.potteckit.config.option.multipart;
 
 import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkEvent;
 import io.github.rainyaphthyl.potteckit.chunkphase.phaseclock.GamePhase;
@@ -84,6 +84,14 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         return (DimensionType) getValue(4);
     }
 
+    public boolean accept(DimensionType timeDim, GamePhase gamePhase, ChunkEvent event, DimensionType posDim) {
+        boolean matched = timeDimension() == null || timeDimension() == timeDim;
+        if (matched) matched = gamePhase() == null || gamePhase() == gamePhase;
+        if (matched) matched = chunkEvent() == null || chunkEvent() == event;
+        if (matched) matched = chunkDimension() == null || chunkDimension() == posDim;
+        return inverse() == matched;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -124,5 +132,11 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
             }
         }
         return new ChunkFilterEntry(typeArray, args, true);
+    }
+
+    public enum Action {
+        PASS,
+        ACCEPT,
+        REJECT
     }
 }

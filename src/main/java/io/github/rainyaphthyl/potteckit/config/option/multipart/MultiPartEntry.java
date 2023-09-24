@@ -1,4 +1,4 @@
-package io.github.rainyaphthyl.potteckit.config.option;
+package io.github.rainyaphthyl.potteckit.config.option.multipart;
 
 import java.util.Objects;
 

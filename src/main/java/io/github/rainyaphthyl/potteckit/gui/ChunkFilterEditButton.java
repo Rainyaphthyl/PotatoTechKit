@@ -5,7 +5,7 @@ import fi.dy.masa.malilib.gui.BaseScreen;
 import fi.dy.masa.malilib.gui.config.BaseValueListEditScreen;
 import fi.dy.masa.malilib.gui.widget.button.BaseValueListEditButton;
 import fi.dy.masa.malilib.listener.EventListener;
-import io.github.rainyaphthyl.potteckit.config.option.ChunkFilterEntry;
+import io.github.rainyaphthyl.potteckit.config.option.multipart.ChunkFilterEntry;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;

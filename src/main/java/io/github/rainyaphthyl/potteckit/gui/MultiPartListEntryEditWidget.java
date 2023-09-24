@@ -1,13 +1,15 @@
 package io.github.rainyaphthyl.potteckit.gui;
 
-import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.value.HorizontalAlignment;
 import fi.dy.masa.malilib.gui.widget.DropDownListWidget;
 import fi.dy.masa.malilib.gui.widget.LabelWidget;
 import fi.dy.masa.malilib.gui.widget.button.GenericButton;
 import fi.dy.masa.malilib.gui.widget.list.entry.BaseOrderableListEditEntryWidget;
 import fi.dy.masa.malilib.gui.widget.list.entry.DataListEntryWidgetData;
-import io.github.rainyaphthyl.potteckit.config.option.MultiPartEntry;
+import io.github.rainyaphthyl.potteckit.config.option.multipart.MultiPartEntry;
+import io.github.rainyaphthyl.potteckit.config.option.multipart.NullableEnum;
+import io.github.rainyaphthyl.potteckit.config.option.multipart.PartialValue;
+import io.github.rainyaphthyl.potteckit.config.option.multipart.WrappedValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,7 +26,7 @@ import java.util.function.Function;
 public class MultiPartListEntryEditWidget<ENTRY extends MultiPartEntry<ENTRY>> extends BaseOrderableListEditEntryWidget<ENTRY> {
     protected final ENTRY defaultValue;
     protected final ENTRY initialValue;
-    protected final List<DropDownListWidget<Object>> dropDownWidgetList = new ArrayList<>();
+    protected final List<DropDownListWidget<PartialValue<Object>>> dropDownWidgetList = new ArrayList<>();
     protected final GenericButton resetButton;
 
     public MultiPartListEntryEditWidget(ENTRY initialValue, DataListEntryWidgetData constructData, ENTRY defaultValue, List<PartBundle<Object>> partBundleList, DropDownListWidget.IconWidgetFactory<ENTRY> globalIconWidgetFactory) {
@@ -49,24 +51,27 @@ public class MultiPartListEntryEditWidget<ENTRY extends MultiPartEntry<ENTRY>> e
                 - addButton.getWidth() - removeButton.getWidth()
                 - upButton.getWidth() - downButton.getWidth() - 20;
         for (int i = 0, size = partBundleList.size(); i < size; ++i) {
-            DropDownListWidget<Object> dropDownWidget = getDropDownWidget(partBundleList, i, ddWidth);
+            DropDownListWidget<PartialValue<Object>> dropDownWidget = getDropDownWidget(partBundleList, i, ddWidth);
             dropDownWidgetList.add(dropDownWidget);
         }
     }
 
     @Nonnull
-    private <DATA> DropDownListWidget<DATA> getDropDownWidget(@Nonnull List<PartBundle<DATA>> partBundleList, int index, int ddWidth) {
-        PartBundle<DATA> partBundle = partBundleList.get(index);
-        DropDownListWidget<DATA> dropDownWidget = new DropDownListWidget<>(18, 12, partBundle.possibleValues, partBundle.toStringConverter, partBundle.iconWidgetFactory);
+    private DropDownListWidget<PartialValue<Object>> getDropDownWidget(@Nonnull List<PartBundle<Object>> partBundleList, int index, int ddWidth) {
+        PartBundle<Object> partBundle = partBundleList.get(index);
+        DropDownListWidget<PartialValue<Object>> dropDownWidget = new DropDownListWidget<>(18, 12, partBundle.possibleValues,
+                option -> partBundle.toStringConverter.apply(option.getValue()),
+                partBundle.iconWidgetFactory == null ? null : option -> partBundle.iconWidgetFactory.create(option.getValue())
+        );
         dropDownWidget.setMaxWidth(ddWidth);
-        dropDownWidget.setSelectedEntry(partBundle.type.cast(initialValue.getValue(index)));
-        dropDownWidget.setSelectionListener(value -> {
+        dropDownWidget.setSelectedEntry(new WrappedValue<>(initialValue.getValue(index)));
+        dropDownWidget.setSelectionListener(option -> {
             if (originalListIndex < dataList.size()) {
                 ENTRY previous = dataList.get(originalListIndex);
-                ENTRY updated = previous.copyModified(index, value);
+                ENTRY updated = previous.copyModified(index, option);
                 dataList.set(originalListIndex, updated);
             }
-            resetButton.setEnabled(!defaultValue.equals(value));
+            resetButton.setEnabled(!defaultValue.equals(initialValue));
         });
         return dropDownWidget;
     }
@@ -102,11 +107,11 @@ public class MultiPartListEntryEditWidget<ENTRY extends MultiPartEntry<ENTRY>> e
      */
     public static class PartBundle<DATA> {
         public final Class<? extends DATA> type;
-        public final List<DATA> possibleValues;
+        public final List<PartialValue<DATA>> possibleValues;
         public final Function<DATA, String> toStringConverter;
         public final DropDownListWidget.IconWidgetFactory<DATA> iconWidgetFactory;
 
-        public PartBundle(Class<? extends DATA> type, List<DATA> possibleValues, Function<DATA, String> toStringConverter, @Nullable DropDownListWidget.IconWidgetFactory<DATA> iconWidgetFactory) {
+        public PartBundle(Class<? extends DATA> type, List<PartialValue<DATA>> possibleValues, Function<DATA, String> toStringConverter, @Nullable DropDownListWidget.IconWidgetFactory<DATA> iconWidgetFactory) {
             this.type = type;
             this.possibleValues = Objects.requireNonNull(possibleValues);
             this.toStringConverter = Objects.requireNonNull(toStringConverter);
@@ -114,106 +119,25 @@ public class MultiPartListEntryEditWidget<ENTRY extends MultiPartEntry<ENTRY>> e
         }
 
         @Nonnull
-        public static <E extends Enum<E>> PartBundle<E> createEnumFactories(Class<E> enumClass, Function<E, String> toStringConverter, @Nullable DropDownListWidget.IconWidgetFactory<E> iconWidgetFactory) {
-            return new PartBundle<E>(
-                    enumClass,
-                    ImmutableList.copyOf(enumClass.getEnumConstants()),
-                    value -> value == null ? "<all>" : toStringConverter.apply(value),
-                    iconWidgetFactory
-            );
-        }
-
-        @Nonnull
         public static <E extends Enum<E>> PartBundle<Object> createEnumObjectFactories(Class<E> enumClass, Function<E, String> toStringConverter, @Nullable DropDownListWidget.IconWidgetFactory<E> iconWidgetFactory) {
             return new PartBundle<>(
                     enumClass,
-                    ImmutableList.copyOf(enumClass.getEnumConstants()),
-                    value -> enumClass.isAssignableFrom(value.getClass()) ? toStringConverter.apply(enumClass.cast(value)) : "<all>",
-                    iconWidgetFactory == null ? null : (
-                            value -> enumClass.isAssignableFrom(value.getClass()) ? iconWidgetFactory.create(enumClass.cast(value)) : null
-                    )
+                    NullableEnum.getObjectListOfType(enumClass),
+                    object -> {
+                        E value = null;
+                        if (object != null && enumClass.isAssignableFrom(object.getClass())) {
+                            value = enumClass.cast(object);
+                        }
+                        return value == null ? "*" : toStringConverter.apply(value);
+                    },
+                    iconWidgetFactory == null ? null : object -> {
+                        E value = null;
+                        if (object != null && enumClass.isAssignableFrom(object.getClass())) {
+                            value = enumClass.cast(object);
+                        }
+                        return iconWidgetFactory.create(value);
+                    }
             );
         }
     }
-
-    //protected final DATATYPE defaultValue;
-    //protected final DATATYPE initialValue;
-    //protected final DropDownListWidget<DATATYPE> dropDownWidget;
-    //protected final GenericButton resetButton;
-    //
-    //public BaseValueListEditEntryWidget(DATATYPE initialValue,
-    //                                    DataListEntryWidgetData constructData,
-    //                                    DATATYPE defaultValue,
-    //                                    List<DATATYPE> possibleValues,
-    //                                    Function<DATATYPE, String> toStringConverter,
-    //                                    @Nullable DropDownListWidget.IconWidgetFactory<DATATYPE> iconWidgetFactory)
-    //{
-    //    super(initialValue, constructData);
-    //
-    //    this.defaultValue = defaultValue;
-    //    this.initialValue = initialValue;
-    //    this.newEntryFactory = () -> this.defaultValue;
-    //
-    //    this.labelWidget = new LabelWidget(0xC0C0C0C0, String.format("%3d:", this.originalListIndex + 1));
-    //    this.labelWidget.setAutomaticWidth(false);
-    //    this.labelWidget.setWidth(24);
-    //    this.labelWidget.setHorizontalAlignment(HorizontalAlignment.RIGHT);
-    //
-    //    this.resetButton = GenericButton.create(16, "malilib.button.misc.reset.caps");
-    //    this.resetButton.getBorderRenderer().getNormalSettings().setBorderWidthAndColor(1, 0xFF404040);
-    //
-    //    this.resetButton.setRenderButtonBackgroundTexture(false);
-    //    this.resetButton.setDisabledTextColor(0xFF505050);
-    //
-    //    int ddWidth = this.getWidth() - this.resetButton.getWidth() - this.labelWidget.getWidth()
-    //            - this.addButton.getWidth() - this.removeButton.getWidth()
-    //            - this.upButton.getWidth() - this.downButton.getWidth() - 20;
-    //    this.dropDownWidget = new DropDownListWidget<>(18, 12, possibleValues, toStringConverter, iconWidgetFactory);
-    //
-    //    this.dropDownWidget.setMaxWidth(ddWidth);
-    //    this.dropDownWidget.setSelectedEntry(this.initialValue);
-    //    this.dropDownWidget.setSelectionListener((entry) -> {
-    //        if (this.originalListIndex < this.dataList.size())
-    //        {
-    //            this.dataList.set(this.originalListIndex, entry);
-    //        }
-    //
-    //        this.resetButton.setEnabled(this.defaultValue.equals(entry) == false);
-    //    });
-    //
-    //    this.resetButton.setEnabled(initialValue.equals(this.defaultValue) == false);
-    //    this.resetButton.setActionListener(() -> {
-    //        this.dropDownWidget.setSelectedEntry(this.defaultValue);
-    //
-    //        if (this.originalListIndex < this.dataList.size())
-    //        {
-    //            this.dataList.set(this.originalListIndex, this.defaultValue);
-    //        }
-    //
-    //        this.resetButton.setEnabled(this.defaultValue.equals(this.dropDownWidget.getSelectedEntry()) == false);
-    //    });
-    //}
-    //
-    //@Override
-    //public void reAddSubWidgets()
-    //{
-    //    super.reAddSubWidgets();
-    //
-    //    this.addWidget(this.dropDownWidget);
-    //    this.addWidget(this.resetButton);
-    //}
-    //
-    //@Override
-    //protected void updateSubWidgetsToGeometryChangesPre(int x, int y)
-    //{
-    //    this.labelWidget.setPosition(this.getX() + 2, y + 6);
-    //    this.dropDownWidget.setPosition(x, y + 1);
-    //    this.nextWidgetX = this.dropDownWidget.getRight() + 2;
-    //}
-    //
-    //@Override
-    //protected void updateSubWidgetsToGeometryChangesPost(int x, int y)
-    //{
-    //    this.resetButton.setPosition(x, y + 2);
-    //}
 }
