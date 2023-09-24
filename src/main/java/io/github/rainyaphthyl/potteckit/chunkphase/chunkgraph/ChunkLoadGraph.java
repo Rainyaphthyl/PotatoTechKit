@@ -31,7 +31,7 @@ public class ChunkLoadGraph {
             client.addScheduledTask(() -> {
                 ImmutableList<ChunkFilterEntry> filterList = Configs.chunkLoadFilterList.getValue();
                 for (ChunkFilterEntry filter : filterList) {
-                    if (filter != null && !filter.accept(tickRecord.dimensionType, tickRecord.gamePhase, event, targetDim)) {
+                    if (filter != null && filter.reject(tickRecord.dimensionType, tickRecord.gamePhase, event, targetDim)) {
                         return;
                     }
                 }

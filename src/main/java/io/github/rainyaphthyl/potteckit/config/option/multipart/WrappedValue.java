@@ -10,7 +10,7 @@ public class WrappedValue<E> implements PartialValue<E> {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public final boolean equals(Object object) {
         if (this == object) return true;
         if (!(object instanceof WrappedValue)) return false;
         WrappedValue<?> that = (WrappedValue<?>) object;
@@ -18,7 +18,7 @@ public class WrappedValue<E> implements PartialValue<E> {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return getValue() != null ? getValue().hashCode() : 0;
     }
 

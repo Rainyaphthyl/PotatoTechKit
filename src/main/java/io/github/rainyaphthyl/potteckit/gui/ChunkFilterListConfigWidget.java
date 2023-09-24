@@ -42,7 +42,7 @@ public class ChunkFilterListConfigWidget extends MultiPartListConfigWidget<Chunk
                             MultiPartListEntryEditWidget.PartBundle.createEnumObjectFactories(
                                     ChunkEvent.class, value -> value.shortName, null),
                             dimensionFactoryBundle
-                    ), null);
+                    ), ChunkFilterEntry::fromObjectArray, null);
                 },
                 "Title Test"
         );

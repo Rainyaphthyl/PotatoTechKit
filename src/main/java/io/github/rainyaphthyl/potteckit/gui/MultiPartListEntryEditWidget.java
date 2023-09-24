@@ -28,13 +28,15 @@ public class MultiPartListEntryEditWidget<ENTRY extends MultiPartEntry<ENTRY>> e
     protected final ENTRY initialValue;
     protected final List<DropDownListWidget<PartialValue<Object>>> dropDownWidgetList = new ArrayList<>();
     protected final GenericButton resetButton;
+    protected final Function<Object[], ENTRY> constructor;
 
-    public MultiPartListEntryEditWidget(ENTRY initialValue, DataListEntryWidgetData constructData, ENTRY defaultValue, List<PartBundle<Object>> partBundleList, DropDownListWidget.IconWidgetFactory<ENTRY> globalIconWidgetFactory) {
+    public MultiPartListEntryEditWidget(ENTRY initialValue, DataListEntryWidgetData constructData, ENTRY defaultValue, List<PartBundle<Object>> partBundleList, Function<Object[], ENTRY> constructor, DropDownListWidget.IconWidgetFactory<ENTRY> globalIconWidgetFactory) {
         super(initialValue, constructData);
         this.defaultValue = defaultValue;
         this.initialValue = initialValue;
         newEntryFactory = () -> this.defaultValue;
         resetButton = GenericButton.create(16, "malilib.button.misc.reset.caps");
+        this.constructor = constructor;
         initializeSubWidgets(partBundleList);
     }
 
@@ -54,6 +56,28 @@ public class MultiPartListEntryEditWidget<ENTRY extends MultiPartEntry<ENTRY>> e
             DropDownListWidget<PartialValue<Object>> dropDownWidget = getDropDownWidget(partBundleList, i, ddWidth);
             dropDownWidgetList.add(dropDownWidget);
         }
+        resetButton.setEnabled(!defaultValue.equals(initialValue));
+        resetButton.setActionListener(() -> {
+            int length = dropDownWidgetList.size();
+            for (int i = 0; i < length; ++i) {
+                DropDownListWidget<PartialValue<Object>> widget = dropDownWidgetList.get(i);
+                Object object = defaultValue.getValue(i);
+                widget.setSelectedEntry(new WrappedValue<>(object));
+            }
+            if (originalListIndex < dataList.size()) {
+                dataList.set(originalListIndex, defaultValue);
+            }
+            Object[] selectedParts = new Object[length];
+            for (int i = 0; i < length; ++i) {
+                DropDownListWidget<PartialValue<Object>> widget = dropDownWidgetList.get(i);
+                PartialValue<Object> updated = widget.getSelectedEntry();
+                if (updated != null) {
+                    selectedParts[i] = updated.getValue();
+                }
+            }
+            ENTRY selected = constructor.apply(selectedParts);
+            resetButton.setEnabled(!defaultValue.equals(selected));
+        });
     }
 
     @Nonnull
@@ -66,12 +90,13 @@ public class MultiPartListEntryEditWidget<ENTRY extends MultiPartEntry<ENTRY>> e
         dropDownWidget.setMaxWidth(ddWidth);
         dropDownWidget.setSelectedEntry(new WrappedValue<>(initialValue.getValue(index)));
         dropDownWidget.setSelectionListener(option -> {
-            if (originalListIndex < dataList.size()) {
+            ENTRY updated = null;
+            if (originalListIndex < dataList.size() && option != null) {
                 ENTRY previous = dataList.get(originalListIndex);
-                ENTRY updated = previous.copyModified(index, option);
+                updated = previous.copyModified(index, option.getValue());
                 dataList.set(originalListIndex, updated);
             }
-            resetButton.setEnabled(!defaultValue.equals(initialValue));
+            resetButton.setEnabled(!defaultValue.equals(updated));
         });
         return dropDownWidget;
     }

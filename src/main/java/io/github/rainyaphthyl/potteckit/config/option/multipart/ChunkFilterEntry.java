@@ -8,21 +8,35 @@ import net.minecraft.world.DimensionType;
 import javax.annotation.Nullable;
 
 public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
-    public static final ChunkFilterEntry NULL_WHITE = new ChunkFilterEntry(DimensionType.OVERWORLD, GamePhase.CHUNK_UNLOAD, ChunkEvent.LOADING, DimensionType.OVERWORLD);
+    public static final ChunkFilterEntry NULL_WHITE = new ChunkFilterEntry(true, DimensionType.OVERWORLD, GamePhase.CHUNK_UNLOAD, ChunkEvent.LOADING, DimensionType.OVERWORLD);
 
     protected ChunkFilterEntry(Class<?>[] typeArray, Object[] valueArray, boolean lazyCopy) {
         super(typeArray, valueArray, lazyCopy);
     }
 
-    public ChunkFilterEntry(DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
-        this(false, timeDimension, gamePhase, chunkEvent, chunkDimension);
-    }
-
-    public ChunkFilterEntry(Boolean inverse, DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
+    public ChunkFilterEntry(Boolean accepting, DimensionType timeDimension, GamePhase gamePhase, ChunkEvent chunkEvent, DimensionType chunkDimension) {
         super(
                 new Class<?>[]{Boolean.class, DimensionType.class, GamePhase.class, ChunkEvent.class, DimensionType.class},
-                new Object[]{inverse == null ? Boolean.FALSE : inverse, timeDimension, gamePhase, chunkEvent, chunkDimension}
+                new Object[]{accepting == null ? Boolean.FALSE : accepting, timeDimension, gamePhase, chunkEvent, chunkDimension}
         );
+    }
+    // TODO: 2023/9/24,0024 Add field: "duration" or "depth", to reject a chunk multiple times after an event. E.g. Reject the following unloading after the unloading queueing.
+
+    public static ChunkFilterEntry fromObjectArray(Object... objects) {
+        if (objects != null && objects.length == 5
+                && objects[0] instanceof Boolean
+                && objects[1] instanceof DimensionType
+                && objects[2] instanceof GamePhase
+                && objects[3] instanceof ChunkEvent
+                && objects[4] instanceof DimensionType
+        ) {
+            return new ChunkFilterEntry(
+                    (Boolean) objects[0], (DimensionType) objects[1], (GamePhase) objects[2],
+                    (ChunkEvent) objects[3], (DimensionType) objects[4]
+            );
+        } else {
+            return null;
+        }
     }
 
     public static ChunkFilterEntry fromString(String key) {
@@ -64,7 +78,7 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         }
     }
 
-    public boolean inverse() {
+    public boolean rejecting() {
         return (Boolean) getValue(0);
     }
 
@@ -84,18 +98,18 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         return (DimensionType) getValue(4);
     }
 
-    public boolean accept(DimensionType timeDim, GamePhase gamePhase, ChunkEvent event, DimensionType posDim) {
+    public boolean reject(DimensionType timeDim, GamePhase gamePhase, ChunkEvent event, DimensionType posDim) {
         boolean matched = timeDimension() == null || timeDimension() == timeDim;
         if (matched) matched = gamePhase() == null || gamePhase() == gamePhase;
         if (matched) matched = chunkEvent() == null || chunkEvent() == event;
         if (matched) matched = chunkDimension() == null || chunkDimension() == posDim;
-        return inverse() == matched;
+        return rejecting() == matched;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (inverse()) {
+        if (rejecting()) {
             builder.append('!');
         }
         if (timeDimension() != null) {
@@ -125,7 +139,7 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         System.arraycopy(valueArray, 0, args, 0, valueArray.length);
         for (int i = 0; i < indices.length; ++i) {
             int index = indices[i];
-            if (index >= 0 && index < valueArray.length && typeArray[index].isAssignableFrom(newValues[i].getClass())) {
+            if (index >= 0 && index < valueArray.length && (newValues[i] == null || typeArray[index].isAssignableFrom(newValues[i].getClass()))) {
                 args[index] = newValues[i];
             } else {
                 return this;
