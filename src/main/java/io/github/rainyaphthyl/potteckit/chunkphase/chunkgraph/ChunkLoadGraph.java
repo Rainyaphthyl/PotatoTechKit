@@ -37,29 +37,31 @@ public class ChunkLoadGraph {
             ChunkEvent event = buffer.readEnumValue(ChunkEvent.class);
             Minecraft client = Minecraft.getMinecraft();
             client.addScheduledTask(() -> {
-                ImmutableList<ChunkFilterEntry> filterList = Configs.chunkLoadFilterList.getValue();
-                DimChunkPos pos = new DimChunkPos(targetDim, targetCX, targetCZ);
-                int repeatCount = chunkRepeatCache.getInt(pos);
-                boolean ignored = repeatCount > 0;
-                if (ignored) {
-                    --repeatCount;
-                    if (repeatCount > 0) {
-                        chunkRepeatCache.put(pos, repeatCount);
-                    } else {
-                        chunkRepeatCache.removeInt(pos);
-                    }
-                }
-                for (ChunkFilterEntry filter : filterList) {
-                    if (filter != null && filter.ignores(tickRecord.dimensionType, tickRecord.gamePhase, event, targetDim)) {
-                        int repeatPending = filter.multiplicity();
-                        if (repeatPending > 0 && repeatPending > chunkRepeatCache.getInt(pos)) {
-                            chunkRepeatCache.put(pos, repeatPending);
+                if (Configs.chunkLoadFilterSwitch.getBooleanValue()) {
+                    ImmutableList<ChunkFilterEntry> filterList = Configs.chunkLoadFilterList.getValue();
+                    DimChunkPos pos = new DimChunkPos(targetDim, targetCX, targetCZ);
+                    int repeatCount = chunkRepeatCache.getInt(pos);
+                    boolean ignored = repeatCount > 0;
+                    if (ignored) {
+                        --repeatCount;
+                        if (repeatCount > 0) {
+                            chunkRepeatCache.put(pos, repeatCount);
+                        } else {
+                            chunkRepeatCache.removeInt(pos);
                         }
-                        ignored = true;
                     }
-                }
-                if (ignored) {
-                    return;
+                    for (ChunkFilterEntry filter : filterList) {
+                        if (filter != null && filter.ignores(tickRecord.dimensionType, tickRecord.gamePhase, event, targetDim)) {
+                            int repeatPending = filter.multiplicity();
+                            if (repeatPending > 0 && repeatPending > chunkRepeatCache.getInt(pos)) {
+                                chunkRepeatCache.put(pos, repeatPending);
+                            }
+                            ignored = true;
+                        }
+                    }
+                    if (ignored) {
+                        return;
+                    }
                 }
                 StringBuilder builder = new StringBuilder();
                 builder.append(tickRecord).append(' ');

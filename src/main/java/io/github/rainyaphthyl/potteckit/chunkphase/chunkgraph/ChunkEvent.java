@@ -7,10 +7,12 @@ import java.util.Map;
 
 public enum ChunkEvent {
     GENERATING("Generating", "is generated", "G", TextFormatting.LIGHT_PURPLE, false),
+    POPULATING("Populating", "is populated", "P", TextFormatting.DARK_PURPLE, true),
     LOADING("Loading", "is loaded", "L", TextFormatting.AQUA, false),
     CANCEL_UNLOAD("Cancel Unload", "cancels unloading", "CU", TextFormatting.DARK_GREEN, true),
     QUEUE_UNLOAD("Queue Unload", "queues unloading", "QU", TextFormatting.GOLD, true),
-    UNLOADING("Unloading", "is unloaded", "U", TextFormatting.RED, false);
+    UNLOADING("Unloading", "is unloaded", "U", TextFormatting.RED, false),
+    SAVING("Saving", "is saved", "S", TextFormatting.DARK_RED, true);
     private static final Map<String, ChunkEvent> eventMapByName = new HashMap<>();
 
     static {
