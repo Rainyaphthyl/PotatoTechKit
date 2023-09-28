@@ -8,6 +8,7 @@
     "access.AccessMinecraft",
     "access.AccessNextTickListEntry",
     "access.AccessRenderChunk",
+    "chunkgraph.MixinChunk",
     "chunkgraph.MixinChunkProviderServer",
     "chunkgraph.MixinTileEntityHopper",
     "core.MixinGuiMainMenu",

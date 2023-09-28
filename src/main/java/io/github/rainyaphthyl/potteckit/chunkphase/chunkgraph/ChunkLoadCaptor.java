@@ -122,7 +122,7 @@ public class ChunkLoadCaptor {
         playerList.sendMessage(component);
     }
 
-    public static void debugChunkTickStamp(TickRecord record, int chunkX, int chunkZ, DimensionType dimensionType, ChunkEvent event, @SuppressWarnings("unused") ChunkLoadSource source, @Nonnull PlayerList playerList) {
+    public static void debugChunkTickStamp(TickRecord record, int chunkX, int chunkZ, DimensionType dimensionType, ChunkEvent event, ChunkLoadSource source, @Nonnull PlayerList playerList) {
         ChunkPacketBuffer buffer = new ChunkPacketBuffer(Unpooled.buffer());
         SPacketCustomPayload packet = new SPacketCustomPayload(CHANNEL_EVENT, buffer);
         buffer.writeTickRecord(record).writeSignedVarInt(chunkX).writeSignedVarInt(chunkZ);
