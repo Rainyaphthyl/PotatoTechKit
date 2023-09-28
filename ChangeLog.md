@@ -10,9 +10,9 @@ This is a **pre-release** version.
 
 ### Mod Versions
 
-- Current version: `0.1.4`
-- Previous version: `0.1.3`
-- Previous annotated version: `0.1.2`
+- Current version: `0.1.5` (not annotated)
+- Previous version: `0.1.4`
+- Previous annotated version: `0.1.4`
 - Previous release version: `null`
 
 ## Abstract
