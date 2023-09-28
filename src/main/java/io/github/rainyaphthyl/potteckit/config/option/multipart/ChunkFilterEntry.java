@@ -52,7 +52,7 @@ public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
         }
         boolean inverse = key.startsWith("!");
         String mainKey = key.substring(key.lastIndexOf('!') + 1);
-        String[] args = mainKey.split("^:$", -1);
+        String[] args = mainKey.split(":", -1);
         if (args.length != 5) {
             return null;
         }
