@@ -10,6 +10,7 @@
     "access.AccessRenderChunk",
     "chunkgraph.MixinChunk",
     "chunkgraph.MixinChunkProviderServer",
+    "chunkgraph.MixinRegionFile",
     "chunkgraph.MixinTileEntityHopper",
     "core.MixinGuiMainMenu",
     "core.MixinMinecraft",

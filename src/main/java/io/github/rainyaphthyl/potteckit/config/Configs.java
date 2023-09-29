@@ -66,6 +66,8 @@ public class Configs {
     public static final ChunkFilterListConfig chunkLoadFilterList = ChunkFilterListConfig.create("chunk_load_filter", ImmutableList.of());
     @Config(types = Type.TOGGLE, domains = Domain.METER)
     public static final HotkeyedBooleanConfig chunkLoadFilterSwitch = new HotkeyedBooleanConfig("chunk_load_filter_switch", false, "", "chunk_load_filter_switch", "chunk_load_filter_switch");
+    @Config(types = Type.TOGGLE, domains = Domain.METER, serverSide = true)
+    public static final HotkeyedBooleanConfig saveStateLogger = new HotkeyedBooleanConfig("save_state_logger", false, "", "save_state_logger", "save_state_logger");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
