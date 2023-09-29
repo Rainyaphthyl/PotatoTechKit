@@ -13,6 +13,7 @@
     "chunkgraph.MixinRegionFile",
     "chunkgraph.MixinTileEntityHopper",
     "core.MixinGuiMainMenu",
+    "core.MixinMapGenEndCity$Start",
     "core.MixinMinecraft",
     "core.MixinNetHandlerPlayClient",
     "gamephase.MixinEntityTracker",

@@ -67,7 +67,9 @@ public class Configs {
     @Config(types = Type.TOGGLE, domains = Domain.METER)
     public static final HotkeyedBooleanConfig chunkLoadFilterSwitch = new HotkeyedBooleanConfig("chunk_load_filter_switch", false, "", "chunk_load_filter_switch", "chunk_load_filter_switch");
     @Config(types = Type.TOGGLE, domains = Domain.METER, serverSide = true)
-    public static final HotkeyedBooleanConfig saveStateLogger = new HotkeyedBooleanConfig("save_state_logger", false, "", "save_state_logger", "save_state_logger");
+    public static final HotkeyedBooleanConfig logSaveState = new HotkeyedBooleanConfig("log_save_state", false, "", "log_save_state", "log_save_state");
+    @Config(types = Type.TOGGLE, domains = Domain.METER, serverSide = true)
+    public static final HotkeyedBooleanConfig logInvalidEndCity = new HotkeyedBooleanConfig("log_invalid_end_city", false, "", "log_invalid_end_city", "log_invalid_end_city");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
