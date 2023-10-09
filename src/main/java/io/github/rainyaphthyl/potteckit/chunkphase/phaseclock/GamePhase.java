@@ -83,6 +83,7 @@ public enum GamePhase {
     public final Class<? extends SubPhase> subClass;
     public final Class<? extends SubPhaseClock> clockClass;
     private final ITextComponent component;
+
     GamePhase(boolean dimensional, String description, String shortName) {
         this(dimensional, description, shortName, null, null);
     }
