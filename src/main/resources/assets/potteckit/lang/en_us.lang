@@ -46,6 +46,10 @@ potteckit.config.comment.block_state_texture_sync_list=§6(Server-side Modificat
 
 potteckit.config.name.optifine_spawning_fix=§6Optifine Spawning Fix§r
 potteckit.config.comment.optifine_spawning_fix=§6(Server-side Modification)§r\nFixes the bug of Optifine that mob spawning is suppressed when a player has just joined the world, or that mob spawning continues when a player has just swapped to spectator mode, before the player moves across chunks.\nThis is unnecessary in liteloaded vanilla without Optifine.
+potteckit.config.name.optifine_joining_game_fix=§6Optifine Joining Game Fix§r
+potteckit.config.comment.optifine_joining_game_fix=§6(Server-side Modification)§r\nFixes the bug of Optifine that the initial chunk loading is not completely done when a player joins the world.\nThis is unnecessary in liteloaded vanilla without Optifine.
+potteckit.config.name.optifine_joining_game_debug=§6Optifine Joining Game Debug§r
+potteckit.config.comment.optifine_joining_game_debug=§6(Single-player Only)§r\nA server-side logger about the changes of the PCM size, related to "§6Optifine Joining Game Fix§r". You do not need to notice this option.
 
 potteckit.config.name.fix_lan_quit_freeze=§6Fix LAN Quitting Freeze§r
 potteckit.config.comment.fix_lan_quit_freeze=§6(Single-player Only)§r\nFixes MC-72943 that the client probably gets frozen when quitting an "Open to LAN" server.
