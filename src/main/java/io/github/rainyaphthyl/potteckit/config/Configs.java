@@ -64,6 +64,16 @@ public class Configs {
     public static final OptionListConfig<EnumRealmStatus> yeetRealmPage = new OptionListConfig<>("yeet_realm_page", EnumRealmStatus.DISABLED, EnumRealmStatus.list, "yeet_realm_page", "yeet_realm_page");
     @Config(types = Type.LIST, domains = Domain.METER)
     public static final ChunkFilterListConfig chunkLoadFilterList = ChunkFilterListConfig.create("chunk_load_filter", ImmutableList.of());
+    @Config(types = Type.TOGGLE, domains = Domain.METER)
+    public static final HotkeyedBooleanConfig chunkLoadFilterSwitch = new HotkeyedBooleanConfig("chunk_load_filter_switch", false, "", "chunk_load_filter_switch", "chunk_load_filter_switch");
+    @Config(types = Type.TOGGLE, domains = Domain.METER, serverSide = true)
+    public static final HotkeyedBooleanConfig logSaveState = new HotkeyedBooleanConfig("log_save_state", false, "", "log_save_state", "log_save_state");
+    @Config(types = Type.TOGGLE, domains = Domain.METER, serverSide = true)
+    public static final HotkeyedBooleanConfig logInvalidEndCity = new HotkeyedBooleanConfig("log_invalid_end_city", false, "", "log_invalid_end_city", "log_invalid_end_city");
+    @Config(types = Type.TOGGLE, domains = Domain.FIX, serverSide = true)
+    public static final HotkeyedBooleanConfig optifineJoiningGameFix = new HotkeyedBooleanConfig("optifine_joining_game_fix", false, "", "optifine_joining_game_fix", "optifine_joining_game_fix");
+    @Config(types = Type.TOGGLE, domains = Domain.GENERIC, serverSide = true)
+    public static final HotkeyedBooleanConfig optifineJoiningGameDebug = new HotkeyedBooleanConfig("optifine_joining_game_debug", false, "", "optifine_joining_game_debug", "optifine_joining_game_debug");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

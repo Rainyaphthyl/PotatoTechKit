@@ -309,6 +309,15 @@ public class MutablePhaseClock {
         }
     }
 
+    @Nullable
+    public TickRecord markCurrentTickStamp(boolean mainThreadOnly) {
+        if (mainThreadOnly && !server.isCallingFromMinecraftThread()) {
+            return null;
+        } else {
+            return markCurrentTickStamp();
+        }
+    }
+
     public void pushPhase(GamePhase phase) {
         if (running) {
             try {

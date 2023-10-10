@@ -8,7 +8,7 @@ import net.minecraft.world.DimensionType;
 import javax.annotation.Nullable;
 
 public class ChunkFilterEntry extends MultiPartEntry<ChunkFilterEntry> {
-    public static final ChunkFilterEntry NULL_WHITE = new ChunkFilterEntry(true, DimensionType.OVERWORLD, GamePhase.CHUNK_UNLOAD, ChunkEvent.LOADING, DimensionType.OVERWORLD);
+    public static final ChunkFilterEntry NULL_WHITE = new ChunkFilterEntry(false, DimensionType.NETHER, GamePhase.TILE_TICK, ChunkEvent.LOADING, DimensionType.NETHER);
 
     protected ChunkFilterEntry(Class<?>[] typeArray, Object[] valueArray, boolean lazyCopy) {
         super(typeArray, valueArray, lazyCopy);
