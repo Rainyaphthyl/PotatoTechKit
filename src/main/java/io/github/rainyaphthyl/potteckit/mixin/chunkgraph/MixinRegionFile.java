@@ -37,7 +37,7 @@ public abstract class MixinRegionFile {
                         int chunkX = (regionX << 5) + x;
                         int regionZ = Integer.parseInt(regionPos[1]);
                         int chunkZ = (regionZ << 5) + z;
-                        String message = "§eChunk [" + chunkX + ", " + chunkZ + "] overflow with " + String.format("%.2f", percentage) + "%§r";
+                        String message = "\u00A7eChunk [" + chunkX + ", " + chunkZ + "] overflow with " + String.format("%.2f", percentage) + "%\u00A7r";
                         server.getPlayerList().sendMessage(new TextComponentString(message), true);
                     }
                 }

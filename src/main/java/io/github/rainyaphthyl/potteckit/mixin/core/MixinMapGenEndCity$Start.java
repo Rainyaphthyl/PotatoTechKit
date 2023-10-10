@@ -27,7 +27,7 @@ public abstract class MixinMapGenEndCity$Start extends StructureStart {
             potatoTechKit$needsReport = true;
             IntegratedServer server = Minecraft.getMinecraft().getIntegratedServer();
             if (server != null) {
-                String message = "§eAn End City becomes invalid...§r";
+                String message = "\u00A7eAn End City becomes invalid...\u00A7r";
                 server.getPlayerList().sendMessage(new TextComponentString(message), true);
             }
         }
@@ -41,7 +41,7 @@ public abstract class MixinMapGenEndCity$Start extends StructureStart {
                 if (server != null) {
                     int cx = getChunkPosX();
                     int cz = getChunkPosZ();
-                    String message = "§eThe End City starting at chunk [" + cx + ", " + cz + "] is invalid!§r";
+                    String message = "\u00A7eThe End City starting at chunk [" + cx + ", " + cz + "] is invalid!\u00A7r";
                     server.getPlayerList().sendMessage(new TextComponentString(message), true);
                     potatoTechKit$needsReport = false;
                 }
