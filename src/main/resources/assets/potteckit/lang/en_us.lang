@@ -19,6 +19,14 @@ potteckit.config.name.chunk_loading_details=§6Chunk Loading Details§r
 potteckit.config.comment.chunk_loading_details=§6(Server-side Modification)§r\nCaptures the sub-phase details of the timestamps (tick records), when the chunk loading captor is running.
 potteckit.config.name.chunk_loading_graph_receiver=§eChunk Loading Graph Client§r
 potteckit.config.comment.chunk_loading_graph_receiver=§e(Single-player Only or Need Special Protocols)§r\nThe client-side tools of Chunk Loading Graph.
+potteckit.config.name.chunk_load_filter=§eChunk Message Filter List§r
+potteckit.config.comment.chunk_load_filter=§e(Single-player Only or Need Special Protocols)§r\nThe filter rules to ignore or reserve the chunk event (loading, unloading, generating, etc.) messages with some patterns.
+potteckit.config.name.chunk_load_filter_switch=§eChunk Message Filter Switch§r
+potteckit.config.comment.chunk_load_filter_switch=§e(Single-player Only or Need Special Protocols)§r\nEnables the option "§eChunk Message Filter List§r".
+potteckit.config.name.log_save_state=§6Savestate Logger§r
+potteckit.config.comment.log_save_state=§6(Server-side Modification)§r\nThe server sends a chat message when trying to save a chunk with data overflowing.
+potteckit.config.name.log_invalid_end_city=§6Invalid End City Logger§r
+potteckit.config.comment.log_invalid_end_city=§6(Server-side Modification)§r\nThe server sends a chat message when finding an End City with "isSizeableStructure" returning false, after level saving and reloading.
 
 potteckit.config.name.more_profiler_levels=§7More Profiler Levels§r
 potteckit.config.comment.more_profiler_levels=§cNot compatible with §oOptifine§r\nMore detailed info at deeper levels will be added into the profiler graph (the pie charts in the lower right), e.g. more separated entries of "root.gameRenderer.level.terrain_setup.rebuildNear".
