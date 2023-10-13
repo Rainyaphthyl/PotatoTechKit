@@ -7,6 +7,8 @@ import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
 import fi.dy.masa.malilib.config.option.IntegerConfig;
 import fi.dy.masa.malilib.config.option.OptionListConfig;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
+import fi.dy.masa.malilib.config.option.list.ItemListConfig;
+import fi.dy.masa.malilib.input.KeyBindSettings;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
@@ -20,6 +22,7 @@ import io.github.rainyaphthyl.potteckit.gui.InvIntegerConfigWidget;
 import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 
 public class Configs {
     @Config(types = Type.TOGGLE, domains = {Domain.GENERIC, Domain.TWEAK})
@@ -74,6 +77,13 @@ public class Configs {
     public static final HotkeyedBooleanConfig optifineJoiningGameFix = new HotkeyedBooleanConfig("optifine_joining_game_fix", false, "", "optifine_joining_game_fix", "optifine_joining_game_fix");
     @Config(types = Type.TOGGLE, domains = Domain.GENERIC, serverSide = true)
     public static final HotkeyedBooleanConfig optifineJoiningGameDebug = new HotkeyedBooleanConfig("optifine_joining_game_debug", false, "", "optifine_joining_game_debug", "optifine_joining_game_debug");
+    // TODO: 2023/10/13,0013 Add translations
+    @Config(types = Type.TOGGLE, domains = Domain.METER)
+    public static final HotkeyedBooleanConfig projectileAimIndicator = new HotkeyedBooleanConfig("projectile_aim_indicator", false, "", "projectile_aim_indicator", "projectile_aim_indicator");
+    @Config(types = Type.LIST, domains = Domain.METER)
+    public static final ItemListConfig projectileAimList = new ItemListConfig("projectile_aim_list", ImmutableList.of(Items.BOW, Items.ENDER_PEARL));
+    @Config(types = Type.HOTKEY, domains = Domain.ACTION)
+    public static final HotkeyConfig projectileAimTrigger = new HotkeyConfig("projectile_aim_trigger", "", KeyBindSettings.INGAME_DEFAULT);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
