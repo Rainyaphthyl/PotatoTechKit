@@ -13,6 +13,7 @@ import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.*;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -69,8 +70,9 @@ public class ArrowSimulator {
         float rx = -MathHelper.sin(yawDegree) * cosPitch;
         float ry = -MathHelper.sin(pitchDegree);
         float rz = MathHelper.cos(yawDegree) * cosPitch;
-        for (int range = 0; range <= 2; ++range) {
+        for (int range = 0; range <= 3; ++range) {
             int maxBits = range == 0 ? 0b000 : 0b111;
+            boolean hitEntity = true;
             for (int bits = 0; bits <= maxBits; ++bits) {
                 setPosition(shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ);
                 setInitMotion(rx, ry, rz, velocity, inaccuracy, range, bits);
@@ -79,10 +81,19 @@ public class ArrowSimulator {
                 if (!shooter.onGround) {
                     motionY += shooter.motionY;
                 }
-                simulateMovement();
+                hitEntity &= simulateMovement();
                 MessageOutput.CHAT.send(String.format("\u00A7%cHit position: %s\u00A7r",
                         range == 0 ? 'e' : 'f', hitPoint
                 ), MessageDispatcher.generic());
+                if (range > 0) {
+                    List<Vec3d> aimList = Renderers.PROJECTILE_AIM_RENDERER.aimListMap.get(range);
+                    if (aimList == null) {
+                        aimList = new ArrayList<>();
+                        Renderers.PROJECTILE_AIM_RENDERER.aimListMap.put(range, aimList);
+                    }
+                    aimList.add(hitPoint);
+                    Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.put(range, hitEntity);
+                }
             }
         }
     }
@@ -110,19 +121,22 @@ public class ArrowSimulator {
         prevRotationPitch = rotationPitch;
     }
 
-    public void simulateMovement() {
+    public boolean simulateMovement() {
         stopped = false;
         inGround = false;
         hitPoint = null;
+        boolean hitEntity = false;
         while (!(stopped || inGround)) {
-            onUpdate();
+            hitEntity |= onUpdate();
         }
+        return hitEntity;
     }
 
     /**
      * {@link EntityArrow#onUpdate()}
      */
-    public void onUpdate() {
+    public boolean onUpdate() {
+        boolean hitEntity = false;
         onEntityUpdate();
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F) {
             double f = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
@@ -164,6 +178,7 @@ public class ArrowSimulator {
             }
             if (raytraceresult != null) {
                 onHit(raytraceresult);
+                hitEntity = raytraceresult.entityHit != null;
             }
             posX += motionX;
             posY += motionY;
@@ -195,6 +210,7 @@ public class ArrowSimulator {
             motionY -= 0.05000000074505806D;
             setPosition(posX, posY, posZ);
         }
+        return hitEntity;
     }
 
     public Entity findEntityOnPath(Vec3d start, Vec3d end) {

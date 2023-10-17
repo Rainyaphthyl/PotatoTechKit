@@ -16,6 +16,7 @@ import io.github.rainyaphthyl.potteckit.config.annotation.Type;
 import io.github.rainyaphthyl.potteckit.config.option.EnumRealmStatus;
 import io.github.rainyaphthyl.potteckit.config.option.InvIntegerConfig;
 import io.github.rainyaphthyl.potteckit.config.option.multipart.ChunkFilterListConfig;
+import io.github.rainyaphthyl.potteckit.entities.Renderers;
 import io.github.rainyaphthyl.potteckit.gui.ChunkFilterListConfigWidget;
 import io.github.rainyaphthyl.potteckit.gui.GuiConfigScreen;
 import io.github.rainyaphthyl.potteckit.gui.InvIntegerConfigWidget;
@@ -64,7 +65,7 @@ public class Configs {
     @Config(types = Type.TOGGLE, domains = Domain.FIX, serverSide = true)
     public static final HotkeyedBooleanConfig fixLanSkinAbsence = new HotkeyedBooleanConfig("fix_lan_skin_absence", true, "", "fix_lan_skin_absence", "fix_lan_skin_absence");
     @Config(types = Type.ENUM, domains = Domain.YEET)
-    public static final OptionListConfig<EnumRealmStatus> yeetRealmPage = new OptionListConfig<>("yeet_realm_page", EnumRealmStatus.DISABLED, EnumRealmStatus.list, "yeet_realm_page", "yeet_realm_page");
+    public static final OptionListConfig<EnumRealmStatus> yeetRealmPage = new OptionListConfig<>("yeet_realm_page", EnumRealmStatus.DISABLED, EnumRealmStatus.LIST, "yeet_realm_page", "yeet_realm_page");
     @Config(types = Type.LIST, domains = Domain.METER)
     public static final ChunkFilterListConfig chunkLoadFilterList = ChunkFilterListConfig.create("chunk_load_filter", ImmutableList.of());
     @Config(types = Type.TOGGLE, domains = Domain.METER)
@@ -95,5 +96,6 @@ public class Configs {
         Registry.HOTKEY_MANAGER.registerHotkeyProvider(new PotteckitHotkeyProvider());
         Actions.init();
         Callbacks.init();
+        Renderers.init();
     }
 }
