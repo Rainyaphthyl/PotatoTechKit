@@ -1,6 +1,9 @@
 package io.github.rainyaphthyl.potteckit.mixin.meters;
 
+import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
+import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import io.github.rainyaphthyl.potteckit.entities.ArrowSimulator;
+import io.github.rainyaphthyl.potteckit.entities.EntityAimCamera;
 import io.github.rainyaphthyl.potteckit.entities.Renderers;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.EntityLivingBase;
@@ -33,6 +36,8 @@ public abstract class MixinItemBow extends Item {
     @Inject(method = "onPlayerStoppedUsing", at = @At(value = "RETURN"))
     public void onDispenseArrow(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft, CallbackInfo ci) {
         if (worldIn instanceof WorldClient) {
+            MessageOutput.CHAT.send("Arrow is dispensed", MessageDispatcher.generic());
+            EntityAimCamera.removeAimCamera();
             Thread thread = new Thread(() -> {
                 try {
                     Thread.sleep(10_000);
