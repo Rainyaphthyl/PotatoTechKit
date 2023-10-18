@@ -1,7 +1,5 @@
 package io.github.rainyaphthyl.potteckit.entities;
 
-import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
-import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -83,9 +81,9 @@ public class ArrowSimulator {
                     motionY += shooter.motionY;
                 }
                 hitEntity &= simulateMovement();
-                MessageOutput.CHAT.send(String.format("\u00A7%cHit position: %s\u00A7r",
-                        range == 0 ? 'e' : 'f', hitPoint
-                ), MessageDispatcher.generic());
+                //MessageOutput.CHAT.send(String.format("\u00A7%cHit position: %s\u00A7r",
+                //        range == 0 ? 'e' : 'f', hitPoint
+                //), MessageDispatcher.generic());
                 if (range > 0) {
                     List<Vec3d> aimList = Renderers.PROJECTILE_AIM_RENDERER.aimListMap.get(range);
                     if (aimList == null) {
@@ -161,6 +159,7 @@ public class ArrowSimulator {
                 inGround = true;
             }
         }
+        hitMotion = new Vec3d(motionX, motionY, motionZ);
         if (this.inGround) {
             this.setDead();
         } else {
@@ -172,7 +171,6 @@ public class ArrowSimulator {
             nextPos = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
             if (raytraceresult != null) {
                 hitPoint = raytraceresult.hitVec;
-                hitMotion = new Vec3d(motionX, motionY, motionZ);
                 nextPos = new Vec3d(raytraceresult.hitVec.x, raytraceresult.hitVec.y, raytraceresult.hitVec.z);
             }
             Entity entity = findEntityOnPath(currPos, nextPos);
