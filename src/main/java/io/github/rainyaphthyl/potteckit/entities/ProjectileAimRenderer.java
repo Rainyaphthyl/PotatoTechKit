@@ -41,12 +41,12 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
 
     @Override
     public boolean shouldRender(Minecraft mc) {
-        return true;
+        return mc != null;
     }
 
     @Override
     public boolean needsUpdate(Entity entity, Minecraft mc) {
-        return true;
+        return mc != null;
     }
 
     @Override

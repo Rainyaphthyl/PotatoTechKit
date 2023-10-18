@@ -82,9 +82,9 @@ public class Configs {
     @Config(types = Type.TOGGLE, domains = Domain.METER)
     public static final HotkeyedBooleanConfig projectileAimIndicator = new HotkeyedBooleanConfig("projectile_aim_indicator", false, "", "projectile_aim_indicator", "projectile_aim_indicator");
     @Config(types = Type.LIST, domains = Domain.METER)
-    public static final ItemListConfig projectileAimList = new ItemListConfig("projectile_aim_list", ImmutableList.of(Items.BOW, Items.ENDER_PEARL));
+    public static final ItemListConfig projectileAimList = new ItemListConfig("projectile_aim_list", ImmutableList.of(Items.BOW, Items.ENDER_PEARL, Items.EGG, Items.SNOWBALL));
     @Config(types = Type.HOTKEY, domains = Domain.ACTION)
-    public static final HotkeyConfig projectileAimTrigger = new HotkeyConfig("projectile_aim_trigger", "", KeyBindSettings.INGAME_DEFAULT);
+    public static final HotkeyConfig projectileAimTrigger = new HotkeyConfig("projectile_aim_trigger", "G", KeyBindSettings.INGAME_MODIFIER);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

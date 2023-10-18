@@ -51,7 +51,7 @@ public class ArrowSimulator {
     private int ticksInAir;
     private boolean stopped = false;
     private Vec3d hitPoint = null;
-    private Vec3d approachingPoint = null;
+    private Vec3d hitMotion = null;
 
     public ArrowSimulator(Entity shooter, WorldClient world) {
         this.shooter = shooter;
@@ -94,12 +94,11 @@ public class ArrowSimulator {
                     }
                     aimList.add(hitPoint);
                     Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.put(range, hitEntity);
-                } else if (approachingPoint != null && hitPoint != null) {
-                    Vec3d look = hitPoint.subtract(approachingPoint);
-                    double length = MathHelper.sqrt(look.x * look.x + look.z * look.z);
-                    float cameraYaw = -(float) (MathHelper.atan2(look.x, look.z) * (180D / Math.PI));
-                    float cameraPitch = -(float) (MathHelper.atan2(look.y, length) * (180D / Math.PI));
-                    Vec3d posToTarget = look.scale(-3.0).add(approachingPoint);
+                } else if (hitMotion != null && hitPoint != null) {
+                    double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
+                    float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * (180D / Math.PI));
+                    float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * (180D / Math.PI));
+                    Vec3d posToTarget = hitMotion.scale(-4.0).add(hitPoint);
                     EntityAimCamera.startAimSpectating(posToTarget, cameraYaw, cameraPitch);
                 }
             }
@@ -133,7 +132,7 @@ public class ArrowSimulator {
         stopped = false;
         inGround = false;
         hitPoint = null;
-        approachingPoint = null;
+        hitMotion = null;
         boolean hitEntity = false;
         while (!(stopped || inGround)) {
             hitEntity |= onUpdate();
@@ -173,7 +172,7 @@ public class ArrowSimulator {
             nextPos = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
             if (raytraceresult != null) {
                 hitPoint = raytraceresult.hitVec;
-                approachingPoint = currPos;
+                hitMotion = new Vec3d(motionX, motionY, motionZ);
                 nextPos = new Vec3d(raytraceresult.hitVec.x, raytraceresult.hitVec.y, raytraceresult.hitVec.z);
             }
             Entity entity = findEntityOnPath(currPos, nextPos);
@@ -227,7 +226,6 @@ public class ArrowSimulator {
         Entity target = null;
         List<Entity> list = world.getEntitiesInAABBexcluding(null, boundingBox.expand(motionX, motionY, motionZ).grow(1.0), ARROW_TARGETS::test);
         double minDistSq = 0.0;
-        boolean flag = false;
         for (Entity tested : list) {
             if (tested != shooter || ticksInAir >= 5) {
                 AxisAlignedBB axisAlignedBB = tested.getEntityBoundingBox().grow(0.30000001192092896);
@@ -238,13 +236,9 @@ public class ArrowSimulator {
                         target = tested;
                         minDistSq = tempDistSq;
                         hitPoint = rayTraceResult.hitVec;
-                        flag = true;
                     }
                 }
             }
-        }
-        if (flag) {
-            approachingPoint = start;
         }
         return target;
     }
@@ -276,7 +270,6 @@ public class ArrowSimulator {
             motionX = (float) (raytraceResultIn.hitVec.x - posX);
             motionY = (float) (raytraceResultIn.hitVec.y - posY);
             motionZ = (float) (raytraceResultIn.hitVec.z - posZ);
-            approachingPoint = new Vec3d(posX, posY, posZ);
             hitPoint = raytraceResultIn.hitVec;
             float f2 = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
             posX -= motionX / (double) f2 * 0.05000000074505806D;

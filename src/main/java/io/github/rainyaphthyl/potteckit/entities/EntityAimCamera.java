@@ -10,9 +10,8 @@ import net.minecraft.util.math.Vec3d;
 import javax.annotation.Nonnull;
 
 public class EntityAimCamera extends Entity {
-    private static EntityAimCamera camera = null;
     private static Entity vanilla = null;
-    private static boolean flagRenderMany = false;
+    private static boolean aiming = false;
 
     protected EntityAimCamera(WorldClient worldIn, double x, double y, double z, float yaw, float pitch) {
         super(worldIn);
@@ -24,30 +23,35 @@ public class EntityAimCamera extends Entity {
         EntityPlayerSP playerSP = client.player;
         WorldClient worldClient = client.world;
         if (playerSP != null && worldClient != null) {
-            vanilla = client.getRenderViewEntity();
-            flagRenderMany = client.renderChunksMany;
+            Entity camera = client.getRenderViewEntity();
             double x = pos.x;
             double y = pos.y;
             double z = pos.z;
-            camera = new EntityAimCamera(worldClient, x, y, z, yaw, pitch);
-            worldClient.spawnEntity(camera);
-            client.setRenderViewEntity(camera);
-            client.renderChunksMany = false;
+            if (camera instanceof EntityAimCamera) {
+                camera.setLocationAndAngles(x, y, z, yaw, pitch);
+            } else {
+                vanilla = camera;
+                camera = new EntityAimCamera(worldClient, x, y, z, yaw, pitch);
+                worldClient.spawnEntity(camera);
+                client.setRenderViewEntity(camera);
+            }
+            aiming = true;
         }
     }
 
     public static void removeAimCamera() {
-        if (camera != null) {
+        if (aiming) {
             Minecraft client = Minecraft.getMinecraft();
-            client.setRenderViewEntity(vanilla);
-            client.renderChunksMany = flagRenderMany;
-            WorldClient worldClient = client.world;
-            if (worldClient != null) {
-                worldClient.removeEntity(camera);
+            Entity camera = client.getRenderViewEntity();
+            if (camera instanceof EntityAimCamera) {
+                WorldClient worldClient = client.world;
+                if (worldClient != null) {
+                    worldClient.removeEntity(camera);
+                }
             }
+            client.setRenderViewEntity(vanilla);
             vanilla = null;
-            flagRenderMany = false;
-            camera = null;
+            aiming = false;
         }
     }
 
