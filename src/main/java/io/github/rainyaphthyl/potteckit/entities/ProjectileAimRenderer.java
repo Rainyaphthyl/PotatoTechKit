@@ -15,14 +15,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.DoubleUnaryOperator;
 
 public class ProjectileAimRenderer extends BaseOverlayRenderer {
-    public static final double MAX_DISTANCE = 128.0;
     public final Int2ObjectSortedMap<List<Vec3d>> aimListMap = new Int2ObjectAVLTreeMap<>();
     public final Int2BooleanMap aimDamageMap = new Int2BooleanOpenHashMap();
     private double distanceRate = 4.0;
@@ -32,10 +29,6 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
 
     public synchronized double getDistanceRate() {
         return distanceRate;
-    }
-
-    public synchronized void operateDistanceRate(@Nonnull DoubleUnaryOperator updater) {
-        distanceRate = updater.applyAsDouble(distanceRate);
     }
 
     public synchronized void resetDistanceRate() {

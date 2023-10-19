@@ -1,7 +1,6 @@
 package io.github.rainyaphthyl.potteckit.config;
 
 import com.google.common.collect.ImmutableList;
-import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.*;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
@@ -84,12 +83,6 @@ public class Configs {
     public static final DualColorConfig projectileRangeColor = new DualColorConfig("arrow_color_range", "0xFF3C3C", "0x3CFF3C", "arrow_color_range").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
     @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
     public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", false, 40.0, 0.0, 200.0, "projectile_accurate_aim");
-    @Config(types = Type.TOGGLE, domains = Domain.METER)
-    public static final HotkeyedBooleanConfig projectileAimZoom = new HotkeyedBooleanConfig("projectile_aim_zoom", false, "", "projectile_aim_zoom", "projectile_aim_zoom");
-    @Config(types = Type.HOTKEY, domains = Domain.ACTION)
-    public static final HotkeyConfig projectileAimZoomIn = new HotkeyConfig("projectile_aim_zoom_in", "G,SCROLL_UP", MaLiLibConfigs.Hotkeys.SCROLL_ADJUST);
-    @Config(types = Type.HOTKEY, domains = Domain.ACTION)
-    public static final HotkeyConfig projectileAimZoomOut = new HotkeyConfig("projectile_aim_zoom_out", "G,SCROLL_DOWN", MaLiLibConfigs.Hotkeys.SCROLL_ADJUST);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
