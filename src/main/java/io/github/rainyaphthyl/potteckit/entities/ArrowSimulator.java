@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 
 public class ArrowSimulator {
     public static final float DEG_TO_RAD = 0.017453292F;
+    protected static final double RAD_TO_DEG = 180.0 / Math.PI;
     protected static final Predicate<Entity> ARROW_TARGETS = EntitySelectors.NOT_SPECTATING.and(EntitySelectors.IS_ALIVE).and(Entity::canBeCollidedWith);
     protected static final double GAUSSIAN_SCALE = 0.007499999832361937D;
     protected static final float height = 0.5F;
@@ -61,6 +62,8 @@ public class ArrowSimulator {
     }
 
     public void predictDestination(float velocity, float inaccuracy) {
+        Renderers.PROJECTILE_AIM_RENDERER.aimListMap.clear();
+        Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.clear();
         float pitch = shooter.rotationPitch;
         float yaw = shooter.rotationYaw;
         float yawDegree = yaw * DEG_TO_RAD;
@@ -70,6 +73,7 @@ public class ArrowSimulator {
         float ry = -MathHelper.sin(pitchDegree);
         float rz = MathHelper.cos(yawDegree) * cosPitch;
         for (int range = 0; range <= 3; ++range) {
+            //if (range == 1 || range == 3) continue;
             int maxBits = range == 0 ? 0b000 : 0b111;
             boolean hitEntity = true;
             for (int bits = 0; bits <= maxBits; ++bits) {
@@ -81,22 +85,19 @@ public class ArrowSimulator {
                     motionY += shooter.motionY;
                 }
                 hitEntity &= simulateMovement();
-                //MessageOutput.CHAT.send(String.format("\u00A7%cHit position: %s\u00A7r",
-                //        range == 0 ? 'e' : 'f', hitPoint
-                //), MessageDispatcher.generic());
-                if (range > 0) {
-                    List<Vec3d> aimList = Renderers.PROJECTILE_AIM_RENDERER.aimListMap.get(range);
-                    if (aimList == null) {
-                        aimList = new ArrayList<>();
-                        Renderers.PROJECTILE_AIM_RENDERER.aimListMap.put(range, aimList);
-                    }
-                    aimList.add(hitPoint);
-                    Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.put(range, hitEntity);
-                } else if (hitMotion != null && hitPoint != null) {
+                List<Vec3d> aimList = Renderers.PROJECTILE_AIM_RENDERER.aimListMap.get(range);
+                if (aimList == null) {
+                    aimList = new ArrayList<>();
+                    Renderers.PROJECTILE_AIM_RENDERER.aimListMap.put(range, aimList);
+                }
+                aimList.add(hitPoint);
+                Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.put(range, hitEntity);
+                if (range == 0 && hitMotion != null && hitPoint != null) {
                     double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
-                    float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * (180D / Math.PI));
-                    float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * (180D / Math.PI));
-                    Vec3d posToTarget = hitMotion.scale(-4.0).add(hitPoint);
+                    float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * RAD_TO_DEG);
+                    float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * RAD_TO_DEG);
+                    Vec3d hitCenter = hitPoint.add(0.0, 0.25, 0.0);
+                    Vec3d posToTarget = hitMotion.scale(-4.0).add(hitCenter);
                     EntityAimCamera.startAimSpectating(posToTarget, cameraYaw, cameraPitch);
                 }
             }

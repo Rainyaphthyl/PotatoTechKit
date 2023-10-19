@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 
@@ -16,9 +17,11 @@ public class EntityAimCamera extends Entity {
     private static final AtomicBoolean aimingFlag = new AtomicBoolean(false);
     private static Entity vanillaCamera = null;
     private static boolean cullingFlag = false;
+    protected final EntityPlayerSP shooter;
 
-    protected EntityAimCamera(WorldClient worldIn, double x, double y, double z, float yaw, float pitch) {
+    protected EntityAimCamera(WorldClient worldIn, EntityPlayerSP shooter, double x, double y, double z, float yaw, float pitch) {
         super(worldIn);
+        this.shooter = shooter;
         setLocationAndAngles(x, y, z, yaw, pitch);
     }
 
@@ -27,19 +30,21 @@ public class EntityAimCamera extends Entity {
         EntityPlayerSP playerSP = client.player;
         WorldClient worldClient = client.world;
         if (playerSP != null && worldClient != null) {
-            Entity camera = client.getRenderViewEntity();
+            Entity viewEntity = client.getRenderViewEntity();
             double x = pos.x;
             double y = pos.y;
             double z = pos.z;
-            if (camera instanceof EntityAimCamera) {
+            if (viewEntity instanceof EntityAimCamera) {
+                EntityAimCamera camera = (EntityAimCamera) viewEntity;
                 if (camera.posX != x || camera.posY != y || camera.posZ != z || camera.rotationYaw != yaw || camera.rotationPitch != pitch) {
                     MessageOutput.CHAT.send(String.format("Camera loc & rot: %.2f, %.2f, %.2f, %.2f, %.2f", x, y, z, yaw, pitch), MessageDispatcher.generic());
+                    MessageOutput.CHAT.send(String.format("\u00A7ePlayer loc & rot: %.2f, %.2f, %.2f, %.2f, %.2f\u00A7r", playerSP.posX, playerSP.posY, playerSP.posZ, playerSP.rotationYaw, playerSP.rotationPitch), MessageDispatcher.generic());
+                    camera.setLocationAndAngles(x, y, z, yaw, pitch);
                 }
-                camera.setLocationAndAngles(x, y, z, yaw, pitch);
             } else {
-                vanillaCamera = camera;
+                vanillaCamera = viewEntity;
                 cullingFlag = client.renderChunksMany;
-                camera = new EntityAimCamera(worldClient, x, y, z, yaw, pitch);
+                EntityAimCamera camera = new EntityAimCamera(worldClient, playerSP, x, y, z, yaw, pitch);
                 worldClient.spawnEntity(camera);
                 client.setRenderViewEntity(camera);
                 client.renderChunksMany = false;
@@ -66,6 +71,10 @@ public class EntityAimCamera extends Entity {
             cullingFlag = false;
             aimingFlag.set(false);
         }
+    }
+
+    public boolean isCurrentShooter(EntityPlayer player) {
+        return player == shooter;
     }
 
     @Override

@@ -18,12 +18,10 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProjectileAimRenderer extends BaseOverlayRenderer {
     public final Int2ObjectSortedMap<List<Vec3d>> aimListMap = new Int2ObjectAVLTreeMap<>();
     public final Int2BooleanMap aimDamageMap = new Int2BooleanOpenHashMap();
-    public final AtomicInteger updateCounter = new AtomicInteger(0);
 
     public ProjectileAimRenderer() {
     }
@@ -51,8 +49,6 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
 
     @Override
     public void update(Vec3d cameraPos, Entity entity, Minecraft mc) {
-        Color colorCenter = new Color(255, 60, 60);
-        Color colorBorder = new Color(60, 255, 60);
         int colorRGBAim;
         for (Int2ObjectMap.Entry<List<Vec3d>> mapEntry : aimListMap.int2ObjectEntrySet()) {
             List<Vec3d> list = mapEntry.getValue();
@@ -64,11 +60,6 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
                 double maxY = -Double.MAX_VALUE;
                 double maxZ = -Double.MAX_VALUE;
                 int level = mapEntry.getIntKey();
-                if (aimDamageMap.get(level)) {
-                    colorRGBAim = colorCenter.getRGB();
-                } else {
-                    colorRGBAim = colorBorder.getRGB();
-                }
                 for (Vec3d pos : list) {
                     if (pos.x < minX) {
                         minX = pos.x;
@@ -89,6 +80,17 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
                         maxZ = pos.z;
                     }
                 }
+                boolean single = list.size() <= 1;
+                if (aimDamageMap.get(level)) {
+                    colorRGBAim = single ? new Color(0xFF3CFF).getRGB() : new Color(0xFF3C3C).getRGB();
+                } else {
+                    colorRGBAim = single ? new Color(0x3CFFFF).getRGB() : new Color(0x3CFF3C).getRGB();
+                }
+                minX -= 0.25;
+                minZ -= 0.25;
+                maxX += 0.25;
+                maxY += 0.5;
+                maxZ += 0.25;
                 BufferBuilder buffer = RenderUtils.startBuffer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR, false);
                 ShapeRenderUtils.renderBoxEdgeLines(
                         minX - cameraPos.x, minY - cameraPos.y, minZ - cameraPos.z,
@@ -103,7 +105,7 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
                 //ShapeRenderUtils.renderBoxEdgeLines(
                 //        minX - cameraPos.x, minY - cameraPos.y, minZ - cameraPos.z,
                 //        maxX - cameraPos.x, maxY - cameraPos.y, maxZ - cameraPos.z,
-                //        Color4f.fromColor(colorBorder.getRGB()), buffer
+                //        Color4f.fromColor(colorBlock.getRGB()), buffer
                 //);
                 RenderUtils.drawBuffer();
             }

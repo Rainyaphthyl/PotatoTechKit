@@ -68,3 +68,8 @@ potteckit.config.comment.yeet_realm_page=Your client has been outdated and not c
 
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.
+
+potteckit.config.name.projectile_aim_indicator=Projectile Aim Indicator
+potteckit.config.comment.projectile_aim_indicator=Displays the probable ranges (within 0, 1, 2, and 3 sigma along each axis) of hit locations of an arrow, when holding the "Actions -> Projectile Aim Indicator" hotkey.
+potteckit.hotkey.name.projectile_aim_indicator=Projectile Aim Indicator
+potteckit.hotkey.comment.projectile_aim_indicator=The key to activate "Meters -> Projectile Aim Indicator" when holding a bow. This requires the toggle config to be enabled.
