@@ -36,11 +36,20 @@ public class EntityAimCamera extends Entity {
             double x = pos.x;
             double y = pos.y;
             double z = pos.z;
-            if (Configs.projectileAccurateAim.getBooleanValue() && mouseSensitivity < 0.0F) {
+            if (Configs.projectileAccurateAim.getBooleanValue() || Configs.projectileAimZoom.getBooleanValue()) {
                 GameSettings gameSettings = client.gameSettings;
                 if (gameSettings != null) {
-                    mouseSensitivity = gameSettings.mouseSensitivity;
-                    gameSettings.mouseSensitivity = Configs.projectileAccurateAim.getFloatValue() / 200.0F;
+                    if (mouseSensitivity < 0.0F) {
+                        mouseSensitivity = gameSettings.mouseSensitivity;
+                    }
+                    double rate = Renderers.PROJECTILE_AIM_RENDERER.getDistanceRate() / 4.0;
+                    float fovZoom;
+                    if (Configs.projectileAccurateAim.getBooleanValue()) {
+                        fovZoom = Configs.projectileAccurateAim.getFloatValue() / 200.0F;
+                    } else {
+                        fovZoom = mouseSensitivity;
+                    }
+                    gameSettings.mouseSensitivity = fovZoom * (float) rate;
                 }
             }
             if (viewEntity instanceof EntityAimCamera) {
@@ -85,9 +94,9 @@ public class EntityAimCamera extends Entity {
             }
             client.setRenderViewEntity(vanillaCamera);
             client.renderChunksMany = cullingFlag;
-            if (Configs.projectileAccurateAim.getBooleanValue() && mouseSensitivity >= 0.0F) {
+            if (Configs.projectileAccurateAim.getBooleanValue() || Configs.projectileAimZoom.getBooleanValue()) {
                 GameSettings gameSettings = client.gameSettings;
-                if (gameSettings != null) {
+                if (gameSettings != null && mouseSensitivity >= 0.0F) {
                     gameSettings.mouseSensitivity = mouseSensitivity;
                     mouseSensitivity = -1.0F;
                 }

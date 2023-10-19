@@ -83,13 +83,13 @@ public class Configs {
     @Config(types = Type.NUMBER, domains = Domain.VISUAL)
     public static final DualColorConfig projectileRangeColor = new DualColorConfig("arrow_color_range", "0xFF3C3C", "0x3CFF3C", "arrow_color_range").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
     @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
-    public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", true, 40.0, 0.0, 200.0, "projectile_accurate_aim");
+    public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", false, 40.0, 0.0, 200.0, "projectile_accurate_aim");
     @Config(types = Type.TOGGLE, domains = Domain.METER)
-    public static final HotkeyedBooleanConfig projectileAimZoom = new HotkeyedBooleanConfig("projectile_aim_zoom", true, "", "projectile_aim_zoom", "projectile_aim_zoom");
+    public static final HotkeyedBooleanConfig projectileAimZoom = new HotkeyedBooleanConfig("projectile_aim_zoom", false, "", "projectile_aim_zoom", "projectile_aim_zoom");
     @Config(types = Type.HOTKEY, domains = Domain.ACTION)
-    public static final HotkeyConfig projectileAimZoomIn = new HotkeyConfig("projectile_aim_zoom_in", "SCROLL_UP", MaLiLibConfigs.Hotkeys.SCROLL_ADJUST);
+    public static final HotkeyConfig projectileAimZoomIn = new HotkeyConfig("projectile_aim_zoom_in", "G,SCROLL_UP", MaLiLibConfigs.Hotkeys.SCROLL_ADJUST);
     @Config(types = Type.HOTKEY, domains = Domain.ACTION)
-    public static final HotkeyConfig projectileAimZoomOut = new HotkeyConfig("projectile_aim_zoom_out", "SCROLL_DOWN", MaLiLibConfigs.Hotkeys.SCROLL_ADJUST);
+    public static final HotkeyConfig projectileAimZoomOut = new HotkeyConfig("projectile_aim_zoom_out", "G,SCROLL_DOWN", MaLiLibConfigs.Hotkeys.SCROLL_ADJUST);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

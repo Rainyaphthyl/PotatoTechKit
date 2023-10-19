@@ -91,7 +91,9 @@ public class ArrowSimulator {
                     aimList = new ArrayList<>();
                     Renderers.PROJECTILE_AIM_RENDERER.aimListMap.put(range, aimList);
                 }
-                aimList.add(hitPoint);
+                if (hitPoint != null) {
+                    aimList.add(hitPoint);
+                }
                 Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.put(range, hitEntity);
                 if (range == 0 && hitMotion != null && hitPoint != null) {
                     double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
