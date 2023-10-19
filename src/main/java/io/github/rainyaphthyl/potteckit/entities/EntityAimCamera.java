@@ -1,8 +1,10 @@
 package io.github.rainyaphthyl.potteckit.entities;
 
+import io.github.rainyaphthyl.potteckit.config.Configs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +17,7 @@ public class EntityAimCamera extends Entity {
     private static final AtomicBoolean aimingFlag = new AtomicBoolean(false);
     private static Entity vanillaCamera = null;
     private static boolean cullingFlag = false;
+    private static float mouseSensitivity = -1.0F;
     protected final EntityPlayerSP shooter;
 
     protected EntityAimCamera(WorldClient worldIn, EntityPlayerSP shooter, double x, double y, double z, float yaw, float pitch) {
@@ -32,6 +35,13 @@ public class EntityAimCamera extends Entity {
             double x = pos.x;
             double y = pos.y;
             double z = pos.z;
+            if (Configs.projectileAccurateAim.getBooleanValue() && mouseSensitivity < 0.0F) {
+                GameSettings gameSettings = client.gameSettings;
+                if (gameSettings != null) {
+                    mouseSensitivity = gameSettings.mouseSensitivity;
+                    gameSettings.mouseSensitivity = Configs.projectileAccurateAim.getFloatValue() / 200.0F;
+                }
+            }
             if (viewEntity instanceof EntityAimCamera) {
                 EntityAimCamera camera = (EntityAimCamera) viewEntity;
                 if (camera.posX != x || camera.posY != y || camera.posZ != z || camera.rotationYaw != yaw || camera.rotationPitch != pitch) {
@@ -61,6 +71,13 @@ public class EntityAimCamera extends Entity {
             }
             client.setRenderViewEntity(vanillaCamera);
             client.renderChunksMany = cullingFlag;
+            if (Configs.projectileAccurateAim.getBooleanValue() && mouseSensitivity >= 0.0F) {
+                GameSettings gameSettings = client.gameSettings;
+                if (gameSettings != null) {
+                    gameSettings.mouseSensitivity = mouseSensitivity;
+                    mouseSensitivity = -1.0F;
+                }
+            }
             vanillaCamera = null;
             cullingFlag = false;
             aimingFlag.set(false);
