@@ -8,6 +8,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
@@ -59,6 +60,19 @@ public class EntityAimCamera extends Entity {
         }
     }
 
+    public static synchronized void zoomCamera(double diff) {
+        if (Configs.projectileAimZoom.getBooleanValue()) {
+            Minecraft client = Minecraft.getMinecraft();
+            Entity camera = client.getRenderViewEntity();
+            if (camera instanceof EntityAimCamera) {
+                Renderers.PROJECTILE_AIM_RENDERER.operateDistanceRate(operand -> {
+                    operand *= diff;
+                    return MathHelper.clamp(operand, 0.0, ProjectileAimRenderer.MAX_DISTANCE);
+                });
+            }
+        }
+    }
+
     public static synchronized void removeAimCamera() {
         if (aimingFlag.get()) {
             Minecraft client = Minecraft.getMinecraft();
@@ -81,6 +95,7 @@ public class EntityAimCamera extends Entity {
             vanillaCamera = null;
             cullingFlag = false;
             aimingFlag.set(false);
+            Renderers.PROJECTILE_AIM_RENDERER.resetDistanceRate();
         }
     }
 

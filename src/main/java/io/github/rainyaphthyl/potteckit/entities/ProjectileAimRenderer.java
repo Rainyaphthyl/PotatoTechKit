@@ -15,15 +15,31 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.DoubleUnaryOperator;
 
 public class ProjectileAimRenderer extends BaseOverlayRenderer {
+    public static final double MAX_DISTANCE = 128.0;
     public final Int2ObjectSortedMap<List<Vec3d>> aimListMap = new Int2ObjectAVLTreeMap<>();
     public final Int2BooleanMap aimDamageMap = new Int2BooleanOpenHashMap();
+    private double distanceRate = 4.0;
 
     public ProjectileAimRenderer() {
+    }
+
+    public synchronized double getDistanceRate() {
+        return distanceRate;
+    }
+
+    public synchronized void operateDistanceRate(@Nonnull DoubleUnaryOperator updater) {
+        distanceRate = updater.applyAsDouble(distanceRate);
+    }
+
+    public synchronized void resetDistanceRate() {
+        distanceRate = 4.0;
     }
 
     @Override
@@ -49,7 +65,6 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
 
     @Override
     public void update(Vec3d cameraPos, Entity entity, Minecraft mc) {
-        int colorRGBAim;
         for (Int2ObjectMap.Entry<List<Vec3d>> mapEntry : aimListMap.int2ObjectEntrySet()) {
             List<Vec3d> list = mapEntry.getValue();
             if (list != null && !list.isEmpty()) {
@@ -81,8 +96,8 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
                     }
                 }
                 boolean single = list.size() <= 1;
+                int colorRGBAim;
                 if (aimDamageMap.get(level)) {
-                    Configs.projectileCenterColor.getFirstColorInt();
                     colorRGBAim = single ? Configs.projectileCenterColor.getFirstColorInt() : Configs.projectileRangeColor.getFirstColorInt();
                 } else {
                     colorRGBAim = single ? Configs.projectileCenterColor.getSecondColorInt() : Configs.projectileRangeColor.getSecondColorInt();

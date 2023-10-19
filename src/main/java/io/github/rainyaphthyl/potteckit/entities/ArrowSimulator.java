@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 
 public class ArrowSimulator {
     public static final float DEG_TO_RAD = 0.017453292F;
+    public static final int MAX_TICK_COUNT = 1200;
     protected static final double RAD_TO_DEG = 180.0 / Math.PI;
     protected static final Predicate<Entity> ARROW_TARGETS = EntitySelectors.NOT_SPECTATING.and(EntitySelectors.IS_ALIVE).and(Entity::canBeCollidedWith);
     protected static final double GAUSSIAN_SCALE = 0.007499999832361937D;
@@ -97,7 +98,8 @@ public class ArrowSimulator {
                     float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * RAD_TO_DEG);
                     float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * RAD_TO_DEG);
                     Vec3d hitCenter = hitPoint.add(0.0, 0.25, 0.0);
-                    Vec3d posToTarget = hitMotion.scale(-4.0).add(hitCenter);
+                    double rate = Renderers.PROJECTILE_AIM_RENDERER.getDistanceRate();
+                    Vec3d posToTarget = hitMotion.scale(-rate).add(hitCenter);
                     EntityAimCamera.startAimSpectating(posToTarget, cameraYaw, cameraPitch);
                 }
             }
@@ -133,7 +135,7 @@ public class ArrowSimulator {
         hitPoint = null;
         hitMotion = null;
         boolean hitEntity = false;
-        while (!(stopped || inGround)) {
+        for (int i = 0; !(stopped || inGround) && i < MAX_TICK_COUNT; ++i) {
             hitEntity |= onUpdate();
         }
         return hitEntity;

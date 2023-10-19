@@ -53,7 +53,13 @@ public class MixinEntityPlayerSP extends AbstractClientPlayer {
             if (Configs.projectileAimTrigger.getKeyBind().isKeyBindHeld()) {
                 ItemStack itemStack = getHeldItemMainhand();
                 Item item = itemStack.getItem();
-                if (item == Items.BOW) {
+                boolean hasItem = item == Items.BOW;
+                if (!hasItem) {
+                    itemStack = getHeldItemOffhand();
+                    item = itemStack.getItem();
+                    hasItem = item == Items.BOW;
+                }
+                if (hasItem) {
                     ArrowSimulator simulator = new ArrowSimulator(this, (WorldClient) world);
                     simulator.predictDestination(3.0F, 1.0F);
                     flag = false;
