@@ -1,7 +1,5 @@
 package io.github.rainyaphthyl.potteckit.entities;
 
-import fi.dy.masa.malilib.overlay.message.MessageDispatcher;
-import fi.dy.masa.malilib.overlay.message.MessageOutput;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -37,8 +35,6 @@ public class EntityAimCamera extends Entity {
             if (viewEntity instanceof EntityAimCamera) {
                 EntityAimCamera camera = (EntityAimCamera) viewEntity;
                 if (camera.posX != x || camera.posY != y || camera.posZ != z || camera.rotationYaw != yaw || camera.rotationPitch != pitch) {
-                    MessageOutput.CHAT.send(String.format("Camera loc & rot: %.2f, %.2f, %.2f, %.2f, %.2f", x, y, z, yaw, pitch), MessageDispatcher.generic());
-                    MessageOutput.CHAT.send(String.format("\u00A7ePlayer loc & rot: %.2f, %.2f, %.2f, %.2f, %.2f\u00A7r", playerSP.posX, playerSP.posY, playerSP.posZ, playerSP.rotationYaw, playerSP.rotationPitch), MessageDispatcher.generic());
                     camera.setLocationAndAngles(x, y, z, yaw, pitch);
                 }
             } else {
@@ -48,7 +44,6 @@ public class EntityAimCamera extends Entity {
                 worldClient.spawnEntity(camera);
                 client.setRenderViewEntity(camera);
                 client.renderChunksMany = false;
-                MessageOutput.CHAT.send(String.format("Start aiming: %.2f, %.2f, %.2f, %.2f, %.2f", x, y, z, yaw, pitch), MessageDispatcher.generic());
             }
             aimingFlag.set(true);
         }
@@ -58,7 +53,6 @@ public class EntityAimCamera extends Entity {
         if (aimingFlag.get()) {
             Minecraft client = Minecraft.getMinecraft();
             Entity camera = client.getRenderViewEntity();
-            MessageOutput.CHAT.send("Stop aiming!", MessageDispatcher.generic());
             if (camera instanceof EntityAimCamera) {
                 WorldClient worldClient = client.world;
                 if (worldClient != null) {

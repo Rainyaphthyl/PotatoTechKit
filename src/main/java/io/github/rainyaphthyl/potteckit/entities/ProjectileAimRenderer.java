@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.render.ShapeRenderUtils;
 import fi.dy.masa.malilib.render.overlay.BaseOverlayRenderer;
 import fi.dy.masa.malilib.util.data.Color4f;
 import fi.dy.masa.malilib.util.data.ModInfo;
+import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import it.unimi.dsi.fastutil.ints.*;
 import net.minecraft.client.Minecraft;
@@ -15,7 +16,6 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -82,9 +82,10 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
                 }
                 boolean single = list.size() <= 1;
                 if (aimDamageMap.get(level)) {
-                    colorRGBAim = single ? new Color(0xFF3CFF).getRGB() : new Color(0xFF3C3C).getRGB();
+                    Configs.projectileCenterColor.getFirstColorInt();
+                    colorRGBAim = single ? Configs.projectileCenterColor.getFirstColorInt() : Configs.projectileRangeColor.getFirstColorInt();
                 } else {
-                    colorRGBAim = single ? new Color(0x3CFFFF).getRGB() : new Color(0x3CFF3C).getRGB();
+                    colorRGBAim = single ? Configs.projectileCenterColor.getSecondColorInt() : Configs.projectileRangeColor.getSecondColorInt();
                 }
                 minX -= 0.25;
                 minZ -= 0.25;
@@ -97,16 +98,6 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
                         maxX - cameraPos.x, maxY - cameraPos.y, maxZ - cameraPos.z,
                         Color4f.fromColor(colorRGBAim), buffer
                 );
-                //minX -= 0.25;
-                //minZ -= 0.25;
-                //maxX += 0.25;
-                //maxY += 0.5;
-                //maxZ += 0.25;
-                //ShapeRenderUtils.renderBoxEdgeLines(
-                //        minX - cameraPos.x, minY - cameraPos.y, minZ - cameraPos.z,
-                //        maxX - cameraPos.x, maxY - cameraPos.y, maxZ - cameraPos.z,
-                //        Color4f.fromColor(colorBlock.getRGB()), buffer
-                //);
                 RenderUtils.drawBuffer();
             }
         }

@@ -2,10 +2,7 @@ package io.github.rainyaphthyl.potteckit.config;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.JsonModConfig;
-import fi.dy.masa.malilib.config.option.HotkeyConfig;
-import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
-import fi.dy.masa.malilib.config.option.IntegerConfig;
-import fi.dy.masa.malilib.config.option.OptionListConfig;
+import fi.dy.masa.malilib.config.option.*;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
 import fi.dy.masa.malilib.input.KeyBindSettings;
 import fi.dy.masa.malilib.registry.Registry;
@@ -80,6 +77,10 @@ public class Configs {
     public static final HotkeyedBooleanConfig projectileAimIndicator = new HotkeyedBooleanConfig("projectile_aim_indicator", false, "", "projectile_aim_indicator", "projectile_aim_indicator");
     @Config(types = Type.HOTKEY, domains = Domain.ACTION)
     public static final HotkeyConfig projectileAimTrigger = new HotkeyConfig("projectile_aim_indicator", "G", KeyBindSettings.INGAME_MODIFIER);
+    @Config(types = Type.NUMBER, domains = Domain.VISUAL)
+    public static final DualColorConfig projectileCenterColor = new DualColorConfig("arrow_color_center", "0xFF3CFF", "0x3CFFFF", "arrow_color_center").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
+    @Config(types = Type.NUMBER, domains = Domain.VISUAL)
+    public static final DualColorConfig projectileRangeColor = new DualColorConfig("arrow_color_range", "0xFF3C3C", "0x3CFF3C", "arrow_color_range").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
