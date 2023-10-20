@@ -57,10 +57,6 @@ public class ArrowSimulator {
         this.world = world;
     }
 
-    public static int getSign(int boundaryBits, int mask) {
-        return (boundaryBits & mask) == 0 ? -1 : 1;
-    }
-
     public void predictDestination(float velocity, float inaccuracy) {
         float pitch = shooter.rotationPitch;
         float yaw = shooter.rotationYaw;
@@ -72,27 +68,42 @@ public class ArrowSimulator {
         float rz = MathHelper.cos(yawDegree) * cosPitch;
         AimRangePacket rangePacket = new AimRangePacket();
         for (int range = 0; range <= 3; ++range) {
-            int maxBits = range == 0 ? 0b000 : 0b111;
-            for (int bits = 0; bits <= maxBits; ++bits) {
-                setPosition(shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ);
-                setInitMotion(rx, ry, rz, velocity, inaccuracy, range, bits);
-                motionX += shooter.motionX;
-                motionZ += shooter.motionZ;
-                if (!shooter.onGround) {
-                    motionY += shooter.motionY;
-                }
-                boolean hitEntity = simulateMovement();
-                if (hitPoint != null) {
-                    rangePacket.addVertexAtLevel(range, hitPoint, hitEntity);
-                }
-                if (range == 0 && hitMotion != null && hitPoint != null) {
-                    double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
-                    float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * RAD_TO_DEG);
-                    float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * RAD_TO_DEG);
-                    Vec3d hitCenter = hitPoint.add(0.0, 0.25, 0.0);
-                    double rate = Renderers.PROJECTILE_AIM_RENDERER.getDistanceRate();
-                    Vec3d posToTarget = hitMotion.scale(-rate).add(hitCenter);
-                    EntityAimCamera.startAimSpectating(posToTarget, cameraYaw, cameraPitch);
+            boolean notEnough = true;
+            for (byte dirX = -1; notEnough && dirX <= 1; ++dirX) {
+                for (byte dirY = -1; notEnough && dirY <= 1; ++dirY) {
+                    for (byte dirZ = -1; notEnough && dirZ <= 1; ++dirZ) {
+                        setPosition(shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ);
+                        boolean valid = true;
+                        if (range == 0) {
+                            dirX = 0;
+                            dirY = 0;
+                            dirZ = 0;
+                            notEnough = false;
+                        } else if (dirX == 0 && dirY == 0 && dirZ == 0) {
+                            valid = false;
+                        }
+                        if (valid) {
+                            setInitMotion(rx, ry, rz, velocity, inaccuracy, range, dirX, dirY, dirZ);
+                            motionX += shooter.motionX;
+                            motionZ += shooter.motionZ;
+                            if (!shooter.onGround) {
+                                motionY += shooter.motionY;
+                            }
+                            boolean hitEntity = simulateMovement();
+                            if (hitPoint != null) {
+                                rangePacket.addVertexAtLevel(range, hitPoint, hitEntity);
+                            }
+                            if (range == 0 && hitMotion != null && hitPoint != null) {
+                                double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
+                                float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * RAD_TO_DEG);
+                                float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * RAD_TO_DEG);
+                                Vec3d hitCenter = hitPoint.add(0.0, 0.25, 0.0);
+                                double rate = Renderers.PROJECTILE_AIM_RENDERER.getDistanceRate();
+                                Vec3d posToTarget = hitMotion.scale(-rate).add(hitCenter);
+                                EntityAimCamera.startAimSpectating(posToTarget, cameraYaw, cameraPitch);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -100,25 +111,25 @@ public class ArrowSimulator {
         Renderers.PROJECTILE_AIM_RENDERER.addAimRange(rangePacket);
     }
 
-    public void setInitMotion(double x, double y, double z, float velocity, double inaccuracy, double sigmaLevel, int boundaryBits) {
-        double scale = MathHelper.sqrt(x * x + y * y + z * z);
-        x /= scale;
-        y /= scale;
-        z /= scale;
+    public void setInitMotion(double mx, double my, double mz, float velocity, double inaccuracy, double sigmaLevel, byte dirX, byte dirY, byte dirZ) {
+        double scale = MathHelper.sqrt(mx * mx + my * my + mz * mz);
+        mx /= scale;
+        my /= scale;
+        mz /= scale;
         if (sigmaLevel != 0) {
-            x += getSign(boundaryBits, 0b001) * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
-            y += getSign(boundaryBits, 0b010) * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
-            z += getSign(boundaryBits, 0b100) * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
+            mx += dirX * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
+            my += dirY * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
+            mz += dirZ * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
         }
-        x *= velocity;
-        y *= velocity;
-        z *= velocity;
-        motionX = x;
-        motionY = y;
-        motionZ = z;
-        double horizonScale = MathHelper.sqrt(x * x + z * z);
-        rotationYaw = (float) (MathHelper.atan2(x, z) * (180.0 / Math.PI));
-        rotationPitch = (float) (MathHelper.atan2(y, horizonScale) * (180.0 / Math.PI));
+        mx *= velocity;
+        my *= velocity;
+        mz *= velocity;
+        motionX = mx;
+        motionY = my;
+        motionZ = mz;
+        double horizonScale = MathHelper.sqrt(mx * mx + mz * mz);
+        rotationYaw = (float) (MathHelper.atan2(mx, mz) * (180.0 / Math.PI));
+        rotationPitch = (float) (MathHelper.atan2(my, horizonScale) * (180.0 / Math.PI));
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
     }

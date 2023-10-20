@@ -32,7 +32,8 @@ public class AimRangePacket implements Iterable<Double2ObjectMap.Entry<AimRangeP
 
     public void addVertexAtLevel(double level, Vec3d position, boolean atEntity) {
         Vertex vertex = new Vertex(position, atEntity);
-        addVertexAtLevel(level, vertex);
+        double absLevel = Math.abs(level);
+        addVertexAtLevel(absLevel, vertex);
     }
 
     public void setCompleted() {
