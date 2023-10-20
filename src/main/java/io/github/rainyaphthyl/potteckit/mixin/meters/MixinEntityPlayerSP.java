@@ -67,9 +67,8 @@ public class MixinEntityPlayerSP extends AbstractClientPlayer {
             }
         }
         if (flag) {
-            Renderers.PROJECTILE_AIM_RENDERER.aimListMap.clear();
-            Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.clear();
             EntityAimCamera.removeAimCamera();
+            Renderers.PROJECTILE_AIM_RENDERER.removeAimRange();
         }
     }
 }

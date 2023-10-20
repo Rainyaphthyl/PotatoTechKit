@@ -11,7 +11,6 @@ import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.*;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -63,8 +62,6 @@ public class ArrowSimulator {
     }
 
     public void predictDestination(float velocity, float inaccuracy) {
-        Renderers.PROJECTILE_AIM_RENDERER.aimListMap.clear();
-        Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.clear();
         float pitch = shooter.rotationPitch;
         float yaw = shooter.rotationYaw;
         float yawDegree = yaw * DEG_TO_RAD;
@@ -73,10 +70,9 @@ public class ArrowSimulator {
         float rx = -MathHelper.sin(yawDegree) * cosPitch;
         float ry = -MathHelper.sin(pitchDegree);
         float rz = MathHelper.cos(yawDegree) * cosPitch;
+        AimRangePacket rangePacket = new AimRangePacket();
         for (int range = 0; range <= 3; ++range) {
-            //if (range == 1 || range == 3) continue;
             int maxBits = range == 0 ? 0b000 : 0b111;
-            boolean hitEntity = true;
             for (int bits = 0; bits <= maxBits; ++bits) {
                 setPosition(shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ);
                 setInitMotion(rx, ry, rz, velocity, inaccuracy, range, bits);
@@ -85,16 +81,10 @@ public class ArrowSimulator {
                 if (!shooter.onGround) {
                     motionY += shooter.motionY;
                 }
-                hitEntity &= simulateMovement();
-                List<Vec3d> aimList = Renderers.PROJECTILE_AIM_RENDERER.aimListMap.get(range);
-                if (aimList == null) {
-                    aimList = new ArrayList<>();
-                    Renderers.PROJECTILE_AIM_RENDERER.aimListMap.put(range, aimList);
-                }
+                boolean hitEntity = simulateMovement();
                 if (hitPoint != null) {
-                    aimList.add(hitPoint);
+                    rangePacket.addVertexAtLevel(range, hitPoint, hitEntity);
                 }
-                Renderers.PROJECTILE_AIM_RENDERER.aimDamageMap.put(range, hitEntity);
                 if (range == 0 && hitMotion != null && hitPoint != null) {
                     double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
                     float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * RAD_TO_DEG);
@@ -106,6 +96,8 @@ public class ArrowSimulator {
                 }
             }
         }
+        rangePacket.setCompleted();
+        Renderers.PROJECTILE_AIM_RENDERER.addAimRange(rangePacket);
     }
 
     public void setInitMotion(double x, double y, double z, float velocity, double inaccuracy, double sigmaLevel, int boundaryBits) {
