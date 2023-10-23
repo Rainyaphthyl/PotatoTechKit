@@ -82,7 +82,7 @@ public class Configs {
     @Config(types = Type.NUMBER, domains = Domain.VISUAL)
     public static final DualColorConfig projectileRangeColor = new DualColorConfig("arrow_color_range", "0xFF3C3C", "0x3CFF3C", "arrow_color_range").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
     @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
-    public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", false, 40.0, 0.0, 200.0, "projectile_accurate_aim");
+    public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", false, 80.0, 0.0, 200.0, "projectile_accurate_aim");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
