@@ -15,7 +15,8 @@ public enum Domain {
     ACTION(Category.ACTION),
     FIX(Category.FIX),
     TWEAK(Category.TWEAK),
-    YEET(Category.YEET);
+    YEET(Category.YEET),
+    VISUAL(Category.VISUAL);
     public final Category category;
 
     Domain(Category category) {

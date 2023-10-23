@@ -16,6 +16,7 @@ public enum Category {
      * Helping players with game operations
      */
     ACTION("Actions", "action"),
+    VISUAL("Visual", "visual"),
     WITH_SERVER("NeedServer", "server"),
     /**
      * Making some manual operations so convenient that players refuse to design automatic machines for them.

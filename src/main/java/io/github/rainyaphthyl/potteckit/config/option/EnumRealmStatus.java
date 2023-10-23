@@ -7,7 +7,7 @@ public enum EnumRealmStatus implements OptionListConfigValue {
     VANILLA("vanilla", "Vanilla"),
     DISABLED("disabled", "Disabled"),
     INVISIBLE("invisible", "Invisible");
-    public static final ImmutableList<EnumRealmStatus> list = ImmutableList.copyOf(values());
+    public static final ImmutableList<EnumRealmStatus> LIST = ImmutableList.copyOf(values());
     public final String name;
     public final String description;
 

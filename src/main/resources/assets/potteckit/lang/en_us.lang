@@ -6,6 +6,7 @@ potteckit.config.tab.fix=Fixes
 potteckit.config.tab.tweak=Tweaks
 potteckit.config.tab.yeet=Yeet
 potteckit.config.tab.action=Actions
+potteckit.config.tab.visual=Visual
 potteckit.config.tab.server=Need Server
 potteckit.config.tab.vanilless=Not Vanilla
 potteckit.config.tab.cheat=Cheating
@@ -68,3 +69,16 @@ potteckit.config.comment.yeet_realm_page=Your client has been outdated and not c
 
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.
+
+potteckit.config.name.projectile_aim_indicator=Projectile Aim Indicator
+potteckit.config.comment.projectile_aim_indicator=Displays the probable ranges (within 0, 1, 2, and 3 sigma along each axis) of hit locations of an arrow, when holding the "Actions -> Projectile Aim Indicator" hotkey.
+potteckit.hotkey.name.projectile_aim_indicator=Projectile Aim Indicator
+potteckit.hotkey.comment.projectile_aim_indicator=The key to activate "Meters -> Projectile Aim Indicator" when holding a bow. This requires the toggle config to be enabled.
+potteckit.config.name.arrow_color_center=Projectile Center Color
+potteckit.config.comment.arrow_color_center=The first for hit and the second for missed.
+potteckit.config.name.arrow_color_range=Projectile Range Color
+potteckit.config.comment.arrow_color_range=The first for hit and the second for missed.
+potteckit.label.arrow_color.hit=The color to indicate arrows hitting an entity.
+potteckit.label.arrow_color.miss=The color to indicate arrows missing entities.
+potteckit.config.name.projectile_accurate_aim=Projectile Aim Adjust Sensitivity
+potteckit.config.comment.projectile_accurate_aim=Temporarily adjusts the mouse sensitivity to the intended value, while using Projectile Aim Indicator.

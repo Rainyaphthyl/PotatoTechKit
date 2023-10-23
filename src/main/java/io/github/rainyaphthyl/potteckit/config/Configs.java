@@ -2,11 +2,9 @@ package io.github.rainyaphthyl.potteckit.config;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.JsonModConfig;
-import fi.dy.masa.malilib.config.option.HotkeyConfig;
-import fi.dy.masa.malilib.config.option.HotkeyedBooleanConfig;
-import fi.dy.masa.malilib.config.option.IntegerConfig;
-import fi.dy.masa.malilib.config.option.OptionListConfig;
+import fi.dy.masa.malilib.config.option.*;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
+import fi.dy.masa.malilib.input.KeyBindSettings;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
@@ -14,6 +12,7 @@ import io.github.rainyaphthyl.potteckit.config.annotation.Type;
 import io.github.rainyaphthyl.potteckit.config.option.EnumRealmStatus;
 import io.github.rainyaphthyl.potteckit.config.option.InvIntegerConfig;
 import io.github.rainyaphthyl.potteckit.config.option.multipart.ChunkFilterListConfig;
+import io.github.rainyaphthyl.potteckit.entities.Renderers;
 import io.github.rainyaphthyl.potteckit.gui.ChunkFilterListConfigWidget;
 import io.github.rainyaphthyl.potteckit.gui.GuiConfigScreen;
 import io.github.rainyaphthyl.potteckit.gui.InvIntegerConfigWidget;
@@ -61,7 +60,7 @@ public class Configs {
     @Config(types = Type.TOGGLE, domains = Domain.FIX, serverSide = true)
     public static final HotkeyedBooleanConfig fixLanSkinAbsence = new HotkeyedBooleanConfig("fix_lan_skin_absence", true, "", "fix_lan_skin_absence", "fix_lan_skin_absence");
     @Config(types = Type.ENUM, domains = Domain.YEET)
-    public static final OptionListConfig<EnumRealmStatus> yeetRealmPage = new OptionListConfig<>("yeet_realm_page", EnumRealmStatus.DISABLED, EnumRealmStatus.list, "yeet_realm_page", "yeet_realm_page");
+    public static final OptionListConfig<EnumRealmStatus> yeetRealmPage = new OptionListConfig<>("yeet_realm_page", EnumRealmStatus.DISABLED, EnumRealmStatus.LIST, "yeet_realm_page", "yeet_realm_page");
     @Config(types = Type.LIST, domains = Domain.METER)
     public static final ChunkFilterListConfig chunkLoadFilterList = ChunkFilterListConfig.create("chunk_load_filter", ImmutableList.of());
     @Config(types = Type.TOGGLE, domains = Domain.METER)
@@ -74,6 +73,16 @@ public class Configs {
     public static final HotkeyedBooleanConfig optifineJoiningGameFix = new HotkeyedBooleanConfig("optifine_joining_game_fix", false, "", "optifine_joining_game_fix", "optifine_joining_game_fix");
     @Config(types = Type.TOGGLE, domains = Domain.GENERIC, serverSide = true)
     public static final HotkeyedBooleanConfig optifineJoiningGameDebug = new HotkeyedBooleanConfig("optifine_joining_game_debug", false, "", "optifine_joining_game_debug", "optifine_joining_game_debug");
+    @Config(types = Type.TOGGLE, domains = Domain.METER)
+    public static final HotkeyedBooleanConfig projectileAimIndicator = new HotkeyedBooleanConfig("projectile_aim_indicator", false, "", "projectile_aim_indicator", "projectile_aim_indicator");
+    @Config(types = Type.HOTKEY, domains = Domain.ACTION)
+    public static final HotkeyConfig projectileAimTrigger = new HotkeyConfig("projectile_aim_indicator", "", KeyBindSettings.INGAME_MODIFIER);
+    @Config(types = Type.NUMBER, domains = Domain.VISUAL)
+    public static final DualColorConfig projectileCenterColor = new DualColorConfig("arrow_color_center", "0xFF3CFF", "0x3CFFFF", "arrow_color_center").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
+    @Config(types = Type.NUMBER, domains = Domain.VISUAL)
+    public static final DualColorConfig projectileRangeColor = new DualColorConfig("arrow_color_range", "0xFF3C3C", "0x3CFF3C", "arrow_color_range").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
+    @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
+    public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", false, 80.0, 0.0, 200.0, "projectile_accurate_aim");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
@@ -85,5 +94,6 @@ public class Configs {
         Registry.HOTKEY_MANAGER.registerHotkeyProvider(new PotteckitHotkeyProvider());
         Actions.init();
         Callbacks.init();
+        Renderers.init();
     }
 }

@@ -10,9 +10,9 @@ This is a **pre-release** version.
 
 ### Mod Versions
 
-- Current version: `0.1.6`
-- Previous version: `0.1.5`
-- Previous annotated version: `0.1.4`
+- Current version: `0.2.0`
+- Previous version: `0.1.6`
+- Previous annotated version: `0.1.6`
 - Previous release version: `null`
 
 ## Abstract
@@ -21,23 +21,20 @@ This is a **pre-release** version.
 
 ### Description
 
-- Chunk Loading Captor captures chunk populating and saving.
-- Chunk event messages can be filtered according to a list of rules.
-- Savestate Logger.
-- Logger of invalid End Cities.
-- A new option, fixing an Optifine bug about players joining the world.
+- New Tab of Configs:
+   - Visual
 
 ### New Configs
 
-1. Meters
-   1. Chunk Message Filter List
-   2. Chunk Message Filter Switch
-   3. Savestate Logger
-   4. Invalid End City Logger
-2. Fixes
-   1. Optifine Joining Game Fix
-3. Generic
-   1. Optifine Joining Game Debug
+1. Meters:
+   1. Projectile Aim Indicator
+2. Tweaks:
+   1. Projectile Aim Adjust Sensitivity
+3. Actions:
+   1. Projectile Aim Indicator
+4. Visual:
+   1. Projectile Center Color
+   2. Projectile Range Color
 
 ## Modified Features
 
