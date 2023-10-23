@@ -76,7 +76,7 @@ public class Configs {
     @Config(types = Type.TOGGLE, domains = Domain.METER)
     public static final HotkeyedBooleanConfig projectileAimIndicator = new HotkeyedBooleanConfig("projectile_aim_indicator", false, "", "projectile_aim_indicator", "projectile_aim_indicator");
     @Config(types = Type.HOTKEY, domains = Domain.ACTION)
-    public static final HotkeyConfig projectileAimTrigger = new HotkeyConfig("projectile_aim_indicator", "G", KeyBindSettings.INGAME_MODIFIER);
+    public static final HotkeyConfig projectileAimTrigger = new HotkeyConfig("projectile_aim_indicator", "", KeyBindSettings.INGAME_MODIFIER);
     @Config(types = Type.NUMBER, domains = Domain.VISUAL)
     public static final DualColorConfig projectileCenterColor = new DualColorConfig("arrow_color_center", "0xFF3CFF", "0x3CFFFF", "arrow_color_center").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
     @Config(types = Type.NUMBER, domains = Domain.VISUAL)
