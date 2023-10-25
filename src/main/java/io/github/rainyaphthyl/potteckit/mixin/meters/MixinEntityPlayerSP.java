@@ -1,5 +1,6 @@
 package io.github.rainyaphthyl.potteckit.mixin.meters;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.authlib.GameProfile;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.entities.ArrowSimulator;
@@ -50,19 +51,23 @@ public class MixinEntityPlayerSP extends AbstractClientPlayer {
     public void checkBowUsage(CallbackInfo ci) {
         boolean flag = true;
         if (Configs.projectileAimIndicator.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
-            if (Configs.projectileAimTrigger.getKeyBind().isKeyBindHeld()) {
+            if (Configs.projectileAimTrigger.isHeld()) {
                 ItemStack itemStack = getHeldItemMainhand();
                 Item item = itemStack.getItem();
-                boolean hasItem = item == Items.BOW;
+                ImmutableList<Item> immutableList = Configs.projectileAimList.getValue();
+                boolean hasItem = immutableList.contains(item);
                 if (!hasItem) {
                     itemStack = getHeldItemOffhand();
                     item = itemStack.getItem();
-                    hasItem = item == Items.BOW;
+                    hasItem = immutableList.contains(item);
                 }
                 if (hasItem) {
-                    ArrowSimulator simulator = new ArrowSimulator(this, (WorldClient) world);
-                    simulator.predictDestination(3.0F, 1.0F);
-                    flag = false;
+                    if (Items.BOW == item) {
+                        ArrowSimulator simulator = new ArrowSimulator(this, (WorldClient) world);
+                        simulator.predictDestination(3.0F, 1.0F);
+                        flag = false;
+                    } else if (Items.EGG == item || Items.ENDER_PEARL == item || Items.SNOWBALL == item || Items.EXPERIENCE_BOTTLE == item || Items.SPLASH_POTION == item || Items.LINGERING_POTION == item) {
+                    }
                 }
             }
         }

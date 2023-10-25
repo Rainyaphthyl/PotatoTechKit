@@ -82,3 +82,5 @@ potteckit.label.arrow_color.hit=The color to indicate arrows hitting an entity.
 potteckit.label.arrow_color.miss=The color to indicate arrows missing entities.
 potteckit.config.name.projectile_accurate_aim=Projectile Aim Adjust Sensitivity
 potteckit.config.comment.projectile_accurate_aim=Temporarily adjusts the mouse sensitivity to the intended value, while using Projectile Aim Indicator.
+potteckit.config.name.projectile_aim_list=Projectile Aim List
+potteckit.config.comment.projectile_aim_list=The list of items which can trigger "Projectile Aim Indicator".

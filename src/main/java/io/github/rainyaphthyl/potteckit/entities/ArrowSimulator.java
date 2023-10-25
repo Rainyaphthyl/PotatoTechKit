@@ -14,34 +14,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ArrowSimulator {
+public class ArrowSimulator extends ProjectileSimulator {
     public static final float DEG_TO_RAD = 0.017453292F;
     public static final int MAX_TICK_COUNT = 1200;
     protected static final double RAD_TO_DEG = 180.0 / Math.PI;
     protected static final Predicate<Entity> ARROW_TARGETS = EntitySelectors.NOT_SPECTATING.and(EntitySelectors.IS_ALIVE).and(Entity::canBeCollidedWith);
     protected static final double GAUSSIAN_SCALE = 0.007499999832361937D;
-    protected static final float height = 0.5F;
-    protected static final float width = 0.5F;
-    /**
-     * The owner of this arrow.
-     */
-    public final Entity shooter;
-    public final WorldClient world;
-    protected boolean inGround;
-    protected double posX;
-    protected double posY;
-    protected double posZ;
-    protected double prevPosX;
-    protected double prevPosY;
-    protected double prevPosZ;
-    protected double motionX;
-    protected double motionY;
-    protected double motionZ;
-    protected float rotationYaw;
-    protected float rotationPitch;
-    protected float prevRotationPitch;
-    protected float prevRotationYaw;
-    protected AxisAlignedBB boundingBox;
     protected boolean inWater = false;
     protected boolean firstUpdate;
     private int xTile;
@@ -49,91 +27,12 @@ public class ArrowSimulator {
     private int zTile;
     private int ticksInAir;
     private boolean stopped = false;
-    private Vec3d hitPoint = null;
-    private Vec3d hitMotion = null;
 
     public ArrowSimulator(Entity shooter, WorldClient world) {
-        this.shooter = shooter;
-        this.world = world;
+        super(shooter, world, 0.5F, 0.5F);
     }
 
-    public void predictDestination(float velocity, float inaccuracy) {
-        float pitch = shooter.rotationPitch;
-        float yaw = shooter.rotationYaw;
-        float yawDegree = yaw * DEG_TO_RAD;
-        float pitchDegree = pitch * DEG_TO_RAD;
-        float cosPitch = MathHelper.cos(pitchDegree);
-        float rx = -MathHelper.sin(yawDegree) * cosPitch;
-        float ry = -MathHelper.sin(pitchDegree);
-        float rz = MathHelper.cos(yawDegree) * cosPitch;
-        AimRangePacket rangePacket = new AimRangePacket();
-        for (int range = 0; range <= 3; ++range) {
-            boolean notEnough = true;
-            for (byte dirX = -1; notEnough && dirX <= 1; ++dirX) {
-                for (byte dirY = -1; notEnough && dirY <= 1; ++dirY) {
-                    for (byte dirZ = -1; notEnough && dirZ <= 1; ++dirZ) {
-                        setPosition(shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ);
-                        boolean valid = true;
-                        if (range == 0) {
-                            dirX = 0;
-                            dirY = 0;
-                            dirZ = 0;
-                            notEnough = false;
-                        } else if (dirX == 0 && dirY == 0 && dirZ == 0) {
-                            valid = false;
-                        }
-                        if (valid) {
-                            setInitMotion(rx, ry, rz, velocity, inaccuracy, range, dirX, dirY, dirZ);
-                            motionX += shooter.motionX;
-                            motionZ += shooter.motionZ;
-                            if (!shooter.onGround) {
-                                motionY += shooter.motionY;
-                            }
-                            boolean hitEntity = simulateMovement();
-                            if (hitPoint != null) {
-                                rangePacket.addVertexAtLevel(range, hitPoint, hitEntity);
-                            }
-                            if (range == 0 && hitMotion != null && hitPoint != null) {
-                                double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
-                                float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * RAD_TO_DEG);
-                                float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * RAD_TO_DEG);
-                                Vec3d hitCenter = hitPoint.add(0.0, 0.25, 0.0);
-                                double rate = Renderers.PROJECTILE_AIM_RENDERER.getDistanceRate();
-                                Vec3d posToTarget = hitMotion.scale(-rate).add(hitCenter);
-                                EntityAimCamera.startAimSpectating(posToTarget, cameraYaw, cameraPitch);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        rangePacket.setCompleted();
-        Renderers.PROJECTILE_AIM_RENDERER.addAimRange(rangePacket);
-    }
-
-    public void setInitMotion(double mx, double my, double mz, float velocity, double inaccuracy, double sigmaLevel, byte dirX, byte dirY, byte dirZ) {
-        double scale = MathHelper.sqrt(mx * mx + my * my + mz * mz);
-        mx /= scale;
-        my /= scale;
-        mz /= scale;
-        if (sigmaLevel != 0) {
-            mx += dirX * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
-            my += dirY * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
-            mz += dirZ * sigmaLevel * GAUSSIAN_SCALE * inaccuracy;
-        }
-        mx *= velocity;
-        my *= velocity;
-        mz *= velocity;
-        motionX = mx;
-        motionY = my;
-        motionZ = mz;
-        double horizonScale = MathHelper.sqrt(mx * mx + mz * mz);
-        rotationYaw = (float) (MathHelper.atan2(mx, mz) * (180.0 / Math.PI));
-        rotationPitch = (float) (MathHelper.atan2(my, horizonScale) * (180.0 / Math.PI));
-        prevRotationYaw = rotationYaw;
-        prevRotationPitch = rotationPitch;
-    }
-
+    @Override
     public boolean simulateMovement() {
         stopped = false;
         inGround = false;
@@ -256,14 +155,6 @@ public class ArrowSimulator {
         prevRotationPitch = rotationPitch;
         prevRotationYaw = rotationYaw;
         firstUpdate = false;
-    }
-
-    public void setPosition(double x, double y, double z) {
-        posX = x;
-        posY = y;
-        posZ = z;
-        double radius = width / 2.0F;
-        boundingBox = new AxisAlignedBB(x - radius, y, z - radius, x + radius, y + (double) height, z + radius);
     }
 
     protected void onHit(@Nonnull RayTraceResult raytraceResultIn) {
