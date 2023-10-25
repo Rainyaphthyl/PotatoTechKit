@@ -7,47 +7,20 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.*;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class ArrowSimulator extends ProjectileSimulator {
-    public static final float DEG_TO_RAD = 0.017453292F;
-    public static final int MAX_TICK_COUNT = 1200;
-    protected static final double RAD_TO_DEG = 180.0 / Math.PI;
-    protected static final Predicate<Entity> ARROW_TARGETS = EntitySelectors.NOT_SPECTATING.and(EntitySelectors.IS_ALIVE).and(Entity::canBeCollidedWith);
-    protected static final double GAUSSIAN_SCALE = 0.007499999832361937D;
-    protected boolean inWater = false;
-    protected boolean firstUpdate;
-    private int xTile;
-    private int yTile;
-    private int zTile;
-    private int ticksInAir;
-    private boolean stopped = false;
-
     public ArrowSimulator(Entity shooter, WorldClient world) {
         super(shooter, world, 0.5F, 0.5F);
-    }
-
-    @Override
-    public boolean simulateMovement() {
-        stopped = false;
-        inGround = false;
-        hitPoint = null;
-        hitMotion = null;
-        boolean hitEntity = false;
-        for (int i = 0; !(stopped || inGround) && i < MAX_TICK_COUNT; ++i) {
-            hitEntity |= onUpdate();
-        }
-        return hitEntity;
     }
 
     /**
      * {@link EntityArrow#onUpdate()}
      */
+    @Override
     public boolean onUpdate() {
         boolean hitEntity = false;
         onEntityUpdate();
@@ -73,33 +46,33 @@ public class ArrowSimulator extends ProjectileSimulator {
             ++ticksInAir;
             Vec3d currPos = new Vec3d(posX, posY, posZ);
             Vec3d nextPos = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
-            RayTraceResult raytraceresult = world.rayTraceBlocks(currPos, nextPos, false, true, false);
+            RayTraceResult rayTraceResult = world.rayTraceBlocks(currPos, nextPos, false, true, false);
             currPos = new Vec3d(posX, posY, posZ);
             nextPos = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
-            if (raytraceresult != null) {
-                hitPoint = raytraceresult.hitVec;
-                nextPos = new Vec3d(raytraceresult.hitVec.x, raytraceresult.hitVec.y, raytraceresult.hitVec.z);
+            if (rayTraceResult != null) {
+                hitPoint = rayTraceResult.hitVec;
+                nextPos = new Vec3d(rayTraceResult.hitVec.x, rayTraceResult.hitVec.y, rayTraceResult.hitVec.z);
             }
             Entity entity = findEntityOnPath(currPos, nextPos);
             if (entity != null && !entity.getUniqueID().equals(shooter.getUniqueID())) {
-                raytraceresult = new RayTraceResult(entity);
+                rayTraceResult = new RayTraceResult(entity);
             }
-            if (raytraceresult != null && raytraceresult.entityHit instanceof EntityPlayer) {
-                EntityPlayer entityplayer = (EntityPlayer) raytraceresult.entityHit;
+            if (rayTraceResult != null && rayTraceResult.entityHit instanceof EntityPlayer) {
+                EntityPlayer entityplayer = (EntityPlayer) rayTraceResult.entityHit;
                 if (shooter instanceof EntityPlayer && !((EntityPlayer) shooter).canAttackPlayer(entityplayer)) {
-                    raytraceresult = null;
+                    rayTraceResult = null;
                 }
             }
-            if (raytraceresult != null) {
-                onHit(raytraceresult);
-                hitEntity = raytraceresult.entityHit != null;
+            if (rayTraceResult != null) {
+                onHit(rayTraceResult);
+                hitEntity = rayTraceResult.entityHit != null;
             }
             posX += motionX;
             posY += motionY;
             posZ += motionZ;
-            double f4 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
+            double motionHorizon = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
             rotationYaw = (float) (MathHelper.atan2(motionX, motionZ) * (180D / Math.PI));
-            rotationPitch = (float) (MathHelper.atan2(motionY, f4) * (180D / Math.PI));
+            rotationPitch = (float) (MathHelper.atan2(motionY, motionHorizon) * (180D / Math.PI));
             while (rotationPitch - prevRotationPitch < -180.0F) {
                 prevRotationPitch -= 360.0F;
             }
@@ -127,6 +100,7 @@ public class ArrowSimulator extends ProjectileSimulator {
         return hitEntity;
     }
 
+    @Override
     public Entity findEntityOnPath(Vec3d start, Vec3d end) {
         Entity target = null;
         List<Entity> list = world.getEntitiesInAABBexcluding(null, boundingBox.expand(motionX, motionY, motionZ).grow(1.0), ARROW_TARGETS::test);
@@ -148,15 +122,6 @@ public class ArrowSimulator extends ProjectileSimulator {
         return target;
     }
 
-    public void onEntityUpdate() {
-        prevPosX = posX;
-        prevPosY = posY;
-        prevPosZ = posZ;
-        prevRotationPitch = rotationPitch;
-        prevRotationYaw = rotationYaw;
-        firstUpdate = false;
-    }
-
     protected void onHit(@Nonnull RayTraceResult raytraceResultIn) {
         Entity entity = raytraceResultIn.entityHit;
         if (entity == null) {
@@ -168,16 +133,12 @@ public class ArrowSimulator extends ProjectileSimulator {
             motionY = (float) (raytraceResultIn.hitVec.y - posY);
             motionZ = (float) (raytraceResultIn.hitVec.z - posZ);
             hitPoint = raytraceResultIn.hitVec;
-            float f2 = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
-            posX -= motionX / (double) f2 * 0.05000000074505806D;
-            posY -= motionY / (double) f2 * 0.05000000074505806D;
-            posZ -= motionZ / (double) f2 * 0.05000000074505806D;
+            float motionSolid = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+            posX -= motionX / (double) motionSolid * 0.05000000074505806D;
+            posY -= motionY / (double) motionSolid * 0.05000000074505806D;
+            posZ -= motionZ / (double) motionSolid * 0.05000000074505806D;
             inGround = true;
         }
         setDead();
-    }
-
-    public void setDead() {
-        stopped = true;
     }
 }

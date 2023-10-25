@@ -6,6 +6,7 @@ import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.entities.ArrowSimulator;
 import io.github.rainyaphthyl.potteckit.entities.EntityAimCamera;
 import io.github.rainyaphthyl.potteckit.entities.Renderers;
+import io.github.rainyaphthyl.potteckit.entities.ThrowableSimulator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -62,11 +63,24 @@ public class MixinEntityPlayerSP extends AbstractClientPlayer {
                     hasItem = immutableList.contains(item);
                 }
                 if (hasItem) {
-                    if (Items.BOW == item) {
+                    boolean arrow = Items.BOW == item;
+                    boolean normal = Items.EGG == item || Items.ENDER_PEARL == item || Items.SNOWBALL == item;
+                    boolean potion = Items.SPLASH_POTION == item || Items.LINGERING_POTION == item;
+                    boolean bottle = Items.EXPERIENCE_BOTTLE == item;
+                    if (arrow) {
                         ArrowSimulator simulator = new ArrowSimulator(this, (WorldClient) world);
-                        simulator.predictDestination(3.0F, 1.0F);
+                        simulator.predictDestination(0.0F, 3.0F, 1.0F);
                         flag = false;
-                    } else if (Items.EGG == item || Items.ENDER_PEARL == item || Items.SNOWBALL == item || Items.EXPERIENCE_BOTTLE == item || Items.SPLASH_POTION == item || Items.LINGERING_POTION == item) {
+                    } else if (normal || potion || bottle) {
+                        ThrowableSimulator simulator = new ThrowableSimulator(this, (WorldClient) world, item);
+                        if (normal) {
+                            simulator.predictDestination(0.0F, 1.5F, 1.0F);
+                        } else if (bottle) {
+                            simulator.predictDestination(-20.0F, 0.7F, 1.0F);
+                        } else {
+                            simulator.predictDestination(-20.0F, 0.5F, 1.0F);
+                        }
+                        flag = false;
                     }
                 }
             }
