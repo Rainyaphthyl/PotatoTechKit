@@ -121,11 +121,13 @@ public class ProjectileAimRenderer extends BaseOverlayRenderer {
                 } else {
                     colorRGBAim = single ? Configs.projectileCenterColor.getSecondColorInt() : Configs.projectileRangeColor.getSecondColorInt();
                 }
-                minX -= 0.25;
-                minZ -= 0.25;
-                maxX += 0.25;
-                maxY += 0.5;
-                maxZ += 0.25;
+                double radius = (double) aimRangePacket.getWidth() / 2.0;
+                double height = aimRangePacket.getHeight();
+                minX -= radius;
+                minZ -= radius;
+                maxX += radius;
+                maxY += height;
+                maxZ += radius;
                 BufferBuilder buffer = RenderUtils.startBuffer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR, false);
                 ShapeRenderUtils.renderBoxEdgeLines(
                         minX - cameraPos.x, minY - cameraPos.y, minZ - cameraPos.z,

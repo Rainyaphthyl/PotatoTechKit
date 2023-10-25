@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.*;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
+import fi.dy.masa.malilib.config.option.list.ItemListConfig;
 import fi.dy.masa.malilib.input.KeyBindSettings;
 import fi.dy.masa.malilib.registry.Registry;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
@@ -19,6 +20,7 @@ import io.github.rainyaphthyl.potteckit.gui.InvIntegerConfigWidget;
 import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 
 public class Configs {
     @Config(types = Type.TOGGLE, domains = {Domain.GENERIC, Domain.TWEAK})
@@ -83,6 +85,11 @@ public class Configs {
     public static final DualColorConfig projectileRangeColor = new DualColorConfig("arrow_color_range", "0xFF3C3C", "0x3CFF3C", "arrow_color_range").setFirstColorHoverInfoKey("potteckit.label.arrow_color.hit").setSecondColorHoverInfoKey("potteckit.label.arrow_color.miss");
     @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
     public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", false, 80.0, 0.0, 200.0, "projectile_accurate_aim");
+    @Config(types = Type.LIST, domains = Domain.METER)
+    public static final ItemListConfig projectileAimList = new ItemListConfig("projectile_aim_list", ImmutableList.of(
+            Items.BOW, Items.ENDER_PEARL, Items.SNOWBALL, Items.SPLASH_POTION,
+            Items.EGG, Items.LINGERING_POTION, Items.EXPERIENCE_BOTTLE
+    ));
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

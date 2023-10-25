@@ -1,10 +1,12 @@
 package io.github.rainyaphthyl.potteckit.mixin.meters;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.authlib.GameProfile;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import io.github.rainyaphthyl.potteckit.entities.ArrowSimulator;
 import io.github.rainyaphthyl.potteckit.entities.EntityAimCamera;
 import io.github.rainyaphthyl.potteckit.entities.Renderers;
+import io.github.rainyaphthyl.potteckit.entities.ThrowableSimulator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -24,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nonnull;
 
 @Mixin(EntityPlayerSP.class)
-public class MixinEntityPlayerSP extends AbstractClientPlayer {
+public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     @Shadow
     protected Minecraft mc;
 
@@ -50,19 +52,36 @@ public class MixinEntityPlayerSP extends AbstractClientPlayer {
     public void checkBowUsage(CallbackInfo ci) {
         boolean flag = true;
         if (Configs.projectileAimIndicator.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
-            if (Configs.projectileAimTrigger.getKeyBind().isKeyBindHeld()) {
+            if (Configs.projectileAimTrigger.isHeld()) {
                 ItemStack itemStack = getHeldItemMainhand();
                 Item item = itemStack.getItem();
-                boolean hasItem = item == Items.BOW;
+                ImmutableList<Item> immutableList = Configs.projectileAimList.getValue();
+                boolean hasItem = immutableList.contains(item);
                 if (!hasItem) {
                     itemStack = getHeldItemOffhand();
                     item = itemStack.getItem();
-                    hasItem = item == Items.BOW;
+                    hasItem = immutableList.contains(item);
                 }
                 if (hasItem) {
-                    ArrowSimulator simulator = new ArrowSimulator(this, (WorldClient) world);
-                    simulator.predictDestination(3.0F, 1.0F);
-                    flag = false;
+                    boolean arrow = Items.BOW == item;
+                    boolean normal = Items.EGG == item || Items.ENDER_PEARL == item || Items.SNOWBALL == item;
+                    boolean potion = Items.SPLASH_POTION == item || Items.LINGERING_POTION == item;
+                    boolean bottle = Items.EXPERIENCE_BOTTLE == item;
+                    if (arrow) {
+                        ArrowSimulator simulator = new ArrowSimulator(this, (WorldClient) world);
+                        simulator.predictDestination(0.0F, 3.0F, 1.0F);
+                        flag = false;
+                    } else if (normal || potion || bottle) {
+                        ThrowableSimulator simulator = new ThrowableSimulator(this, (WorldClient) world, item);
+                        if (normal) {
+                            simulator.predictDestination(0.0F, 1.5F, 1.0F);
+                        } else if (bottle) {
+                            simulator.predictDestination(-20.0F, 0.7F, 1.0F);
+                        } else {
+                            simulator.predictDestination(-20.0F, 0.5F, 1.0F);
+                        }
+                        flag = false;
+                    }
                 }
             }
         }
