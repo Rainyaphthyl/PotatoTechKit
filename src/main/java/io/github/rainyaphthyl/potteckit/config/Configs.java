@@ -87,7 +87,8 @@ public class Configs {
     public static final BooleanAndDoubleConfig projectileAccurateAim = new BooleanAndDoubleConfig("projectile_accurate_aim", false, 80.0, 0.0, 200.0, "projectile_accurate_aim");
     @Config(types = Type.LIST, domains = Domain.METER)
     public static final ItemListConfig projectileAimList = new ItemListConfig("projectile_aim_list", ImmutableList.of(
-            Items.BOW
+            Items.BOW, Items.ENDER_PEARL, Items.SNOWBALL, Items.SPLASH_POTION,
+            Items.EGG, Items.LINGERING_POTION, Items.EXPERIENCE_BOTTLE
     ));
 
     public static void registerOnInit() {

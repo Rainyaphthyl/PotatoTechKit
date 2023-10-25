@@ -63,7 +63,7 @@ public abstract class ProjectileSimulator {
         float rx = -MathHelper.sin(yawDegree) * cosPitch;
         float ry = -MathHelper.sin((pitch + pitchOffset) * ProjectileSimulator.DEG_TO_RAD);
         float rz = MathHelper.cos(yawDegree) * cosPitch;
-        AimRangePacket rangePacket = new AimRangePacket();
+        AimRangePacket rangePacket = new AimRangePacket(width, height);
         for (int range = 0; range <= 3; ++range) {
             boolean notEnough = true;
             for (byte dirX = -1; notEnough && dirX <= 1; ++dirX) {
@@ -94,7 +94,7 @@ public abstract class ProjectileSimulator {
                                 double length = MathHelper.sqrt(hitMotion.x * hitMotion.x + hitMotion.z * hitMotion.z);
                                 float cameraYaw = -(float) (MathHelper.atan2(hitMotion.x, hitMotion.z) * ProjectileSimulator.RAD_TO_DEG);
                                 float cameraPitch = -(float) (MathHelper.atan2(hitMotion.y, length) * ProjectileSimulator.RAD_TO_DEG);
-                                Vec3d hitCenter = hitPoint.add(0.0, 0.25, 0.0);
+                                Vec3d hitCenter = hitPoint.add(0.0, height / 2, 0.0);
                                 double rate = Renderers.PROJECTILE_AIM_RENDERER.getDistanceRate();
                                 Vec3d posToTarget = hitMotion.scale(-rate).add(hitCenter);
                                 EntityAimCamera.startAimSpectating(posToTarget, cameraYaw, cameraPitch);

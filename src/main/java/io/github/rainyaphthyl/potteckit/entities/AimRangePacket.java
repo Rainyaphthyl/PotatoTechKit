@@ -12,13 +12,17 @@ import java.util.List;
 
 public class AimRangePacket implements Iterable<Double2ObjectMap.Entry<AimRangePacket.Range>> {
     private final Double2ObjectSortedMap<Range> vertexCircleMap = new Double2ObjectAVLTreeMap<>();
+    private final float width;
+    private final float height;
     private boolean completed = false;
 
     {
         vertexCircleMap.defaultReturnValue(null);
     }
 
-    public AimRangePacket() {
+    public AimRangePacket(float width, float height) {
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -65,6 +69,14 @@ public class AimRangePacket implements Iterable<Double2ObjectMap.Entry<AimRangeP
     @Nonnull
     public Iterator<Double2ObjectMap.Entry<Range>> iterator() {
         return vertexCircleMap.double2ObjectEntrySet().iterator();
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 
     public static class Range implements Iterable<Vertex> {
