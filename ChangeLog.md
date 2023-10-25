@@ -10,9 +10,9 @@ This is a **pre-release** version.
 
 ### Mod Versions
 
-- Current version: `0.2.0`
-- Previous version: `0.1.6`
-- Previous annotated version: `0.1.6`
+- Current version: `0.2.1`
+- Previous version: `0.2.0`
+- Previous annotated version: `0.2.0`
 - Previous release version: `null`
 
 ## Abstract
@@ -21,20 +21,19 @@ This is a **pre-release** version.
 
 ### Description
 
-- New Tab of Configs:
-   - Visual
+Projectile Aim Indicator is applied to:
+
+1. Ender Pearl
+2. Egg
+3. Snowball
+4. Bottle o' Enchanting
+5. Splash Potions
+6. Lingering Potions
 
 ### New Configs
 
 1. Meters:
-   1. Projectile Aim Indicator
-2. Tweaks:
-   1. Projectile Aim Adjust Sensitivity
-3. Actions:
-   1. Projectile Aim Indicator
-4. Visual:
-   1. Projectile Center Color
-   2. Projectile Range Color
+   1. Projectile Aim List
 
 ## Modified Features
 
