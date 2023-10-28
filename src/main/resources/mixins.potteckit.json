@@ -33,7 +33,8 @@
     "render.MixinChunkRenderWorker",
     "render.MixinRenderChunk",
     "render.MixinRenderGlobal",
-    "sync.MixinWorld"
+    "sync.MixinWorld",
+    "sync.MixinWorldServer"
   ],
   "injectors": {
     "defaultRequire": 1
