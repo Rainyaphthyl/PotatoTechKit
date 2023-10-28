@@ -87,3 +87,9 @@ potteckit.config.comment.projectile_aim_list=The list of items which can trigger
 
 potteckit.config.name.creative_invulnerable_crystal=§6Creative Invulnerable Crystal§r
 potteckit.config.comment.creative_invulnerable_crystal=§6(Server-side Modification)§r\nMakes invulnerable crystals really invulnerable in creative mode, as if in survival.\nOtherwise, you may accidentally blow it up.
+potteckit.config.name.block_event_packet_range=§6Block Event Packet Range§r
+potteckit.config.comment.block_event_packet_range=§6(Server-side Modification)§r\nSet the range where player will receive a block event packet after a block event fires successfully.
+potteckit.config.name.explosion_packet_range=§6Explosion Packet Range§r
+potteckit.config.comment.explosion_packet_range=§6(Server-side Modification)§r\nThe maximum horizontal chebyshev distance (in chunks) for the server to sync entities information to the client.
+potteckit.config.name.entity_tracker_distance=§6Entity Tracker Distance§r
+potteckit.config.comment.entity_tracker_distance=§6(Server-side Modification)§r\nSet the range where player will receive an explosion packet when an explosion happens.

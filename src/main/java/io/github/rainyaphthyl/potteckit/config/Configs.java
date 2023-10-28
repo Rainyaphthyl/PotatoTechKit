@@ -92,6 +92,12 @@ public class Configs {
     ));
     @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
     public static final HotkeyedBooleanConfig creativeInvulnerableCrystal = new HotkeyedBooleanConfig("creative_invulnerable_crystal", false, "", "creative_invulnerable_crystal", "creative_invulnerable_crystal");
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
+    public static final BooleanAndDoubleConfig blockEventPacketRange = new BooleanAndDoubleConfig("block_event_packet_range", false, 64.0, 0.0, 1024.0, "block_event_packet_range");
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
+    public static final BooleanAndDoubleConfig explosionPacketRange = new BooleanAndDoubleConfig("explosion_packet_range", false, 64.0, 0.0, 1024.0, "explosion_packet_range");
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
+    public static final BooleanAndIntConfig entityTrackerDistance = new BooleanAndIntConfig("entity_tracker_distance", false, 8, 0, 64, "entity_tracker_distance");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
