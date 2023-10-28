@@ -19,9 +19,19 @@ public abstract class MixinWorldServer extends World implements IThreadListener 
     }
 
     @ModifyConstant(method = "sendQueuedBlockEvents", constant = @Constant(doubleValue = 64.0))
-    public double onGetBlockEventRange(double constant) {
+    public double modifyBlockEventRange(double constant) {
         if (Configs.blockEventPacketRange.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
             return Configs.blockEventPacketRange.getDoubleValue();
+        } else {
+            return constant;
+        }
+    }
+
+    @ModifyConstant(method = "newExplosion", constant = @Constant(doubleValue = 4096.0))
+    public double modifyExplosionRangeSq(double constant) {
+        if (Configs.explosionPacketRange.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
+            double range = Configs.explosionPacketRange.getDoubleValue();
+            return range * range;
         } else {
             return constant;
         }
