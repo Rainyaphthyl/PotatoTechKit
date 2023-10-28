@@ -90,6 +90,8 @@ public class Configs {
             Items.BOW, Items.ENDER_PEARL, Items.SNOWBALL, Items.SPLASH_POTION,
             Items.EGG, Items.LINGERING_POTION, Items.EXPERIENCE_BOTTLE
     ));
+    @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
+    public static final HotkeyedBooleanConfig creativeInvulnerableCrystal = new HotkeyedBooleanConfig("creative_invulnerable_crystal", false, "", "creative_invulnerable_crystal", "creative_invulnerable_crystal");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

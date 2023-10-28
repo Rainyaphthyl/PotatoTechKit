@@ -84,3 +84,6 @@ potteckit.config.name.projectile_accurate_aim=Projectile Aim Adjust Sensitivity
 potteckit.config.comment.projectile_accurate_aim=Temporarily adjusts the mouse sensitivity to the intended value, while using Projectile Aim Indicator.
 potteckit.config.name.projectile_aim_list=Projectile Aim List
 potteckit.config.comment.projectile_aim_list=The list of items which can trigger "Projectile Aim Indicator".
+
+potteckit.config.name.creative_invulnerable_crystal=§6Creative Invulnerable Crystal§r
+potteckit.config.comment.creative_invulnerable_crystal=§6(Server-side Modification)§r\nMakes invulnerable crystals really invulnerable in creative mode, as if in survival.\nOtherwise, you may accidentally blow it up.
