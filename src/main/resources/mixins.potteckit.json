@@ -33,6 +33,7 @@
     "render.MixinChunkRenderWorker",
     "render.MixinRenderChunk",
     "render.MixinRenderGlobal",
+    "sync.MixinEntityTrackerEntry",
     "sync.MixinWorld",
     "sync.MixinWorldServer"
   ],
