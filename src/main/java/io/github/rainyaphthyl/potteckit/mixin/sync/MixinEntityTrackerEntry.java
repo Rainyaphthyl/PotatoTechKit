@@ -18,7 +18,7 @@ public abstract class MixinEntityTrackerEntry {
     @Redirect(method = "isVisibleTo", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/entity/EntityTrackerEntry;range:I"))
     public int onCheckTrackerDistance(EntityTrackerEntry instance) {
         if (Configs.entityTrackerDistance.getBooleanValue() && Configs.enablePotteckit.getBooleanValue()) {
-            return Configs.entityTrackerDistance.getIntegerValue();
+            return Configs.entityTrackerDistance.getIntegerValue() * 16;
         } else {
             return range;
         }
