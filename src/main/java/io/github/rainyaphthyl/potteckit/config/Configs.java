@@ -98,6 +98,10 @@ public class Configs {
     public static final BooleanAndDoubleConfig explosionPacketRange = new BooleanAndDoubleConfig("explosion_packet_range", false, 64.0, 0.0, 1024.0, "explosion_packet_range");
     @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
     public static final BooleanAndIntConfig entityTrackerDistance = new BooleanAndIntConfig("entity_tracker_distance", false, 8, 0, 64, "entity_tracker_distance");
+    @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
+    public static final HotkeyedBooleanConfig yeetItemAntiSpam = new HotkeyedBooleanConfig("yeet_item_anti_spam", false, "", "yeet_item_anti_spam", "yeet_item_anti_spam");
+    @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
+    public static final HotkeyedBooleanConfig yeetChatAntiSpam = new HotkeyedBooleanConfig("yeet_chat_anti_spam", false, "", "yeet_chat_anti_spam", "yeet_chat_anti_spam");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
