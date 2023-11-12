@@ -97,4 +97,5 @@ potteckit.config.name.yeet_item_anti_spam=§6Disable Item Drop Antispam§r
 potteckit.config.comment.yeet_item_anti_spam=§6(Server-side Modification)§r\nDisables spamming checks on players about creative item drop cool down.
 potteckit.config.name.yeet_chat_anti_spam=§6Disable Chat Antispam§r
 potteckit.config.comment.yeet_chat_anti_spam=§6(Server-side Modification)§r\nDisables spamming checks on players about chat message cool down.
-
+potteckit.config.name.yeet_fill_update=§6Disable Fill Update§r
+potteckit.config.comment.yeet_fill_update=§6(Server-side Modification)§r\nDisables the block updates caused by fill/clone/setblock commands and structure blocks. This is necessary when pasting a schematic.
