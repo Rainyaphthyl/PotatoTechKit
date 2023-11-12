@@ -12,6 +12,7 @@
     "chunkgraph.MixinChunkProviderServer",
     "chunkgraph.MixinRegionFile",
     "chunkgraph.MixinTileEntityHopper",
+    "command.MixinCommandFill",
     "core.MixinEntity",
     "core.MixinGuiMainMenu",
     "core.MixinMapGenEndCity$Start",
