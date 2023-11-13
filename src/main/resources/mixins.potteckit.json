@@ -15,6 +15,7 @@
     "command.MixinCommandClone",
     "command.MixinCommandFill",
     "command.MixinCommandSetBlock",
+    "command.MixinWorld",
     "core.MixinEntity",
     "core.MixinGuiMainMenu",
     "core.MixinMapGenEndCity$Start",

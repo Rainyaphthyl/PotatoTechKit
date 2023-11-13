@@ -2,6 +2,7 @@ package io.github.rainyaphthyl.potteckit.mixin.command;
 
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandClone;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.NextTickListEntry;
@@ -9,18 +10,22 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
 @Mixin(CommandClone.class)
 public abstract class MixinCommandClone {
-    @ModifyConstant(method = "execute", constant = @Constant(intValue = 3, ordinal = 1))
-    public int modifyBlockUpdateFlags(int constant) {
+    @Redirect(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)Z"))
+    public boolean modifyBlockUpdateFlags(World instance, BlockPos pos, IBlockState newState, int flags) {
         boolean flag = Configs.yeetFillUpdate.getBooleanValue() && Configs.enablePotteckit.getBooleanValue();
-        return flag ? (~1 & constant) : constant;
+        if (flag) {
+            flags &= ~0x1;
+            // 16 & 128
+            // 0x10 & 0x80
+            flags |= 0x90;
+        }
+        return instance.setBlockState(pos, newState, flags);
     }
 
     @Redirect(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;notifyNeighborsRespectDebug(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/Block;Z)V"))
