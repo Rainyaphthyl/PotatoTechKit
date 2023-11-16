@@ -12,6 +12,7 @@
     "chunkgraph.MixinChunkProviderServer",
     "chunkgraph.MixinRegionFile",
     "chunkgraph.MixinTileEntityHopper",
+    "command.MixinChunk",
     "command.MixinCommandClone",
     "command.MixinCommandFill",
     "command.MixinCommandSetBlock",
