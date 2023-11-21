@@ -25,6 +25,7 @@
     "gamephase.MixinWorldProvider",
     "gamephase.MixinWorldProviderEnd",
     "gamephase.MixinWorldServer",
+    "inventory.MixinGuiContainerCreative",
     "meters.MixinEntityPlayerSP",
     "optifix.MixinPlayerList",
     "optifix.MixinWorldEntitySpawner",
