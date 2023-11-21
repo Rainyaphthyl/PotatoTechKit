@@ -10,30 +10,24 @@ This is a **pre-release** version.
 
 ### Mod Versions
 
-- Current version: `0.2.1`
-- Previous version: `0.2.0`
-- Previous annotated version: `0.2.0`
+- Current version: `0.2.2`
+- Previous version: `0.2.1`
+- Previous annotated version: `0.2.1`
 - Previous release version: `null`
 
 ## Abstract
 
 ## New Features
 
-### Description
+### Protect Creative Slots
 
-Projectile Aim Indicator is applied to:
-
-1. Ender Pearl
-2. Egg
-3. Snowball
-4. Bottle o' Enchanting
-5. Splash Potions
-6. Lingering Potions
+Protects the items at the given slots from being destroyed when shift-clicking the "Destroy Item" button. E.g. you may not want to delete your elytra.
 
 ### New Configs
 
-1. Meters:
-   1. Projectile Aim List
+1. Yeet:
+   1. Protect Creative Slots
+   2. Protect Creative Slot List
 
 ## Modified Features
 
