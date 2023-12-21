@@ -108,6 +108,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig protectCreativeSlots = new HotkeyedBooleanConfig("protect_creative_slots", false, "", "protect_creative_slots", "protect_creative_slots");
     @Config(types = Type.LIST, domains = Domain.YEET)
     public static final EquipmentSlotListConfig protectCreativeSlotList = new EquipmentSlotListConfig("protect_creative_slot_list", ImmutableList.of(EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET));
+    @Config(types = Type.TOGGLE, domains = Domain.YEET)
+    public static final BooleanAndIntConfig dynamicFPS = new BooleanAndIntConfig("dynamic_fps", false, 5, 1, 20, "dynamic_fps");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

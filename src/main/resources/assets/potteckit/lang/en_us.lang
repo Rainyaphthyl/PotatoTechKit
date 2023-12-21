@@ -66,6 +66,8 @@ potteckit.config.name.fix_lan_skin_absence=§6Fix LAN Skin Absence§r
 potteckit.config.comment.fix_lan_skin_absence=§6(Single-player Only)§r\nFixes MC-52974: Host's skin not visible to other players when in LAN world.\nThis option should be enabled on the host's client.
 potteckit.config.name.yeet_realm_page=Realm Page Access
 potteckit.config.comment.yeet_realm_page=Your client has been outdated and not compatible with Realms! You should not keep the button clickable! Keep playing 1.12.2 and forget it! :P
+potteckit.config.name.dynamic_fps=Dynamic FPS
+potteckit.config.comment.dynamic_fps=Reduces the frame rate (FPS) limit when the client loses focus.
 
 potteckit.hotkey.name.open_config_screen=Open Config Screen
 potteckit.hotkey.comment.open_config_screen=Open the config screen of Potato Tech Kit.
