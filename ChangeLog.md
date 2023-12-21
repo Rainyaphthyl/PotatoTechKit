@@ -23,6 +23,10 @@ This is a **pre-release** version.
 
 Protects the items at the given slots from being destroyed when shift-clicking the "Destroy Item" button. E.g. you may not want to delete your elytra.
 
+### Dynamic FPS
+
+A trivial power saving mode for AFK players.
+
 ### Ported Rules
 
 Configs of "Creative Invulnerable Crystal", Antispam, Packets, and Trackers, from carpet mods.
@@ -39,6 +43,7 @@ Configs of "Creative Invulnerable Crystal", Antispam, Packets, and Trackers, fro
    3. Disable Chat Antispam
    4. Protect Creative Slots
    5. Protect Creative Slot List
+   6. Dynamic FPS
 
 ## Modified Features
 
