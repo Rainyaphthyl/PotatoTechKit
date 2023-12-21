@@ -108,6 +108,10 @@ public class Configs {
     public static final HotkeyedBooleanConfig protectCreativeSlots = new HotkeyedBooleanConfig("protect_creative_slots", false, "", "protect_creative_slots", "protect_creative_slots");
     @Config(types = Type.LIST, domains = Domain.YEET)
     public static final EquipmentSlotListConfig protectCreativeSlotList = new EquipmentSlotListConfig("protect_creative_slot_list", ImmutableList.of(EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET));
+    @Config(types = Type.TOGGLE, domains = Domain.METER)
+    public static final HotkeyedBooleanConfig anvilEnchantIndicator = new HotkeyedBooleanConfig("anvil_enchant_indicator", false, "", "anvil_enchant_indicator", "anvil_enchant_indicator");
+    @Config(types = Type.HOTKEY, domains = Domain.ACTION)
+    public static final HotkeyConfig anvilEnchantTrigger = new HotkeyConfig("anvil_enchant_trigger", "V", KeyBindSettings.GUI_DEFAULT);
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
