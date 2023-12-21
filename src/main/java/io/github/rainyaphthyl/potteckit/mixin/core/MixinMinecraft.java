@@ -5,7 +5,9 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import io.github.rainyaphthyl.potteckit.config.Configs;
 import net.minecraft.client.Minecraft;
+import net.minecraft.profiler.ISnooperInfo;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.util.Session;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nonnull;
 
 @Mixin(Minecraft.class)
-public abstract class MixinMinecraft {
+public abstract class MixinMinecraft implements IThreadListener, ISnooperInfo {
     @Shadow
     @Final
     private Session session;
