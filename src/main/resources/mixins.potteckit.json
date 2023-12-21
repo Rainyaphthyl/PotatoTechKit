@@ -32,6 +32,7 @@
     "render.MixinBlockRendererDispatcher",
     "render.MixinChunkRenderDispatcher",
     "render.MixinChunkRenderWorker",
+    "render.MixinEntityRenderer",
     "render.MixinRenderChunk",
     "render.MixinRenderGlobal",
     "sync.MixinEntityTrackerEntry",
