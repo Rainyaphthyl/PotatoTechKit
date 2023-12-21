@@ -12,6 +12,7 @@
     "chunkgraph.MixinChunkProviderServer",
     "chunkgraph.MixinRegionFile",
     "chunkgraph.MixinTileEntityHopper",
+    "core.MixinEntity",
     "core.MixinGuiMainMenu",
     "core.MixinMapGenEndCity$Start",
     "core.MixinMinecraft",
@@ -24,6 +25,7 @@
     "gamephase.MixinWorldProvider",
     "gamephase.MixinWorldProviderEnd",
     "gamephase.MixinWorldServer",
+    "inventory.MixinGuiContainerCreative",
     "meters.MixinEntityPlayerSP",
     "optifix.MixinPlayerList",
     "optifix.MixinWorldEntitySpawner",
@@ -32,7 +34,10 @@
     "render.MixinChunkRenderWorker",
     "render.MixinRenderChunk",
     "render.MixinRenderGlobal",
-    "sync.MixinWorld"
+    "sync.MixinEntityTrackerEntry",
+    "sync.MixinNetHandlerPlayServer",
+    "sync.MixinWorld",
+    "sync.MixinWorldServer"
   ],
   "injectors": {
     "defaultRequire": 1

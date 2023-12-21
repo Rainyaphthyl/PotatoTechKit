@@ -3,6 +3,7 @@ package io.github.rainyaphthyl.potteckit.mixin.core;
 import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkLoadCaptor;
 import io.github.rainyaphthyl.potteckit.chunkphase.chunkgraph.ChunkLoadGraph;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nonnull;
 
 @Mixin(NetHandlerPlayClient.class)
-public abstract class MixinNetHandlerPlayClient {
+public abstract class MixinNetHandlerPlayClient implements INetHandlerPlayClient {
     @Inject(method = "handleCustomPayload", at = @At(value = "RETURN"))
     public void onHandleCustomPayload(@Nonnull SPacketCustomPayload packetIn, CallbackInfo ci) {
         String channelName = packetIn.getChannelName();

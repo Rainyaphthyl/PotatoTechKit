@@ -84,3 +84,21 @@ potteckit.config.name.projectile_accurate_aim=Projectile Aim Adjust Sensitivity
 potteckit.config.comment.projectile_accurate_aim=Temporarily adjusts the mouse sensitivity to the intended value, while using Projectile Aim Indicator.
 potteckit.config.name.projectile_aim_list=Projectile Aim List
 potteckit.config.comment.projectile_aim_list=The list of items which can trigger "Projectile Aim Indicator".
+
+potteckit.config.name.creative_invulnerable_crystal=§6Creative Invulnerable Crystal§r
+potteckit.config.comment.creative_invulnerable_crystal=§6(Server-side Modification)§r\nMakes invulnerable crystals really invulnerable in creative mode, as if in survival.\nOtherwise, you may accidentally blow it up.
+potteckit.config.name.block_event_packet_range=§6Block Event Packet Range§r
+potteckit.config.comment.block_event_packet_range=§6(Server-side Modification)§r\nSet the range where player will receive a block event packet after a block event fires successfully.
+potteckit.config.name.explosion_packet_range=§6Explosion Packet Range§r
+potteckit.config.comment.explosion_packet_range=§6(Server-side Modification)§r\nThe maximum horizontal chebyshev distance (in chunks) for the server to sync entities information to the client.
+potteckit.config.name.entity_tracker_distance=§6Entity Tracker Distance§r
+potteckit.config.comment.entity_tracker_distance=§6(Server-side Modification)§r\nSet the range where player will receive an explosion packet when an explosion happens.
+potteckit.config.name.yeet_item_anti_spam=§6Disable Item Drop Antispam§r
+potteckit.config.comment.yeet_item_anti_spam=§6(Server-side Modification)§r\nDisables spamming checks on players about creative item drop cool down.
+potteckit.config.name.yeet_chat_anti_spam=§6Disable Chat Antispam§r
+potteckit.config.comment.yeet_chat_anti_spam=§6(Server-side Modification)§r\nDisables spamming checks on players about chat message cool down.
+
+potteckit.config.name.protect_creative_slots=Protect Creative Slots
+potteckit.config.comment.protect_creative_slots=Protects the items at the given slots from being destroyed when shift-clicking the "Destroy Item" button. E.g. you may not want to delete your elytra.
+potteckit.config.name.protect_creative_slot_list=Protect Creative Slot List
+potteckit.config.comment.protect_creative_slot_list=The list of items to be protected by the config "Protect Creative Slots".

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.*;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
+import fi.dy.masa.malilib.config.option.list.EquipmentSlotListConfig;
 import fi.dy.masa.malilib.config.option.list.ItemListConfig;
 import fi.dy.masa.malilib.input.KeyBindSettings;
 import fi.dy.masa.malilib.registry.Registry;
@@ -21,6 +22,7 @@ import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 
 public class Configs {
     @Config(types = Type.TOGGLE, domains = {Domain.GENERIC, Domain.TWEAK})
@@ -90,6 +92,22 @@ public class Configs {
             Items.BOW, Items.ENDER_PEARL, Items.SNOWBALL, Items.SPLASH_POTION,
             Items.EGG, Items.LINGERING_POTION, Items.EXPERIENCE_BOTTLE
     ));
+    @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
+    public static final HotkeyedBooleanConfig creativeInvulnerableCrystal = new HotkeyedBooleanConfig("creative_invulnerable_crystal", false, "", "creative_invulnerable_crystal", "creative_invulnerable_crystal");
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
+    public static final BooleanAndDoubleConfig blockEventPacketRange = new BooleanAndDoubleConfig("block_event_packet_range", false, 64.0, 0.0, 1024.0, "block_event_packet_range");
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
+    public static final BooleanAndDoubleConfig explosionPacketRange = new BooleanAndDoubleConfig("explosion_packet_range", false, 64.0, 0.0, 1024.0, "explosion_packet_range");
+    @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
+    public static final BooleanAndIntConfig entityTrackerDistance = new BooleanAndIntConfig("entity_tracker_distance", false, 8, 0, 64, "entity_tracker_distance");
+    @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
+    public static final HotkeyedBooleanConfig yeetItemAntiSpam = new HotkeyedBooleanConfig("yeet_item_anti_spam", false, "", "yeet_item_anti_spam", "yeet_item_anti_spam");
+    @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
+    public static final HotkeyedBooleanConfig yeetChatAntiSpam = new HotkeyedBooleanConfig("yeet_chat_anti_spam", false, "", "yeet_chat_anti_spam", "yeet_chat_anti_spam");
+    @Config(types = Type.TOGGLE, domains = Domain.YEET)
+    public static final HotkeyedBooleanConfig protectCreativeSlots = new HotkeyedBooleanConfig("protect_creative_slots", false, "", "protect_creative_slots", "protect_creative_slots");
+    @Config(types = Type.LIST, domains = Domain.YEET)
+    public static final EquipmentSlotListConfig protectCreativeSlotList = new EquipmentSlotListConfig("protect_creative_slot_list", ImmutableList.of(EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET));
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
