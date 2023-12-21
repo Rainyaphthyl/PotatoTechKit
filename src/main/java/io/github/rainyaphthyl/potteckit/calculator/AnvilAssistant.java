@@ -8,9 +8,12 @@ import net.minecraft.client.gui.GuiRepair;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public class AnvilAssistant {
@@ -24,18 +27,48 @@ public class AnvilAssistant {
                 Slot slot = ((AccessGuiContainer) guiScreen).getHoveredSlot();
                 if (slot != null) {
                     ItemStack itemStack = slot.getStack();
-                    if (!itemStack.isEmpty()) {
-                        Item item = itemStack.getItem();
-                        if (item == Items.ENCHANTED_BOOK || itemStack.isItemEnchantable() || itemStack.isItemEnchanted()) {
-                            if (slotsToEnchant.contains(slot)) {
-                                slotsToEnchant.remove(slot);
-                            } else {
-                                slotsToEnchant.add(slot);
-                            }
+                    if (isValidMaterial(itemStack)) {
+                        if (slotsToEnchant.contains(slot)) {
+                            slotsToEnchant.remove(slot);
+                        } else {
+                            slotsToEnchant.add(slot);
+                        }
+                        if (!slotsToEnchant.isEmpty()) {
+                            List<ItemStack> list = new ArrayList<>();
+                            slotsToEnchant.forEach(s -> {
+                                ItemStack inputStack = s.getStack();
+                                if (isValidMaterial(inputStack)) {
+                                    list.add(inputStack);
+                                }
+                            });
+                            ItemStack[] order = findBestOrder(list);
+                            System.out.println(Arrays.toString(order));
                         }
                     }
                 }
             }
         }
+    }
+
+    public static boolean isValidMaterial(ItemStack itemStack) {
+        return itemStack != null && !itemStack.isEmpty() && (itemStack.getItem() == Items.ENCHANTED_BOOK || itemStack.isItemEnchantable() || itemStack.isItemEnchanted());
+    }
+
+    public static ItemStack[] findBestOrder(List<ItemStack> rawStackList) {
+        if (rawStackList == null) {
+            return null;
+        }
+        int rawLength = 0;
+        for (ItemStack stack : rawStackList) {
+            if (stack == null || stack.isEmpty()) {
+                return null;
+            } else {
+                rawLength += 1 + stack.getRepairCost();
+            }
+        }
+        int treeDepth = MathHelper.log2DeBruijn(rawLength);
+        int arrayLength = 1 << treeDepth;
+        ItemStack[] array = new ItemStack[arrayLength];
+        return array;
     }
 }
