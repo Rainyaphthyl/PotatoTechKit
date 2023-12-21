@@ -23,11 +23,22 @@ This is a **pre-release** version.
 
 Protects the items at the given slots from being destroyed when shift-clicking the "Destroy Item" button. E.g. you may not want to delete your elytra.
 
+### Ported Rules
+
+Configs of "Creative Invulnerable Crystal", Antispam, Packets, and Trackers, from carpet mods.
+
 ### New Configs
 
-1. Yeet:
-   1. Protect Creative Slots
-   2. Protect Creative Slot List
+1. Tweaks:
+   1. Block Event Packet Range
+   2. Explosion Packet Range
+   3. Entity Tracker Distance
+2. Yeet:
+   1. Creative Invulnerable Crystal
+   2. Disable Item Drop Antispam
+   3. Disable Chat Antispam
+   4. Protect Creative Slots
+   5. Protect Creative Slot List
 
 ## Modified Features
 
