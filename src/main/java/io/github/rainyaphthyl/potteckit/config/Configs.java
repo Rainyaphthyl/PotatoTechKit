@@ -126,6 +126,8 @@ public class Configs {
     public static final EquipmentSlotListConfig protectCreativeSlotList = new EquipmentSlotListConfig("protect_creative_slot_list", ImmutableList.of(EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET));
     @Config(types = Type.TOGGLE, domains = Domain.YEET)
     public static final BooleanAndIntConfig dynamicFPS = new BooleanAndIntConfig("dynamic_fps", false, 5, 1, 20, "dynamic_fps");
+    @Config(types = Type.TOGGLE, domains = Domain.YEET)
+    public static final HotkeyedBooleanConfig yeetTravelLightCheck = new HotkeyedBooleanConfig("yeet_travel_light_check", false, "", "yeet_travel_light_check", "yeet_travel_light_check");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
