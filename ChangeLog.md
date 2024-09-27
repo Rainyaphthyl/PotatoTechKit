@@ -53,3 +53,4 @@ Configs of "Creative Invulnerable Crystal", Antispam, Packets, and Trackers, fro
 
 1. Fix the bug that
    `root.tick.level.blocks.getChunk.checkedPosition` causes huge lag(?) when elytra-flying over the nether.
+2. Fix [MC-88179](https://bugs.mojang.com/browse/MC-88179): Armor bar disappears after changing dimension until GUI update.
