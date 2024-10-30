@@ -109,3 +109,6 @@ potteckit.config.name.protect_creative_slots=Protect Creative Slots
 potteckit.config.comment.protect_creative_slots=Protects the items at the given slots from being destroyed when shift-clicking the "Destroy Item" button. E.g. you may not want to delete your elytra.
 potteckit.config.name.protect_creative_slot_list=Protect Creative Slot List
 potteckit.config.comment.protect_creative_slot_list=The list of items to be protected by the config "Protect Creative Slots".
+
+potteckit.config.name.swap_elytra_chestplate=Swap Elytra Chestplate
+potteckit.config.comment.swap_elytra_chestplate=Automatically swaps between Elytra and Chestplates when the player is taking off or landing.
