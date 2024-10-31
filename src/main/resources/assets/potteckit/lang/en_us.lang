@@ -110,5 +110,5 @@ potteckit.config.comment.protect_creative_slots=Protects the items at the given 
 potteckit.config.name.protect_creative_slot_list=Protect Creative Slot List
 potteckit.config.comment.protect_creative_slot_list=The list of items to be protected by the config "Protect Creative Slots".
 
-potteckit.config.name.swap_elytra_chestplate=Swap Elytra Chestplate
-potteckit.config.comment.swap_elytra_chestplate=Automatically swaps between Elytra and Chestplates when the player is taking off or landing.
+potteckit.config.name.swap_elytra_chestplate=Auto Swap Elytra Chestplate
+potteckit.config.comment.swap_elytra_chestplate=Automatically swaps an elytra to the slot of chestplate, when the player has been equipped with a chestplate and is taking off.\nAutomatically swaps back when the player has just landed.

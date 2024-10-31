@@ -129,7 +129,7 @@ public class Configs {
     @Config(types = Type.TOGGLE, domains = Domain.YEET)
     public static final HotkeyedBooleanConfig yeetTravelLightCheck = new HotkeyedBooleanConfig("yeet_travel_light_check", false, "", "yeet_travel_light_check", "yeet_travel_light_check");
     @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
-    public static final HotkeyedBooleanConfig swapElytraChestplate = new HotkeyedBooleanConfig("swap_elytra_chestplate", false, "", "swap_elytra_chestplate", "swap_elytra_chestplate");
+    public static final HotkeyedBooleanConfig autoSwapElytraChestplate = new HotkeyedBooleanConfig("swap_elytra_chestplate", false, "", "swap_elytra_chestplate", "swap_elytra_chestplate");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

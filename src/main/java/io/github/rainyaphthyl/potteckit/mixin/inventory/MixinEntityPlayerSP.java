@@ -36,7 +36,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
     @Inject(method = "onLivingUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityPlayerSP;getItemStackFromSlot(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;"))
     public void autoDeployElytra(CallbackInfo ci) {
-        if (Configs.enablePotteckit.getBooleanValue() && Configs.swapElytraChestplate.getBooleanValue()) {
+        if (Configs.enablePotteckit.getBooleanValue() && Configs.autoSwapElytraChestplate.getBooleanValue()) {
             ItemStack chestStack = getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             if (chestStack.getItem() instanceof ItemArmor) {
                 ItemStack elytraStack = ItemStack.EMPTY;
@@ -90,7 +90,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
     @Inject(method = "notifyDataManagerChange", at = @At(value = "RETURN"))
     public void autoDeployChestplate(DataParameter<?> key, CallbackInfo ci) {
-        if (Configs.enablePotteckit.getBooleanValue() && Configs.swapElytraChestplate.getBooleanValue()) {
+        if (Configs.enablePotteckit.getBooleanValue() && Configs.autoSwapElytraChestplate.getBooleanValue()) {
             if (FLAGS.equals(key) && !isElytraFlying() && wasFallFlying) {
                 // the new data have been refreshed during EntityDataManager.setEntryValue()
                 ItemStack elytraStack = getItemStackFromSlot(EntityEquipmentSlot.CHEST);
