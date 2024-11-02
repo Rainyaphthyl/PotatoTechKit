@@ -82,6 +82,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
                         InventoryUtils.clickSlot(inventoryContainer, chestSlot, currentItem, ClickType.SWAP);
                         InventoryUtils.clickSlot(inventoryContainer, elytraSlot, currentItem, ClickType.SWAP);
                     }
+                    playEquipSound(elytraStack);
                     potatoTechKit$cachedChestStack = chestStack;
                 }
             }
@@ -125,6 +126,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
                         InventoryUtils.clickSlot(inventoryContainer, elytraSlot, currentItem, ClickType.SWAP);
                         InventoryUtils.clickSlot(inventoryContainer, chestSlot, currentItem, ClickType.SWAP);
                     }
+                    playEquipSound(chestStack);
                     potatoTechKit$cachedChestStack = ItemStack.EMPTY;
                 }
             }
