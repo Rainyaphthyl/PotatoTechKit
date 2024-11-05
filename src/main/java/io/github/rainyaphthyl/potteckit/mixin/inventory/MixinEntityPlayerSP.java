@@ -37,7 +37,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     @Inject(method = "onLivingUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityPlayerSP;getItemStackFromSlot(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;"))
     public void autoDeployElytra(CallbackInfo ci) {
         if (Configs.enablePotteckit.getBooleanValue() && Configs.autoSwapElytraChestplate.getBooleanValue()) {
-            if (isInWater()) {
+            if (!isInWater()) {
                 ItemStack chestStack = getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (chestStack.getItem() instanceof ItemArmor) {
                     ItemStack elytraStack = ItemStack.EMPTY;
