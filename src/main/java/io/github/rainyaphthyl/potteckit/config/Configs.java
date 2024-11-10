@@ -130,6 +130,8 @@ public class Configs {
     public static final HotkeyedBooleanConfig yeetTravelLightCheck = new HotkeyedBooleanConfig("yeet_travel_light_check", false, "", "yeet_travel_light_check", "yeet_travel_light_check");
     @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
     public static final HotkeyedBooleanConfig autoSwapElytraChestplate = new HotkeyedBooleanConfig("swap_elytra_chestplate", false, "", "swap_elytra_chestplate", "swap_elytra_chestplate");
+    @Config(types = Type.TOGGLE, domains = Domain.METER)
+    public static final HotkeyedBooleanConfig f3CursorAttackIndicator = new HotkeyedBooleanConfig("f3_cursor_attack_indicator", false, "", "f3_cursor_attack_indicator", "f3_cursor_attack_indicator");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);

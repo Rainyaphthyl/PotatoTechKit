@@ -28,6 +28,7 @@
     "inventory.MixinEntityPlayerSP",
     "inventory.MixinGuiContainerCreative",
     "meters.MixinEntityPlayerSP",
+    "meters.MixinGuiIngame",
     "optifix.MixinPlayerList",
     "optifix.MixinWorldEntitySpawner",
     "render.MixinBlockRendererDispatcher",

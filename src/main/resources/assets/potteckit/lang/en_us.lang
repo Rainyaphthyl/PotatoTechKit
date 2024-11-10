@@ -112,3 +112,6 @@ potteckit.config.comment.protect_creative_slot_list=The list of items to be prot
 
 potteckit.config.name.swap_elytra_chestplate=Auto Swap Elytra Chestplate
 potteckit.config.comment.swap_elytra_chestplate=Automatically swaps an elytra to the slot of chestplate, when the player has been equipped with a chestplate and is taking off.\nAutomatically swaps back when the player has just landed.
+
+potteckit.config.name.f3_cursor_attack_indicator=F3 Cursor with Attack Indicator
+potteckit.config.comment.f3_cursor_attack_indicator=Always renders the F3 screen type cursor, meanwhile allows rendering the crosshair attack indicator (if it's enabled in the game settings).
