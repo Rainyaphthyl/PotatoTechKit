@@ -1,4 +1,5 @@
 potteckit.title.configs=Potteckit %s - Configs
+potteckit.title.screen.entity_list_edit=Edit Entity List §e%s§r
 
 potteckit.config.tab.generic=Generic
 potteckit.config.tab.meter=Meters
@@ -95,12 +96,22 @@ potteckit.config.name.explosion_packet_range=§6Explosion Packet Range§r
 potteckit.config.comment.explosion_packet_range=§6(Server-side Modification)§r\nThe maximum horizontal chebyshev distance (in chunks) for the server to sync entities information to the client.
 potteckit.config.name.entity_tracker_distance=§6Entity Tracker Distance§r
 potteckit.config.comment.entity_tracker_distance=§6(Server-side Modification)§r\nSet the range where player will receive an explosion packet when an explosion happens.
+potteckit.config.name.entity_tracker_tweak_list=§6Entity Tracker Tweak List§r
+potteckit.config.comment.entity_tracker_tweak_list=§6(Server-side Modification)§r\nThe filter of entity types affected by "§6Entity Tracker Distance§r".
 potteckit.config.name.yeet_item_anti_spam=§6Disable Item Drop Antispam§r
 potteckit.config.comment.yeet_item_anti_spam=§6(Server-side Modification)§r\nDisables spamming checks on players about creative item drop cool down.
 potteckit.config.name.yeet_chat_anti_spam=§6Disable Chat Antispam§r
 potteckit.config.comment.yeet_chat_anti_spam=§6(Server-side Modification)§r\nDisables spamming checks on players about chat message cool down.
+potteckit.config.name.yeet_travel_light_check=Disable Travel Light Check
+potteckit.config.comment.yeet_travel_light_check=Disables the chunk light check that causes huge client-side lag spikes when the player is traveling fast. (e.g. elytra-gliding above the nether)
 
 potteckit.config.name.protect_creative_slots=Protect Creative Slots
 potteckit.config.comment.protect_creative_slots=Protects the items at the given slots from being destroyed when shift-clicking the "Destroy Item" button. E.g. you may not want to delete your elytra.
 potteckit.config.name.protect_creative_slot_list=Protect Creative Slot List
 potteckit.config.comment.protect_creative_slot_list=The list of items to be protected by the config "Protect Creative Slots".
+
+potteckit.config.name.swap_elytra_chestplate=Auto Swap Elytra Chestplate
+potteckit.config.comment.swap_elytra_chestplate=Automatically swaps an elytra to the slot of chestplate, when the player has been equipped with a chestplate and is taking off.\nAutomatically swaps back when the player has just landed.
+
+potteckit.config.name.f3_cursor_attack_indicator=F3 Cursor with Attack Indicator
+potteckit.config.comment.f3_cursor_attack_indicator=Always renders the F3 screen type cursor, meanwhile allows rendering the crosshair attack indicator (if it's enabled in the game settings).

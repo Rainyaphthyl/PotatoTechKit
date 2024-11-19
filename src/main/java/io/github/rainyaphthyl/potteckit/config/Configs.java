@@ -3,23 +3,30 @@ package io.github.rainyaphthyl.potteckit.config;
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.JsonModConfig;
 import fi.dy.masa.malilib.config.option.*;
+import fi.dy.masa.malilib.config.option.list.BlackWhiteListConfig;
 import fi.dy.masa.malilib.config.option.list.BlockListConfig;
 import fi.dy.masa.malilib.config.option.list.EquipmentSlotListConfig;
 import fi.dy.masa.malilib.config.option.list.ItemListConfig;
+import fi.dy.masa.malilib.config.value.BlackWhiteList;
 import fi.dy.masa.malilib.input.KeyBindSettings;
 import fi.dy.masa.malilib.registry.Registry;
+import fi.dy.masa.malilib.util.restriction.UsageRestriction;
 import io.github.rainyaphthyl.potteckit.config.annotation.Config;
 import io.github.rainyaphthyl.potteckit.config.annotation.Domain;
 import io.github.rainyaphthyl.potteckit.config.annotation.Type;
+import io.github.rainyaphthyl.potteckit.config.option.EntityListConfig;
 import io.github.rainyaphthyl.potteckit.config.option.EnumRealmStatus;
 import io.github.rainyaphthyl.potteckit.config.option.InvIntegerConfig;
 import io.github.rainyaphthyl.potteckit.config.option.multipart.ChunkFilterListConfig;
 import io.github.rainyaphthyl.potteckit.entities.Renderers;
 import io.github.rainyaphthyl.potteckit.gui.ChunkFilterListConfigWidget;
+import io.github.rainyaphthyl.potteckit.gui.EntityListConfigWidget;
 import io.github.rainyaphthyl.potteckit.gui.GuiConfigScreen;
 import io.github.rainyaphthyl.potteckit.gui.InvIntegerConfigWidget;
 import io.github.rainyaphthyl.potteckit.input.PotteckitHotkeyProvider;
 import io.github.rainyaphthyl.potteckit.util.Reference;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -100,6 +107,15 @@ public class Configs {
     public static final BooleanAndDoubleConfig explosionPacketRange = new BooleanAndDoubleConfig("explosion_packet_range", false, 64.0, 0.0, 1024.0, "explosion_packet_range");
     @Config(types = Type.NUMBER, domains = Domain.TWEAK, serverSide = true)
     public static final BooleanAndIntConfig entityTrackerDistance = new BooleanAndIntConfig("entity_tracker_distance", false, 8, 0, 64, "entity_tracker_distance");
+    @Config(types = Type.LIST, domains = Domain.TWEAK, serverSide = true)
+    public static final BlackWhiteListConfig<Class<? extends Entity>> entityTrackerTweakList = new BlackWhiteListConfig<>(
+            "entity_tracker_tweak_list",
+            BlackWhiteList.of(
+                    UsageRestriction.ListType.BLACKLIST,
+                    new EntityListConfig("malilib.label.list_type.blacklist", ImmutableList.of(EntitySquid.class)),
+                    new EntityListConfig("malilib.label.list_type.whitelist", ImmutableList.of())
+            ), "entity_tracker_tweak_list", "entity_tracker_tweak_list"
+    );
     @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
     public static final HotkeyedBooleanConfig yeetItemAntiSpam = new HotkeyedBooleanConfig("yeet_item_anti_spam", false, "", "yeet_item_anti_spam", "yeet_item_anti_spam");
     @Config(types = Type.TOGGLE, domains = Domain.YEET, serverSide = true)
@@ -110,6 +126,12 @@ public class Configs {
     public static final EquipmentSlotListConfig protectCreativeSlotList = new EquipmentSlotListConfig("protect_creative_slot_list", ImmutableList.of(EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET));
     @Config(types = Type.TOGGLE, domains = Domain.YEET)
     public static final BooleanAndIntConfig dynamicFPS = new BooleanAndIntConfig("dynamic_fps", false, 5, 1, 20, "dynamic_fps");
+    @Config(types = Type.TOGGLE, domains = Domain.YEET)
+    public static final HotkeyedBooleanConfig yeetTravelLightCheck = new HotkeyedBooleanConfig("yeet_travel_light_check", false, "", "yeet_travel_light_check", "yeet_travel_light_check");
+    @Config(types = Type.TOGGLE, domains = Domain.TWEAK)
+    public static final HotkeyedBooleanConfig autoSwapElytraChestplate = new HotkeyedBooleanConfig("swap_elytra_chestplate", false, "", "swap_elytra_chestplate", "swap_elytra_chestplate");
+    @Config(types = Type.TOGGLE, domains = Domain.METER)
+    public static final HotkeyedBooleanConfig f3CursorAttackIndicator = new HotkeyedBooleanConfig("f3_cursor_attack_indicator", false, "", "f3_cursor_attack_indicator", "f3_cursor_attack_indicator");
 
     public static void registerOnInit() {
         JsonModConfig jsonModConfig = new JsonModConfig(Reference.MOD_INFO, Reference.CONFIG_VERSION, ConfigHandler.optionCategoryList);
@@ -118,6 +140,7 @@ public class Configs {
         Registry.CONFIG_TAB.registerConfigTabProvider(Reference.MOD_INFO, GuiConfigScreen::getConfigTabs);
         Registry.CONFIG_WIDGET.registerConfigWidgetFactory(InvIntegerConfig.class, InvIntegerConfigWidget::new);
         Registry.CONFIG_WIDGET.registerConfigWidgetFactory(ChunkFilterListConfig.class, ChunkFilterListConfigWidget::new);
+        Registry.CONFIG_WIDGET.registerConfigWidgetFactory(EntityListConfig.class, EntityListConfigWidget::new);
         Registry.HOTKEY_MANAGER.registerHotkeyProvider(new PotteckitHotkeyProvider());
         Actions.init();
         Callbacks.init();
